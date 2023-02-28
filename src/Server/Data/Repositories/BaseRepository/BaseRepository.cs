@@ -11,7 +11,12 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class
     
     protected AppDbContext Context { get; set; }
     
-    public async Task CreateAsync(T entity)
+    public async Task SaveAsync()
+    {
+        await Context.SaveChangesAsync();
+    }
+
+    public async Task CreateAndSaveAsync(T entity)
     {
         await Context.Set<T>().AddAsync(entity);
         await Context.SaveChangesAsync();

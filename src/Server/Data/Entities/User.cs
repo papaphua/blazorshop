@@ -4,29 +4,27 @@ namespace BlazorShop.Server.Data.Entities;
 
 public sealed class User
 {
-    public User(string username, string email, string passwordHash)
+    public User()
     {
         Id = Guid.NewGuid();
         RegisterDate = DateTime.Now;
-        Username = username;
-        Email = email;
-        PasswordHash = passwordHash;
-        IsEmailConfirmed = false;
     }
     
     [Required] public Guid Id { get; set; }
+
+    [Required] public string Username { get; set; } = null!;
     
-    [Required] public string Username { get; set; }
-    
-    [Required] public string Email { get; set; }
+    [Required] public string Email { get; set; } = null!;
     
     [Required] public bool IsEmailConfirmed { get; set; }
     
-    [Required] public string PasswordHash { get; set; }
+    [Required] public string PasswordHash { get; set; } = null!;
     
     [Required] public DateTime RegisterDate { get; set; }
 
     [Required] public ICollection<Role> Roles { get; set; } = null!;
+
+    public string? PaymentProfileId { get; set; }
 
     public string? FirstName { get; set; }
 

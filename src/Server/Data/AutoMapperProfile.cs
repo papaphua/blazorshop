@@ -10,5 +10,11 @@ public sealed class AutoMapperProfile : Profile
     {
         CreateMap<Category, CategoryDto>();
         CreateMap<Product, ProductDto>();
+
+        CreateMap<RegisterDto, User>()
+            .ForSourceMember(src => src.Password,
+                opt => opt.DoNotValidate())
+            .ForSourceMember(src => src.ConfirmPassword,
+                opt => opt.DoNotValidate());
     }
 }
