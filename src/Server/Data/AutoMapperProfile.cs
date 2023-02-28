@@ -4,7 +4,7 @@ using BlazorShop.Shared.Dtos;
 
 namespace BlazorShop.Server.Data;
 
-public class AutoMapperProfile : Profile
+public sealed class AutoMapperProfile : Profile
 {
     public AutoMapperProfile()
     {

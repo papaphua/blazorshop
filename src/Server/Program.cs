@@ -1,8 +1,10 @@
 using BlazorShop.Server.Data;
 using BlazorShop.Server.Data.Repositories.CategoryRepository;
 using BlazorShop.Server.Data.Repositories.ProductRepository;
+using BlazorShop.Server.Data.Repositories.UserRepository;
 using BlazorShop.Server.Services.CategoryService;
 using BlazorShop.Server.Services.ProductService;
+using BlazorShop.Server.Services.UserService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -13,9 +15,11 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
