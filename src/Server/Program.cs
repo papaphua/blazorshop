@@ -1,3 +1,5 @@
+using BlazorShop.Server.Auth.PasswordProvider;
+using BlazorShop.Server.Auth.PermissionHandler;
 using BlazorShop.Server.Data;
 using BlazorShop.Server.Data.Repositories.CategoryRepository;
 using BlazorShop.Server.Data.Repositories.ProductRepository;
@@ -9,6 +11,8 @@ using BlazorShop.Server.Services.PermissionService;
 using BlazorShop.Server.Services.ProductService;
 using BlazorShop.Server.Services.RoleService;
 using BlazorShop.Server.Services.UserService;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -33,6 +37,8 @@ builder.Services.ConfigureOptions<JwtOptionsSetup>();
 builder.Services.ConfigureOptions<MailingOptionsSetup>();
 builder.Services.ConfigureOptions<SecretOptionsSetup>();
 
+builder.Services.AddScoped<IPasswordProvider, PasswordProvider>();
+
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddCors(options =>
@@ -51,6 +57,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
     options.UseSqlServer(connectionString);
 });
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer();
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthHandler>();
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionAuthPolicyProvider>();
 
 var app = builder.Build();
 
@@ -73,6 +87,9 @@ app.UseRouting();
 
 app.UseSwagger();
 app.UseSwaggerUI(options => { options.SwaggerEndpoint("/swagger/v1/swagger.json", "BlazorShop API V1"); });
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapControllers();
