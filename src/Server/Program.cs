@@ -2,8 +2,12 @@ using BlazorShop.Server.Data;
 using BlazorShop.Server.Data.Repositories.CategoryRepository;
 using BlazorShop.Server.Data.Repositories.ProductRepository;
 using BlazorShop.Server.Data.Repositories.UserRepository;
+using BlazorShop.Server.Options.OptionSetups;
 using BlazorShop.Server.Services.CategoryService;
+using BlazorShop.Server.Services.MailService;
+using BlazorShop.Server.Services.PermissionService;
 using BlazorShop.Server.Services.ProductService;
+using BlazorShop.Server.Services.RoleService;
 using BlazorShop.Server.Services.UserService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -20,6 +24,14 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IMailService, MailService>();
+
+builder.Services.ConfigureOptions<HashingOptionsSetup>();
+builder.Services.ConfigureOptions<JwtOptionsSetup>();
+builder.Services.ConfigureOptions<MailingOptionsSetup>();
+builder.Services.ConfigureOptions<SecretOptionsSetup>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
