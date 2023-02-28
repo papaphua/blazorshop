@@ -5,12 +5,13 @@ namespace BlazorShop.Server.Data.Entities;
 
 public sealed class Product
 {
-    public Product(string name, string description, string uri, decimal price, Guid categoryId)
+    public Product(string name, string description, string uri, string imageUrl, decimal price, Guid categoryId)
     {
         Id = Guid.NewGuid();
         Name = name;
         Description = description;
         Uri = uri;
+        ImageUrl = imageUrl;
         Price = price;
         CategoryId = categoryId;
     }
@@ -23,6 +24,8 @@ public sealed class Product
 
     [Required] public string Uri { get; set; }
     
+    [Required] public string ImageUrl { get; set; }
+
     [Required]
     [Column(TypeName = "decimal(18,2)")]
     public decimal Price { get; set; }

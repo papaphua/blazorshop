@@ -1,6 +1,8 @@
 using BlazorShop.Server.Data;
 using BlazorShop.Server.Data.Repositories.CategoryRepository;
+using BlazorShop.Server.Data.Repositories.ProductRepository;
 using BlazorShop.Server.Services.CategoryService;
+using BlazorShop.Server.Services.ProductService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -10,10 +12,17 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", policy => { policy.WithExposedHeaders("X-Pagination"); });
+});
 
 builder.Services.AddSwaggerGen(c =>
 {

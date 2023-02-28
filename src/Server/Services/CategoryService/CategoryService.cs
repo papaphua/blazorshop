@@ -6,13 +6,13 @@ namespace BlazorShop.Server.Services.CategoryService;
 
 public sealed class CategoryService : ICategoryService
 {
-    private readonly ICategoryRepository _categoryRepository;
     private readonly IMapper _mapper;
+    private readonly ICategoryRepository _categoryRepository;
 
-    public CategoryService(ICategoryRepository categoryRepository, IMapper mapper)
+    public CategoryService(IMapper mapper, ICategoryRepository categoryRepository)
     {
-        _categoryRepository = categoryRepository;
         _mapper = mapper;
+        _categoryRepository = categoryRepository;
     }
 
     public async Task<List<CategoryDto>> GetAllCategoriesAsync()
