@@ -3,6 +3,7 @@ using BlazorShop.Server.Auth.PermissionHandler;
 using BlazorShop.Server.Data;
 using BlazorShop.Server.Data.Repositories.CategoryRepository;
 using BlazorShop.Server.Data.Repositories.ProductRepository;
+using BlazorShop.Server.Data.Repositories.SecurityRepository;
 using BlazorShop.Server.Data.Repositories.SessionRepository;
 using BlazorShop.Server.Data.Repositories.UserRepository;
 using BlazorShop.Server.Middlewares;
@@ -30,6 +31,7 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ISessionRepository, SessionRepository>();
+builder.Services.AddScoped<ISecurityRepository, SecurityRepository>();
 
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
@@ -45,6 +47,7 @@ builder.Services.ConfigureOptions<HashingOptionsSetup>();
 builder.Services.ConfigureOptions<JwtOptionsSetup>();
 builder.Services.ConfigureOptions<MailingOptionsSetup>();
 builder.Services.ConfigureOptions<SecretOptionsSetup>();
+builder.Services.ConfigureOptions<SecurityOptionsSetup>();
 
 builder.Services.AddScoped<IPasswordProvider, PasswordProvider>();
 

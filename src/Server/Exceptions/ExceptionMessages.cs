@@ -7,6 +7,8 @@ public static class ExceptionMessages
     public const string PasswordsNotMatch = "Passwords do not match.";
     public const string WrongPassword = "Password is incorrect.";
     public const string InternalError = "Something went wrong.";
+    public const string ExpiredCode = "Code has expired.";
+    public const string WrongCode = "Code is incorrect.";
 
     public static string UsernameAndEmailAlreadyExist(string username, string email)
     {

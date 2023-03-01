@@ -1,10 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using BlazorShop.Server.Options;
-using Microsoft.Extensions.Options;
 
 namespace BlazorShop.Server.Data.Entities;
 
-public class Session
+public sealed class Session
 {
     public Session()
     {

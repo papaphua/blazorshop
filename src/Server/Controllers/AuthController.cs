@@ -36,4 +36,11 @@ public sealed class AuthController : ControllerBase
     {
         return await _authService.RefreshAsync(tokenDto);
     }
+
+    [AllowAnonymous]
+    [HttpPost("email/confirmation")]
+    public async Task ConfirmEmail(EmailConfirmationDto emailConfirmationDto)
+    {
+        await _authService.ConfirmEmailAsync(emailConfirmationDto);
+    }
 }
