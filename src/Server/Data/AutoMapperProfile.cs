@@ -16,5 +16,7 @@ public sealed class AutoMapperProfile : Profile
                 opt => opt.DoNotValidate())
             .ForSourceMember(src => src.ConfirmPassword,
                 opt => opt.DoNotValidate());
+
+        CreateMap<User, ProfileDto>();
     }
 }

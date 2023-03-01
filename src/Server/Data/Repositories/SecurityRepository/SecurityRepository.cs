@@ -18,7 +18,7 @@ public sealed class SecurityRepository : BaseRepository<Security>, ISecurityRepo
         _options = options.Value;
     }
 
-    public async Task CreateSecurityForUser(Guid userId)
+    public async Task CreateSecurityForUserAsync(Guid userId)
     {
         var security = new Security { UserId = userId };
 
@@ -26,35 +26,47 @@ public sealed class SecurityRepository : BaseRepository<Security>, ISecurityRepo
         await Context.SaveChangesAsync();
     }
 
-    public async Task GenerateEmailConfirmationCode(Guid userId)
+    public async Task<string> GenerateConfirmationCode(Guid userId)
     {
         var security = await FindSecurityAsync(userId);
+        
+        if(security is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
-        if (security is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
-
-        security.EmailConfirmationCode = GenerateCode();
-        security.EmailConfirmationCodeExpiry =
-            DateTime.Now + TimeSpan.FromMinutes(_options.SecurityCodeExpiryInMinutes);
-
+        security.ConfirmationCode = GenerateCode();
+        security.ConfirmationCodeExpiry = DateTime.Now.AddMinutes(_options.SecurityCodeExpiryInMinutes);
+        
         await Context.SaveChangesAsync();
+     
+        return security.ConfirmationCode;
     }
 
-    public async Task VerifyEmailConfirmationCode(User user, string code)
+    public async Task<bool> VerifyConfirmationCode(User user, string code)
     {
         var security = await FindSecurityAsync(user.Id);
 
         if (security is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
-        if (security.EmailConfirmationCode is null) await GenerateEmailConfirmationCode(user.Id);
-
-        if (DateTime.Now > security.EmailConfirmationCodeExpiry)
+        if(security.ConfirmationCode is null || security.ConfirmationCodeExpiry is null) 
+            throw new BusinessException(ExceptionMessages.ExpiredCode);
+        
+        if (DateTime.Now > security.ConfirmationCodeExpiry)
             throw new BusinessException(ExceptionMessages.ExpiredCode);
 
-        if (!security.EmailConfirmationCode.Equals(code))
+        if (!security.ConfirmationCode.Equals(code))
             throw new BusinessException(ExceptionMessages.WrongCode);
 
-        user.IsEmailConfirmed = true;
-        
+        return true;
+    }
+
+    public async Task RemoveVerificationCode(Guid userId)
+    {
+        var security = await FindSecurityAsync(userId);
+
+        if (security is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
+
+        security.ConfirmationCode = null;
+        security.ConfirmationCodeExpiry = null;
+
         await Context.SaveChangesAsync();
     }
 

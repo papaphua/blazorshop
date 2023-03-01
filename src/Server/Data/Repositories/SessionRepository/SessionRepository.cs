@@ -16,11 +16,11 @@ public sealed class SessionRepository : BaseRepository<Session>, ISessionReposit
         _options = options.Value;
     }
 
-    public async Task CreateSession(Guid userId, string accessToken, string refreshToken)
+    public async Task CreateSessionAsync(Guid userId, string accessToken, string refreshToken)
     {
         if (await FindSessionsAsync(userId) is not null)
         {
-            await UpdateSession(userId, accessToken, refreshToken);
+            await UpdateSessionAsync(userId, accessToken, refreshToken);
             return;
         }
         
@@ -34,7 +34,7 @@ public sealed class SessionRepository : BaseRepository<Session>, ISessionReposit
         await Context.SaveChangesAsync();
     }
 
-    public async Task UpdateSession(Guid userId, string accessToken, string refreshToken)
+    public async Task UpdateSessionAsync(Guid userId, string accessToken, string refreshToken)
     {
         var session = await FindSessionsAsync(userId);
 

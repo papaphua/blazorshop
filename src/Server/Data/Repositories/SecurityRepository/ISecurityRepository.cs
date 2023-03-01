@@ -5,7 +5,8 @@ namespace BlazorShop.Server.Data.Repositories.SecurityRepository;
 
 public interface ISecurityRepository : IBaseRepository<Security>
 {
-    Task CreateSecurityForUser(Guid userId);
-    Task GenerateEmailConfirmationCode(Guid userId);
-    Task VerifyEmailConfirmationCode(User user, string code);
+    Task CreateSecurityForUserAsync(Guid userId);
+    Task<string> GenerateConfirmationCode(Guid userId);
+    Task<bool> VerifyConfirmationCode(User user, string code);
+    Task RemoveVerificationCode(Guid userId);
 }

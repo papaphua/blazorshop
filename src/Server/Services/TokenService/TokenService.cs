@@ -3,6 +3,8 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using BlazorShop.Server.Data.Entities;
+using BlazorShop.Server.Data.Repositories.UserRepository;
+using BlazorShop.Server.Exceptions;
 using BlazorShop.Server.Options;
 using BlazorShop.Server.Services.PermissionService;
 using BlazorShop.Shared.Auth;
@@ -16,13 +18,15 @@ public sealed class TokenService : ITokenService
     private readonly JwtOptions _options;
     private readonly SecretOptions _secrets;
     private readonly IPermissionService _permissionService;
+    private readonly IUserRepository _userRepository;
 
     public TokenService(IOptions<JwtOptions> options, IOptions<SecretOptions> secrets,
-        IPermissionService permissionService)
+        IPermissionService permissionService, IUserRepository userRepository)
     {
         _options = options.Value;
         _secrets = secrets.Value;
         _permissionService = permissionService;
+        _userRepository = userRepository;
     }
 
     public async Task<string> GenerateAccessTokenAsync(User user)
@@ -73,6 +77,26 @@ public sealed class TokenService : ITokenService
             throw new SecurityTokenException("Invalid token");
 
         return principal;
+    }
+
+    public Guid GetUserIdFromContext(HttpContext context)
+    {
+        var id = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (id is null) throw new NotFoundException(ExceptionMessages.Unauthorized);
+
+        return Guid.Parse(id);
+    }
+
+    public async Task<User> GetUserFromContextAsync(HttpContext context)
+    {
+        var id = GetUserIdFromContext(context);
+        
+        var user = await _userRepository.GetByIdAsync(id);
+
+        if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
+
+        return user;
     }
 
     private string CreateToken(IEnumerable<Claim> claims)

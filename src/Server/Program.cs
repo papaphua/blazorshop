@@ -14,6 +14,7 @@ using BlazorShop.Server.Services.MailService;
 using BlazorShop.Server.Services.PaymentService;
 using BlazorShop.Server.Services.PermissionService;
 using BlazorShop.Server.Services.ProductService;
+using BlazorShop.Server.Services.ProfileService;
 using BlazorShop.Server.Services.RoleService;
 using BlazorShop.Server.Services.TokenService;
 using BlazorShop.Server.Services.UserService;
@@ -41,6 +42,7 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.ConfigureOptions<HashingOptionsSetup>();

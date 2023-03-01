@@ -1,11 +1,13 @@
 ﻿using System.Security.Claims;
 using AutoMapper;
 using BlazorShop.Server.Auth.PasswordProvider;
+using BlazorShop.Server.Data;
 using BlazorShop.Server.Data.Entities;
 using BlazorShop.Server.Data.Repositories.SecurityRepository;
 using BlazorShop.Server.Data.Repositories.SessionRepository;
 using BlazorShop.Server.Data.Repositories.UserRepository;
 using BlazorShop.Server.Exceptions;
+using BlazorShop.Server.Services.MailService;
 using BlazorShop.Server.Services.PaymentService;
 using BlazorShop.Server.Services.RoleService;
 using BlazorShop.Server.Services.TokenService;
@@ -23,6 +25,7 @@ public sealed class AuthService : IAuthService
     private readonly IPaymentService _paymentService;
     private readonly ISessionRepository _sessionRepository;
     private readonly ISecurityRepository _securityRepository;
+    private readonly IMailService _mailService;
 
     public AuthService(
         IUserRepository userRepository,
@@ -32,7 +35,8 @@ public sealed class AuthService : IAuthService
         ITokenService tokenService,
         IPaymentService paymentService,
         ISessionRepository sessionRepository, 
-        ISecurityRepository securityRepository)
+        ISecurityRepository securityRepository, 
+        IMailService mailService)
     {
         _userRepository = userRepository;
         _roleService = roleService;
@@ -42,6 +46,7 @@ public sealed class AuthService : IAuthService
         _paymentService = paymentService;
         _sessionRepository = sessionRepository;
         _securityRepository = securityRepository;
+        _mailService = mailService;
     }
 
     public async Task RegisterAsync(RegisterDto registerDto)
@@ -77,8 +82,8 @@ public sealed class AuthService : IAuthService
 
         await _paymentService.AddPaymentProfileAsync(user);
 
-        await _securityRepository.CreateSecurityForUser(user.Id);
-        await _securityRepository.GenerateEmailConfirmationCode(user.Id);
+        await _securityRepository.CreateSecurityForUserAsync(user.Id);
+        await _securityRepository.GenerateConfirmationCode(user.Id);
         
         await _userRepository.UpdateAndSaveAsync(user);
     }
@@ -99,7 +104,7 @@ public sealed class AuthService : IAuthService
         var accessToken = await _tokenService.GenerateAccessTokenAsync(user);
         var refreshToken = _tokenService.GenerateRefreshToken();
 
-        await _sessionRepository.CreateSession(user.Id, accessToken, refreshToken);
+        await _sessionRepository.CreateSessionAsync(user.Id, accessToken, refreshToken);
 
         return new TokenDto(accessToken, refreshToken);
     }
@@ -117,17 +122,52 @@ public sealed class AuthService : IAuthService
         var accessToken = await _tokenService.GenerateAccessTokenAsync(user);
         var refreshToken = _tokenService.GenerateRefreshToken();
 
-        await _sessionRepository.UpdateSession(user.Id, accessToken, refreshToken);
+        await _sessionRepository.UpdateSessionAsync(user.Id, accessToken, refreshToken);
 
         return new TokenDto(accessToken, refreshToken);
     }
-    
+
+    public async Task GetConfirmationCodeAsync(string email)
+    {
+        var user = await _userRepository.GetByEmailAsync(email);
+
+        if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
+
+        if (user.IsEmailConfirmed) throw new NotFoundException(ExceptionMessages.EmailAlreadyConfirmed);
+        
+        var code = await _securityRepository.GenerateConfirmationCode(user.Id);
+
+        await _mailService.SendEmailAsync(email, Emails.ConfirmationCode(code));
+    }
+
     public async Task ConfirmEmailAsync(EmailConfirmationDto emailConfirmationDto)
     {
         var user = await _userRepository.GetByEmailAsync(emailConfirmationDto.Email);
 
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
-        await _securityRepository.VerifyEmailConfirmationCode(user, emailConfirmationDto.Code);
+        if (await _securityRepository.VerifyConfirmationCode(user, emailConfirmationDto.Code))
+        {
+            user.IsEmailConfirmed = true;
+            await _securityRepository.RemoveVerificationCode(user.Id);
+            await _userRepository.SaveAsync();
+        }
+    }
+
+    public async Task ResetPasswordAsync(PasswordResetDto passwordResetDto)
+    {
+        var user = await _userRepository.GetByEmailAsync(passwordResetDto.Email);
+        
+        if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
+        
+        if (!passwordResetDto.Password.Equals(passwordResetDto.ConfirmPassword))
+            throw new BusinessException(ExceptionMessages.PasswordsNotMatch);
+
+        if (await _securityRepository.VerifyConfirmationCode(user, passwordResetDto.Code))
+        {
+            user.PasswordHash = _passwordProvider.GetPasswordHash(passwordResetDto.Password);
+            await _securityRepository.RemoveVerificationCode(user.Id);
+            await _userRepository.SaveAsync();
+        }
     }
 }
