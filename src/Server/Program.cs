@@ -50,6 +50,7 @@ builder.Services.ConfigureOptions<JwtOptionsSetup>();
 builder.Services.ConfigureOptions<MailingOptionsSetup>();
 builder.Services.ConfigureOptions<SecretOptionsSetup>();
 builder.Services.ConfigureOptions<SecurityOptionsSetup>();
+builder.Services.ConfigureOptions<UrlOptionsSetup>();
 
 builder.Services.AddScoped<IPasswordProvider, PasswordProvider>();
 

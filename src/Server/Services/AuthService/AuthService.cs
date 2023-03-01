@@ -7,11 +7,14 @@ using BlazorShop.Server.Data.Repositories.SecurityRepository;
 using BlazorShop.Server.Data.Repositories.SessionRepository;
 using BlazorShop.Server.Data.Repositories.UserRepository;
 using BlazorShop.Server.Exceptions;
+using BlazorShop.Server.Options;
 using BlazorShop.Server.Services.MailService;
 using BlazorShop.Server.Services.PaymentService;
 using BlazorShop.Server.Services.RoleService;
 using BlazorShop.Server.Services.TokenService;
 using BlazorShop.Shared.Dtos;
+using BlazorShop.Shared.Models;
+using Microsoft.Extensions.Options;
 
 namespace BlazorShop.Server.Services.AuthService;
 
@@ -26,6 +29,7 @@ public sealed class AuthService : IAuthService
     private readonly ISessionRepository _sessionRepository;
     private readonly ISecurityRepository _securityRepository;
     private readonly IMailService _mailService;
+    private readonly UrlOptions _urlOptions;
 
     public AuthService(
         IUserRepository userRepository,
@@ -36,7 +40,8 @@ public sealed class AuthService : IAuthService
         IPaymentService paymentService,
         ISessionRepository sessionRepository, 
         ISecurityRepository securityRepository, 
-        IMailService mailService)
+        IMailService mailService, 
+        IOptions<UrlOptions> urlOptions)
     {
         _userRepository = userRepository;
         _roleService = roleService;
@@ -47,6 +52,7 @@ public sealed class AuthService : IAuthService
         _sessionRepository = sessionRepository;
         _securityRepository = securityRepository;
         _mailService = mailService;
+        _urlOptions = urlOptions.Value;
     }
 
     public async Task RegisterAsync(RegisterDto registerDto)
@@ -83,9 +89,8 @@ public sealed class AuthService : IAuthService
         await _paymentService.AddPaymentProfileAsync(user);
 
         await _securityRepository.CreateSecurityForUserAsync(user.Id);
-        await _securityRepository.GenerateConfirmationCode(user.Id);
-        
-        await _userRepository.UpdateAndSaveAsync(user);
+
+        await GetEmailConfirmationLinkAsync(user.Email);
     }
 
     public async Task<TokenDto> LoginAsync(LoginDto loginDto)
@@ -133,41 +138,78 @@ public sealed class AuthService : IAuthService
 
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
-        if (user.IsEmailConfirmed) throw new NotFoundException(ExceptionMessages.EmailAlreadyConfirmed);
-        
         var code = await _securityRepository.GenerateConfirmationCode(user.Id);
 
         await _mailService.SendEmailAsync(email, Emails.ConfirmationCode(code));
     }
 
-    public async Task ConfirmEmailAsync(EmailConfirmationDto emailConfirmationDto)
+    public async Task GetEmailConfirmationLinkAsync(string email)
     {
-        var user = await _userRepository.GetByEmailAsync(emailConfirmationDto.Email);
+        var user = await _userRepository.GetByEmailAsync(email);
+
+        if(user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
+        
+        if(user.IsEmailConfirmed) throw new BusinessException(ExceptionMessages.EmailAlreadyConfirmed);
+        
+        var token = await _securityRepository.GenerateConfirmationToken(user.Id);
+
+        var parameters = new ConfirmationParameters(token, user.Email);
+        
+        var link = GenerateLink(parameters, _urlOptions.EmailConfirmationUrl);
+        
+        await _mailService.SendEmailAsync(user.Email, Emails.EmailConfirmation(link));
+    }
+
+    public async Task GetPasswordResetLinkAsync(string email)
+    {
+        var user = await _userRepository.GetByEmailAsync(email);
+
+        if(user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
+        
+        var token = await _securityRepository.GenerateConfirmationToken(user.Id);
+
+        var parameters = new ConfirmationParameters(token, user.Email);
+        
+        var link = GenerateLink(parameters, _urlOptions.PasswordResetUrl);
+        
+        await _mailService.SendEmailAsync(user.Email, Emails.PasswordReset(link));
+    }
+
+    public async Task ConfirmEmailAsync(ConfirmationParameters parameters)
+    {
+        var user = await _userRepository.GetByEmailAsync(parameters.Email);
 
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
+        
+        if (user.IsEmailConfirmed) throw new BusinessException(ExceptionMessages.EmailAlreadyConfirmed);
 
-        if (await _securityRepository.VerifyConfirmationCode(user, emailConfirmationDto.Code))
+        if (await _securityRepository.VerifyConfirmationToken(user.Id, parameters.Token))
         {
             user.IsEmailConfirmed = true;
-            await _securityRepository.RemoveVerificationCode(user.Id);
+            await _securityRepository.RemoveConfirmationToken(user.Id);
             await _userRepository.SaveAsync();
         }
     }
 
     public async Task ResetPasswordAsync(PasswordResetDto passwordResetDto)
     {
-        var user = await _userRepository.GetByEmailAsync(passwordResetDto.Email);
+        var user = await _userRepository.GetByEmailAsync(passwordResetDto.ConfirmationParameters.Email);
         
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
         
         if (!passwordResetDto.Password.Equals(passwordResetDto.ConfirmPassword))
             throw new BusinessException(ExceptionMessages.PasswordsNotMatch);
 
-        if (await _securityRepository.VerifyConfirmationCode(user, passwordResetDto.Code))
+        if (await _securityRepository.VerifyConfirmationToken(user.Id, passwordResetDto.ConfirmationParameters.Token))
         {
             user.PasswordHash = _passwordProvider.GetPasswordHash(passwordResetDto.Password);
-            await _securityRepository.RemoveVerificationCode(user.Id);
+            await _securityRepository.RemoveConfirmationToken(user.Id);
             await _userRepository.SaveAsync();
         }
+    }
+
+    private static string GenerateLink(ConfirmationParameters parameters, string url)
+    {
+        return $"https://{url}?token={parameters.Token}&email={parameters.Email}";
     }
 }

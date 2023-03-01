@@ -2,5 +2,6 @@
 
 public class SecurityOptions
 {
-    public int SecurityCodeExpiryInMinutes { get; set; }
+    public int ConfirmationCodeExpiryInMinutes { get; set; }
+    public int ConfirmationTokenExpiryInMinutes { get; set; }
 }

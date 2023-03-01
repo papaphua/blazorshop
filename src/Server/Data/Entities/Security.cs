@@ -17,4 +17,8 @@ public sealed class Security
     
     public string? ConfirmationCode { get; set; }
     public DateTime? ConfirmationCodeExpiry { get; set; }
+    
+    public string? ConfirmationToken { get; set; }
+    public DateTime? ConfirmationTokenExpiry { get; set; }
+
 }

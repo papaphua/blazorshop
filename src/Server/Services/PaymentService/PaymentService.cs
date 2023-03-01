@@ -16,9 +16,9 @@ public sealed class PaymentService : IPaymentService
     private const string Usd = "usd";
     private const string Card = "card";
     private const string Payment = "payment";
-    private const string StripeSignature = "stripe-signature";
-    private const string OrderSuccessUrl = "localhost:7017/order/success";
-    private const string OrderCancelUrl = "localhost:7017/order/cancel";
+    private const string StripeSignature = "Stripe-Signature";
+    private const string OrderSuccessUrl = "localhost:7005/order/success";
+    private const string OrderCancelUrl = "localhost:7005/order/cancel";
 
     private readonly SecretOptions _secrets;
     private readonly IUserRepository _userRepository;
@@ -86,9 +86,8 @@ public sealed class PaymentService : IPaymentService
             {
                 case Events.CustomerCreated:
                 {
-                    var customer = stripeEvent.Data.Object as Customer;
-
-                    if (customer is null) throw new BusinessException(ExceptionMessages.InternalError);
+                    if (stripeEvent.Data.Object is not Customer customer) 
+                        throw new BusinessException(ExceptionMessages.InternalError);
                     
                     await SaveCustomerIdAsUserPaymentProfileId(customer);
 
@@ -153,6 +152,6 @@ public sealed class PaymentService : IPaymentService
         
         user.PaymentProfileId = customer.Id;
 
-        await _userRepository.SaveAsync();
+        await _userRepository.UpdateAndSaveAsync(user);
     }
 }

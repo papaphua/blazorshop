@@ -26,30 +26,43 @@ public sealed class SecurityRepository : BaseRepository<Security>, ISecurityRepo
         await Context.SaveChangesAsync();
     }
 
+    public async Task<string> GenerateConfirmationToken(Guid userId)
+    {
+        var security = await FindSecurityAsync(userId);
+        
+        if(security is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
+
+        security.ConfirmationToken = GenerateCode(32);
+        security.ConfirmationTokenExpiry = DateTime.Now.AddMinutes(_options.ConfirmationTokenExpiryInMinutes);
+
+        await Context.SaveChangesAsync();
+     
+        return security.ConfirmationToken;
+    }
+
     public async Task<string> GenerateConfirmationCode(Guid userId)
     {
         var security = await FindSecurityAsync(userId);
         
         if(security is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
-        security.ConfirmationCode = GenerateCode();
-        security.ConfirmationCodeExpiry = DateTime.Now.AddMinutes(_options.SecurityCodeExpiryInMinutes);
+        security.ConfirmationCode = GenerateCode(6);
+        security.ConfirmationCodeExpiry = DateTime.Now.AddMinutes(_options.ConfirmationCodeExpiryInMinutes);
         
         await Context.SaveChangesAsync();
      
         return security.ConfirmationCode;
     }
 
-    public async Task<bool> VerifyConfirmationCode(User user, string code)
+    public async Task<bool> VerifyConfirmationCode(Guid userId, string code)
     {
-        var security = await FindSecurityAsync(user.Id);
+        var security = await FindSecurityAsync(userId);
 
         if (security is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
-        if(security.ConfirmationCode is null || security.ConfirmationCodeExpiry is null) 
-            throw new BusinessException(ExceptionMessages.ExpiredCode);
-        
-        if (DateTime.Now > security.ConfirmationCodeExpiry)
+        if(security.ConfirmationCode is null || 
+           security.ConfirmationCodeExpiry is null || 
+           DateTime.Now > security.ConfirmationCodeExpiry) 
             throw new BusinessException(ExceptionMessages.ExpiredCode);
 
         if (!security.ConfirmationCode.Equals(code))
@@ -58,7 +71,25 @@ public sealed class SecurityRepository : BaseRepository<Security>, ISecurityRepo
         return true;
     }
 
-    public async Task RemoveVerificationCode(Guid userId)
+    public async Task<bool> VerifyConfirmationToken(Guid userId, string token)
+    {
+        var security = await FindSecurityAsync(userId);
+        
+        if (security is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
+        
+        if(security.ConfirmationToken is null || 
+           security.ConfirmationTokenExpiry is null ||
+           DateTime.Now > security.ConfirmationTokenExpiry) 
+            throw new BusinessException(ExceptionMessages.ExpiredLink);
+        
+
+        if (!security.ConfirmationToken.Equals(token))
+            throw new BusinessException(ExceptionMessages.WrongLink);
+
+        return true;
+    }
+
+    public async Task RemoveConfirmationCode(Guid userId)
     {
         var security = await FindSecurityAsync(userId);
 
@@ -70,15 +101,27 @@ public sealed class SecurityRepository : BaseRepository<Security>, ISecurityRepo
         await Context.SaveChangesAsync();
     }
 
+    public async Task RemoveConfirmationToken(Guid userId)
+    {
+        var security = await FindSecurityAsync(userId);
+
+        if (security is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
+
+        security.ConfirmationToken = null;
+        security.ConfirmationTokenExpiry = null;
+
+        await Context.SaveChangesAsync();
+    }
+
     private async Task<Security?> FindSecurityAsync(Guid userId)
     {
         return await Context.Set<Security>()
             .FirstOrDefaultAsync(security => security.UserId == userId);
     }
 
-    private string GenerateCode()
+    private static string GenerateCode(int length)
     {
-        var randomNumber = new byte[6];
+        var randomNumber = new byte[length];
         using var rng = RandomNumberGenerator.Create();
         rng.GetBytes(randomNumber);
         return Convert.ToBase64String(randomNumber);
