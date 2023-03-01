@@ -2,7 +2,7 @@
 
 namespace BlazorShop.Shared.Dtos;
 
-public class TokenDto
+public sealed class TokenDto
 {
     public TokenDto(string accessToken, string refreshToken)
     {

@@ -24,10 +24,28 @@ public sealed class AuthController : ControllerBase
         await _authService.RegisterAsync(registerDto);
     }
     
+    // [HttpPost("login")]
+    // public async Task<TokenDto> Login(DefaultLoginDto defaultLoginDto)
+    // {
+    //     return await _authService.LoginAsync(defaultLoginDto);
+    // }
+    
     [HttpPost("login")]
-    public async Task<TokenDto> Login(LoginDto loginDto)
+    public async Task<string> FindLoginInfo(LoginInfoDto loginInfoDto)
     {
-        return await _authService.LoginAsync(loginDto);
+        return await _authService.FindLoginInfoAsync(loginInfoDto);
+    }
+    
+    [HttpPost("login/default")]
+    public async Task<AuthDto> DefaultLogin(DefaultLoginDto defaultLoginDto)
+    {
+        return await _authService.DefaultLoginAsync(defaultLoginDto);
+    }
+    
+    [HttpPost("login/2fa")]
+    public async Task<AuthDto> TwoAuthLogin(TwoAuthLoginDto twoAuthLoginDto)
+    {
+        return await _authService.TwoAuthLoginAsync(twoAuthLoginDto);
     }
     
     [HttpPost("refresh")]

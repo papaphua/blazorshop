@@ -38,9 +38,9 @@ public sealed class AuthService : IAuthService
         IMapper mapper,
         ITokenService tokenService,
         IPaymentService paymentService,
-        ISessionRepository sessionRepository, 
-        ISecurityRepository securityRepository, 
-        IMailService mailService, 
+        ISessionRepository sessionRepository,
+        ISecurityRepository securityRepository,
+        IMailService mailService,
         IOptions<UrlOptions> urlOptions)
     {
         _userRepository = userRepository;
@@ -93,15 +93,39 @@ public sealed class AuthService : IAuthService
         await GetEmailConfirmationLinkAsync(user.Email);
     }
 
-    public async Task<TokenDto> LoginAsync(LoginDto loginDto)
+    public async Task<string> FindLoginInfoAsync(LoginInfoDto loginInfoDto)
     {
-        var userByUsername = await _userRepository.GetByUsernameAsync(loginDto.Login);
-        var userByEmail = await _userRepository.GetByEmailAsync(loginDto.Login);
+        var userByUsername = await _userRepository.GetByUsernameAsync(loginInfoDto.Login);
+        var userByEmail = await _userRepository.GetByEmailAsync(loginInfoDto.Login);
         var user = userByUsername ?? userByEmail;
 
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
-        if (!_passwordProvider.VerifyPassword(loginDto.Password, user.PasswordHash))
+        if (!user.IsTwoAuth) return GenerateLoginLink(_urlOptions.DefaultLoginUrl, loginInfoDto.Login);
+        
+        await _securityRepository.GenerateConfirmationCode(user.Id);
+        return GenerateLoginLink(_urlOptions.TwoAuthLoginUrl, loginInfoDto.Login);
+    }
+
+    public async Task<AuthDto> DefaultLoginAsync(DefaultLoginDto defaultLoginDto)
+    {
+        var userByUsername = await _userRepository.GetByUsernameAsync(defaultLoginDto.Login);
+        var userByEmail = await _userRepository.GetByEmailAsync(defaultLoginDto.Login);
+        var user = userByUsername ?? userByEmail;
+
+        if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
+
+        if (user.IsTwoAuth)
+        {
+            return new AuthDto
+            {
+                IsSucceeded = false,
+                Url = GenerateLoginLink(_urlOptions.TwoAuthLoginUrl, defaultLoginDto.Login),
+                Tokens = null
+            };
+        }
+
+        if (!_passwordProvider.VerifyPassword(defaultLoginDto.Password, user.PasswordHash))
             throw new NotFoundException(ExceptionMessages.WrongPassword);
 
         if (!user.IsEmailConfirmed) throw new BusinessException(ExceptionMessages.EmailNotConfirmed(user.Email));
@@ -111,15 +135,79 @@ public sealed class AuthService : IAuthService
 
         await _sessionRepository.CreateSessionAsync(user.Id, accessToken, refreshToken);
 
-        return new TokenDto(accessToken, refreshToken);
+        return new AuthDto
+        {
+            IsSucceeded = true,
+            Url = null,
+            Tokens = new TokenDto(accessToken, refreshToken)
+        };
     }
+
+    public async Task<AuthDto> TwoAuthLoginAsync(TwoAuthLoginDto twoAuthLoginDto)
+    {
+        var userByUsername = await _userRepository.GetByUsernameAsync(twoAuthLoginDto.Login);
+        var userByEmail = await _userRepository.GetByEmailAsync(twoAuthLoginDto.Login);
+        var user = userByUsername ?? userByEmail;
+
+        if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
+
+        if (!user.IsTwoAuth)
+        {
+            return new AuthDto
+            {
+                IsSucceeded = false,
+                Url = GenerateLoginLink(_urlOptions.DefaultLoginUrl, twoAuthLoginDto.Login),
+                Tokens = null
+            };
+        }
+
+        if (!_passwordProvider.VerifyPassword(twoAuthLoginDto.Password, user.PasswordHash))
+            throw new NotFoundException(ExceptionMessages.WrongPassword);
+
+        await _securityRepository.VerifyConfirmationCode(user.Id, twoAuthLoginDto.ConfirmationCode);
+
+        var accessToken = await _tokenService.GenerateAccessTokenAsync(user);
+        var refreshToken = _tokenService.GenerateRefreshToken();
+
+        await _sessionRepository.CreateSessionAsync(user.Id, accessToken, refreshToken);
+
+        await _securityRepository.RemoveConfirmationCode(user.Id);
+        
+        return new AuthDto
+        {
+            IsSucceeded = true,
+            Url = null,
+            Tokens = new TokenDto(accessToken, refreshToken)
+        };
+    }
+
+    // public async Task<TokenDto> LoginAsync(DefaultLoginDto defaultLoginDto)
+    // {
+    //     var userByUsername = await _userRepository.GetByUsernameAsync(defaultLoginDto.Login);
+    //     var userByEmail = await _userRepository.GetByEmailAsync(defaultLoginDto.Login);
+    //     var user = userByUsername ?? userByEmail;
+    //
+    //     if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
+    //
+    //     if (!_passwordProvider.VerifyPassword(defaultLoginDto.Password, user.PasswordHash))
+    //         throw new NotFoundException(ExceptionMessages.WrongPassword);
+    //
+    //     if (!user.IsEmailConfirmed) throw new BusinessException(ExceptionMessages.EmailNotConfirmed(user.Email));
+    //
+    //     var accessToken = await _tokenService.GenerateAccessTokenAsync(user);
+    //     var refreshToken = _tokenService.GenerateRefreshToken();
+    //
+    //     await _sessionRepository.CreateSessionAsync(user.Id, accessToken, refreshToken);
+    //
+    //     return new TokenDto(accessToken, refreshToken);
+    // }
 
     public async Task<TokenDto> RefreshAsync(TokenDto tokenDto)
     {
         var principal = _tokenService.GetPrincipalFromExpiredToken(tokenDto.AccessToken);
-        
+
         var userId = Guid.Parse(principal.FindFirstValue(ClaimTypes.NameIdentifier));
-        
+
         var user = await _userRepository.GetByIdAsync(userId);
 
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
@@ -147,16 +235,16 @@ public sealed class AuthService : IAuthService
     {
         var user = await _userRepository.GetByEmailAsync(email);
 
-        if(user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
-        
-        if(user.IsEmailConfirmed) throw new BusinessException(ExceptionMessages.EmailAlreadyConfirmed);
-        
+        if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
+
+        if (user.IsEmailConfirmed) throw new BusinessException(ExceptionMessages.EmailAlreadyConfirmed);
+
         var token = await _securityRepository.GenerateConfirmationToken(user.Id);
 
         var parameters = new ConfirmationParameters(token, user.Email);
-        
-        var link = GenerateLink(parameters, _urlOptions.EmailConfirmationUrl);
-        
+
+        var link = GenerateConfirmationLink(_urlOptions.EmailConfirmationUrl, parameters);
+
         await _mailService.SendEmailAsync(user.Email, Emails.EmailConfirmation(link));
     }
 
@@ -164,14 +252,14 @@ public sealed class AuthService : IAuthService
     {
         var user = await _userRepository.GetByEmailAsync(email);
 
-        if(user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
-        
+        if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
+
         var token = await _securityRepository.GenerateConfirmationToken(user.Id);
 
         var parameters = new ConfirmationParameters(token, user.Email);
-        
-        var link = GenerateLink(parameters, _urlOptions.PasswordResetUrl);
-        
+
+        var link = GenerateConfirmationLink(_urlOptions.PasswordResetUrl, parameters);
+
         await _mailService.SendEmailAsync(user.Email, Emails.PasswordReset(link));
     }
 
@@ -180,7 +268,7 @@ public sealed class AuthService : IAuthService
         var user = await _userRepository.GetByEmailAsync(parameters.Email);
 
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
-        
+
         if (user.IsEmailConfirmed) throw new BusinessException(ExceptionMessages.EmailAlreadyConfirmed);
 
         if (await _securityRepository.VerifyConfirmationToken(user.Id, parameters.Token))
@@ -194,9 +282,9 @@ public sealed class AuthService : IAuthService
     public async Task ResetPasswordAsync(PasswordResetDto passwordResetDto)
     {
         var user = await _userRepository.GetByEmailAsync(passwordResetDto.ConfirmationParameters.Email);
-        
+
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
-        
+
         if (!passwordResetDto.Password.Equals(passwordResetDto.ConfirmPassword))
             throw new BusinessException(ExceptionMessages.PasswordsNotMatch);
 
@@ -208,8 +296,13 @@ public sealed class AuthService : IAuthService
         }
     }
 
-    private static string GenerateLink(ConfirmationParameters parameters, string url)
+    private static string GenerateConfirmationLink(string url, ConfirmationParameters parameters)
     {
         return $"https://{url}?token={parameters.Token}&email={parameters.Email}";
+    }
+
+    private static string GenerateLoginLink(string url, string login)
+    {
+        return $"https://{url}?login={login}";
     }
 }

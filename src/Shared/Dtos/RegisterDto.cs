@@ -2,7 +2,7 @@
 
 namespace BlazorShop.Shared.Dtos;
 
-public class RegisterDto
+public sealed class RegisterDto
 {
     [Required(ErrorMessage = "Username is required.")]
     [StringLength(12, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]

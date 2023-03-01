@@ -2,7 +2,7 @@
 
 namespace BlazorShop.Shared.Dtos;
 
-public class LoginDto
+public sealed class DefaultLoginDto
 {
     [Required(ErrorMessage = "Username or email is required.")]
     [MinLength(6, ErrorMessage = "The {0} must be at least {1} characters long.")]

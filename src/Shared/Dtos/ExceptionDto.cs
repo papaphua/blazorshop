@@ -2,7 +2,7 @@
 
 namespace BlazorShop.Shared.Dtos;
 
-public class ExceptionDto
+public sealed class ExceptionDto
 {
     public ExceptionDto(string message)
     {
