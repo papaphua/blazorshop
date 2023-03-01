@@ -4,6 +4,12 @@ namespace BlazorShop.Shared.Dtos;
 
 public class TokenDto
 {
-    [Required] public string AccessToken { get; set; } = null!;
-    [Required] public string RefreshToken { get; set; } = null!;
+    public TokenDto(string accessToken, string refreshToken)
+    {
+        AccessToken = accessToken;
+        RefreshToken = refreshToken;
+    }
+    
+    [Required] public string AccessToken { get; set; }
+    [Required] public string RefreshToken { get; set; }
 }

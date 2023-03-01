@@ -4,6 +4,7 @@ using BlazorShop.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorShop.Server.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230301121315_LinkRoleAndPermission")]
+    partial class LinkRoleAndPermission
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,19 +46,19 @@ namespace BlazorShop.Server.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("90a96b62-275b-47b3-9977-a99a44c64fc3"),
+                            Id = new Guid("1e95dffa-5016-4937-8080-86a29a3070d7"),
                             Name = "Books",
                             Uri = "books"
                         },
                         new
                         {
-                            Id = new Guid("fb28a4d4-e4f1-4d03-b363-5e1468f0b166"),
+                            Id = new Guid("24c7088c-c6ae-461b-9f63-d381491c6b1a"),
                             Name = "Movies",
                             Uri = "movies"
                         },
                         new
                         {
-                            Id = new Guid("3381175f-c163-4bf0-8b12-4f12d1205973"),
+                            Id = new Guid("da9fb591-acfc-404f-a096-2e99c8a202d5"),
                             Name = "Video Games",
                             Uri = "video-games"
                         });
@@ -209,8 +212,8 @@ namespace BlazorShop.Server.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("35eb267b-307e-41ac-9d28-63c5d1470c28"),
-                            CategoryId = new Guid("90a96b62-275b-47b3-9977-a99a44c64fc3"),
+                            Id = new Guid("3b02152f-6a48-4e8e-976d-2d29c950e7bb"),
+                            CategoryId = new Guid("1e95dffa-5016-4937-8080-86a29a3070d7"),
                             Description = "The Hitchhiker's Guide to the Galaxy is a comedy science fiction franchise created by Douglas Adams.",
                             ImageUrl = "https://upload.wikimedia.org/wikipedia/en/b/bd/H2G2_UK_front_cover.jpg",
                             Name = "The Hitchhiker's Guide to the Galaxy",
@@ -219,8 +222,8 @@ namespace BlazorShop.Server.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("efd4ee41-8ff9-4f22-b41b-fee41f30dd69"),
-                            CategoryId = new Guid("90a96b62-275b-47b3-9977-a99a44c64fc3"),
+                            Id = new Guid("21174904-68cd-41c4-9943-1798bf548671"),
+                            CategoryId = new Guid("1e95dffa-5016-4937-8080-86a29a3070d7"),
                             Description = "Ready Player One is a 2011 science fiction novel, and the debut novel of American author Ernest Cline.",
                             ImageUrl = "https://upload.wikimedia.org/wikipedia/en/a/a4/Ready_Player_One_cover.jpg",
                             Name = "Ready Player One",
@@ -229,8 +232,8 @@ namespace BlazorShop.Server.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("cf0ce6ce-8d12-4728-9ce6-be771a7ac502"),
-                            CategoryId = new Guid("90a96b62-275b-47b3-9977-a99a44c64fc3"),
+                            Id = new Guid("1fc62484-9272-47b1-b7f1-13bdc9854a18"),
+                            CategoryId = new Guid("1e95dffa-5016-4937-8080-86a29a3070d7"),
                             Description = "Nineteen Eighty-Four (also stylised as 1984) is a dystopian social science fiction novel and cautionary tale written by the English writer George Orwell.",
                             ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/1984first.jpg/330px-1984first.jpg",
                             Name = "Nineteen Eighty-Four",
@@ -239,8 +242,8 @@ namespace BlazorShop.Server.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("2e25d756-5ce9-442e-bf5b-d99cc5cebf11"),
-                            CategoryId = new Guid("fb28a4d4-e4f1-4d03-b363-5e1468f0b166"),
+                            Id = new Guid("cb661e49-9a51-4004-b98d-15bd7925836b"),
+                            CategoryId = new Guid("24c7088c-c6ae-461b-9f63-d381491c6b1a"),
                             Description = "The Matrix is a 1999 science fiction action film written and directed by the Wachowskis, and produced by Joel Silver. Starring Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving, and Joe Pantoliano, and as the first installment in the Matrix franchise, it depicts a dystopian future in which humanity is unknowingly trapped inside a simulated reality, the Matrix, which intelligent machines have created to distract humans while using their bodies as an energy source. When computer programmer Thomas Anderson, under the hacker alias \"Neo\", uncovers the truth, he \"is drawn into a rebellion against the machines\" along with other people who have been freed from the Matrix.",
                             ImageUrl = "https://upload.wikimedia.org/wikipedia/en/c/c1/The_Matrix_Poster.jpg",
                             Name = "The Matrix",
@@ -249,8 +252,8 @@ namespace BlazorShop.Server.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("3bf19fe7-4333-4b1a-a43c-1f38a62faba4"),
-                            CategoryId = new Guid("fb28a4d4-e4f1-4d03-b363-5e1468f0b166"),
+                            Id = new Guid("00c2dfe5-2c9a-4a89-aaf5-d6ac744e83fa"),
+                            CategoryId = new Guid("24c7088c-c6ae-461b-9f63-d381491c6b1a"),
                             Description = "Back to the Future is a 1985 American science fiction film directed by Robert Zemeckis. Written by Zemeckis and Bob Gale, it stars Michael J. Fox, Christopher Lloyd, Lea Thompson, Crispin Glover, and Thomas F. Wilson. Set in 1985, the story follows Marty McFly (Fox), a teenager accidentally sent back to 1955 in a time-traveling DeLorean automobile built by his eccentric scientist friend Doctor Emmett \"Doc\" Brown (Lloyd). Trapped in the past, Marty inadvertently prevents his future parents' meeting—threatening his very existence—and is forced to reconcile the pair and somehow get back to the future.",
                             ImageUrl = "https://upload.wikimedia.org/wikipedia/en/d/d2/Back_to_the_Future.jpg",
                             Name = "Back to the Future",
@@ -259,8 +262,8 @@ namespace BlazorShop.Server.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("d2e2055a-43fe-4fb6-9fef-262e99f0ad24"),
-                            CategoryId = new Guid("fb28a4d4-e4f1-4d03-b363-5e1468f0b166"),
+                            Id = new Guid("c0a49c1a-84a2-4bd6-a107-fbcdbd3e6e6e"),
+                            CategoryId = new Guid("24c7088c-c6ae-461b-9f63-d381491c6b1a"),
                             Description = "Toy Story is a 1995 American computer-animated comedy film produced by Pixar Animation Studios and released by Walt Disney Pictures. The first installment in the Toy Story franchise, it was the first entirely computer-animated feature film, as well as the first feature film from Pixar. The film was directed by John Lasseter (in his feature directorial debut), and written by Joss Whedon, Andrew Stanton, Joel Cohen, and Alec Sokolow from a story by Lasseter, Stanton, Pete Docter, and Joe Ranft. The film features music by Randy Newman, was produced by Bonnie Arnold and Ralph Guggenheim, and was executive-produced by Steve Jobs and Edwin Catmull. The film features the voices of Tom Hanks, Tim Allen, Don Rickles, Wallace Shawn, John Ratzenberger, Jim Varney, Annie Potts, R. Lee Ermey, John Morris, Laurie Metcalf, and Erik von Detten. Taking place in a world where anthropomorphic toys come to life when humans are not present, the plot focuses on the relationship between an old-fashioned pull-string cowboy doll named Woody and an astronaut action figure, Buzz Lightyear, as they evolve from rivals competing for the affections of their owner, Andy Davis, to friends who work together to be reunited with Andy after being separated from him.",
                             ImageUrl = "https://upload.wikimedia.org/wikipedia/en/1/13/Toy_Story.jpg",
                             Name = "Toy Story",
@@ -269,8 +272,8 @@ namespace BlazorShop.Server.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("f030ce3b-6a7b-48f0-bf93-702a5f2604cc"),
-                            CategoryId = new Guid("3381175f-c163-4bf0-8b12-4f12d1205973"),
+                            Id = new Guid("4fc89da9-a585-48df-b029-16f03d5c75ee"),
+                            CategoryId = new Guid("da9fb591-acfc-404f-a096-2e99c8a202d5"),
                             Description = "Half-Life 2 is a 2004 first-person shooter game developed and published by Valve. Like the original Half-Life, it combines shooting, puzzles, and storytelling, and adds features such as vehicles and physics-based gameplay.",
                             ImageUrl = "https://upload.wikimedia.org/wikipedia/en/2/25/Half-Life_2_cover.jpg",
                             Name = "Half-Life 2",
@@ -279,8 +282,8 @@ namespace BlazorShop.Server.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("6db06615-9678-4841-bd1e-93029b3b8484"),
-                            CategoryId = new Guid("3381175f-c163-4bf0-8b12-4f12d1205973"),
+                            Id = new Guid("d4722046-57a9-40e5-9ced-c53876c410f1"),
+                            CategoryId = new Guid("da9fb591-acfc-404f-a096-2e99c8a202d5"),
                             Description = "Diablo II is an action role-playing hack-and-slash computer video game developed by Blizzard North and published by Blizzard Entertainment in 2000 for Microsoft Windows, Classic Mac OS, and macOS.",
                             ImageUrl = "https://upload.wikimedia.org/wikipedia/en/d/d5/Diablo_II_Coverart.png",
                             Name = "Diablo II",
@@ -289,8 +292,8 @@ namespace BlazorShop.Server.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("f32631f1-60b0-418e-a099-436046cf0d2f"),
-                            CategoryId = new Guid("3381175f-c163-4bf0-8b12-4f12d1205973"),
+                            Id = new Guid("82194ff1-7848-4d55-8e3c-1c60fd46386a"),
+                            CategoryId = new Guid("da9fb591-acfc-404f-a096-2e99c8a202d5"),
                             Description = "Day of the Tentacle, also known as Maniac Mansion II: Day of the Tentacle, is a 1993 graphic adventure game developed and published by LucasArts. It is the sequel to the 1987 game Maniac Mansion.",
                             ImageUrl = "https://upload.wikimedia.org/wikipedia/en/7/79/Day_of_the_Tentacle_artwork.jpg",
                             Name = "Day of the Tentacle",
@@ -299,8 +302,8 @@ namespace BlazorShop.Server.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("352a2f01-9436-4f0c-842c-919e51bf737d"),
-                            CategoryId = new Guid("3381175f-c163-4bf0-8b12-4f12d1205973"),
+                            Id = new Guid("a8be064f-3e26-491c-892b-20f59fcc697d"),
+                            CategoryId = new Guid("da9fb591-acfc-404f-a096-2e99c8a202d5"),
                             Description = "The Xbox is a home video game console and the first installment in the Xbox series of video game consoles manufactured by Microsoft.",
                             ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/4/43/Xbox-console.jpg",
                             Name = "Xbox",
@@ -309,8 +312,8 @@ namespace BlazorShop.Server.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("2e40c5ee-1125-4d5e-a26e-acd0e7937403"),
-                            CategoryId = new Guid("3381175f-c163-4bf0-8b12-4f12d1205973"),
+                            Id = new Guid("2333fb5c-c7cc-4c04-9afc-eacd99bde087"),
+                            CategoryId = new Guid("da9fb591-acfc-404f-a096-2e99c8a202d5"),
                             Description = "The Super Nintendo Entertainment System (SNES), also known as the Super NES or Super Nintendo, is a 16-bit home video game console developed by Nintendo that was released in 1990 in Japan and South Korea.",
                             ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/e/ee/Nintendo-Super-Famicom-Set-FL.jpg",
                             Name = "Super Nintendo Entertainment System",
@@ -346,33 +349,6 @@ namespace BlazorShop.Server.Data.Migrations
                             Id = 2,
                             Name = "Admin"
                         });
-                });
-
-            modelBuilder.Entity("BlazorShop.Server.Data.Entities.Session", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AccessToken")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RefreshToken")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("RefreshTokenExpiryTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Session", (string)null);
                 });
 
             modelBuilder.Entity("BlazorShop.Server.Data.Entities.User", b =>
@@ -484,17 +460,6 @@ namespace BlazorShop.Server.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("BlazorShop.Server.Data.Entities.Session", b =>
-                {
-                    b.HasOne("BlazorShop.Server.Data.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

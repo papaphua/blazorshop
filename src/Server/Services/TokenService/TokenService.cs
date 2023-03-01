@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using BlazorShop.Server.Data.Entities;
 using BlazorShop.Server.Options;
@@ -24,7 +25,7 @@ public sealed class TokenService : ITokenService
         _permissionService = permissionService;
     }
 
-    public async Task<string> GenerateAuthTokenAsync(User user)
+    public async Task<string> GenerateAccessTokenAsync(User user)
     {
         var claims = new List<Claim>
         {
@@ -39,6 +40,39 @@ public sealed class TokenService : ITokenService
             permissions.Select(permission => new Claim(CustomClaims.Permissions, permission)));
 
         return CreateToken(claims);
+    }
+
+    public string GenerateRefreshToken()
+    {
+        var randomNumber = new byte[32];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+        return Convert.ToBase64String(randomNumber);
+    }
+
+    public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+    {
+        var tokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = true,
+            ValidateIssuer = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(_secrets.JwtSecretKey)),
+            ValidateLifetime = false,
+            ValidIssuer = _options.Issuer,
+            ValidAudience = _options.Audience
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+
+        if (securityToken is not JwtSecurityToken jwtSecurityToken
+            || !jwtSecurityToken.Header.Alg.Equals(
+                SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            throw new SecurityTokenException("Invalid token");
+
+        return principal;
     }
 
     private string CreateToken(IEnumerable<Claim> claims)

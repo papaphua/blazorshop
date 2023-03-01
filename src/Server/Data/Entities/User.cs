@@ -23,7 +23,6 @@ public sealed class User
     [Required] public DateTime RegisterDate { get; set; }
 
     [Required] public ICollection<Role> Roles { get; set; } = null!;
-
     public string? PaymentProfileId { get; set; }
 
     public string? FirstName { get; set; }

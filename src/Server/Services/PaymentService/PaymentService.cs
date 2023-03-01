@@ -7,6 +7,7 @@ using BlazorShop.Shared.Models;
 using Microsoft.Extensions.Options;
 using Stripe;
 using Stripe.Checkout;
+using Session = Stripe.Checkout.Session;
 
 namespace BlazorShop.Server.Services.PaymentService;
 
@@ -89,7 +90,7 @@ public sealed class PaymentService : IPaymentService
 
                     if (customer is null) throw new BusinessException(ExceptionMessages.InternalError);
                     
-                    await AddCustomerIdToUserAsync(customer);
+                    await SaveCustomerIdAsUserPaymentProfileId(customer);
 
                     return HttpStatusCode.OK;
                 }
@@ -142,7 +143,7 @@ public sealed class PaymentService : IPaymentService
         await service.DeleteAsync(user.PaymentProfileId);
     }
 
-    private async Task AddCustomerIdToUserAsync(Customer customer)
+    private async Task SaveCustomerIdAsUserPaymentProfileId(Customer customer)
     {
         var user = await _userRepository.GetByEmailAsync(customer.Email);
 

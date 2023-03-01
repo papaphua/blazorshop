@@ -2,6 +2,7 @@
 using BlazorShop.Server.Data.Entities;
 using BlazorShop.Shared.Models;
 using Stripe.Checkout;
+using Session = Stripe.Checkout.Session;
 
 namespace BlazorShop.Server.Services.PaymentService;
 

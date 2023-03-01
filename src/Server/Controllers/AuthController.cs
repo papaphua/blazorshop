@@ -22,4 +22,18 @@ public sealed class AuthController : ControllerBase
     {
         await _authService.RegisterAsync(registerDto);
     }
+    
+    [AllowAnonymous]
+    [HttpPost("login")]
+    public async Task<TokenDto> Login(LoginDto loginDto)
+    {
+        return await _authService.LoginAsync(loginDto);
+    }
+    
+    [AllowAnonymous]
+    [HttpPost("refresh")]
+    public async Task<TokenDto> Refresh(TokenDto tokenDto)
+    {
+        return await _authService.RefreshAsync(tokenDto);
+    }
 }
