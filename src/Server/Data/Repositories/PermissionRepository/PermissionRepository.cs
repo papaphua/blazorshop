@@ -1,21 +1,19 @@
-﻿using BlazorShop.Server.Data;
-using BlazorShop.Server.Data.Entities;
+﻿using BlazorShop.Server.Data.Entities;
+using BlazorShop.Server.Data.Repositories.BaseRepository;
 using Microsoft.EntityFrameworkCore;
 
-namespace BlazorShop.Server.Services.PermissionService;
+namespace BlazorShop.Server.Data.Repositories.PermissionRepository;
 
-public sealed class PermissionService : IPermissionService
+public sealed class PermissionRepository : BaseRepository<Permission>, IPermissionRepository
 {
-    private readonly AppDbContext _context;
-
-    public PermissionService(AppDbContext context)
+    public PermissionRepository(AppDbContext context) 
+        : base(context)
     {
-        _context = context;
     }
-
+    
     public async Task<HashSet<string>> GetUserPermissionsAsync(Guid userId)
     {
-        var roles = await _context.Set<User>()
+        var roles = await Context.Set<User>()
             .Where(user => user.Id == userId)
             .Include(user => user.Roles)
             .ThenInclude(role => role.Permissions)

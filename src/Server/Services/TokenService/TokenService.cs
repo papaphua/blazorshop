@@ -3,10 +3,10 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using BlazorShop.Server.Data.Entities;
+using BlazorShop.Server.Data.Repositories.PermissionRepository;
 using BlazorShop.Server.Data.Repositories.UserRepository;
 using BlazorShop.Server.Exceptions;
 using BlazorShop.Server.Options;
-using BlazorShop.Server.Services.PermissionService;
 using BlazorShop.Shared.Auth;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -17,16 +17,16 @@ public sealed class TokenService : ITokenService
 {
     private readonly JwtOptions _options;
     private readonly SecretOptions _secrets;
-    private readonly IPermissionService _permissionService;
+    private readonly IPermissionRepository _permissionRepository;
     private readonly IUserRepository _userRepository;
 
-    public TokenService(IOptions<JwtOptions> options, IOptions<SecretOptions> secrets,
-        IPermissionService permissionService, IUserRepository userRepository)
+    public TokenService(IOptions<JwtOptions> options, IOptions<SecretOptions> secrets, IUserRepository userRepository,
+        IPermissionRepository permissionRepository)
     {
         _options = options.Value;
         _secrets = secrets.Value;
-        _permissionService = permissionService;
         _userRepository = userRepository;
+        _permissionRepository = permissionRepository;
     }
 
     public async Task<string> GenerateAccessTokenAsync(User user)
@@ -38,7 +38,7 @@ public sealed class TokenService : ITokenService
             new(ClaimTypes.Email, user.Email)
         };
 
-        var permissions = await _permissionService.GetUserPermissionsAsync(user.Id);
+        var permissions = await _permissionRepository.GetUserPermissionsAsync(user.Id);
 
         claims.AddRange(
             permissions.Select(permission => new Claim(CustomClaims.Permissions, permission)));
@@ -53,7 +53,7 @@ public sealed class TokenService : ITokenService
         rng.GetBytes(randomNumber);
         return Convert.ToBase64String(randomNumber);
     }
-    
+
     public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
     {
         var tokenValidationParameters = new TokenValidationParameters
@@ -91,7 +91,7 @@ public sealed class TokenService : ITokenService
     public async Task<User> GetUserFromContextAsync(HttpContext context)
     {
         var id = GetUserIdFromContext(context);
-        
+
         var user = await _userRepository.GetByIdAsync(id);
 
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
