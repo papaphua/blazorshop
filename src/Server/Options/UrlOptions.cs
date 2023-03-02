@@ -9,4 +9,6 @@ public class UrlOptions
     public string DefaultLoginUrl { get; set; } = null!;
     
     public string TwoAuthLoginUrl { get; set; } = null!;
+    
+    public string DeleteProfileUrl { get; set; } = null!;
 }

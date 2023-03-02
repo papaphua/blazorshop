@@ -16,9 +16,9 @@ public sealed class Security
     [Required] public User User { get; set; } = null!;
     
     public string? ConfirmationCode { get; set; }
+    public string? NewEmailConfirmationCode { get; set; }
     public DateTime? ConfirmationCodeExpiry { get; set; }
     
     public string? ConfirmationToken { get; set; }
     public DateTime? ConfirmationTokenExpiry { get; set; }
-
 }

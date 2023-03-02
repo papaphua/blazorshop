@@ -1,5 +1,7 @@
 ﻿using System.Security.Claims;
 using AutoMapper;
+using BlazorShop.Server.Auth.AuthTokenProvider;
+using BlazorShop.Server.Auth.ConfirmationLinkProvider;
 using BlazorShop.Server.Auth.PasswordProvider;
 using BlazorShop.Server.Data;
 using BlazorShop.Server.Data.Entities;
@@ -11,7 +13,6 @@ using BlazorShop.Server.Options;
 using BlazorShop.Server.Services.MailService;
 using BlazorShop.Server.Services.PaymentService;
 using BlazorShop.Server.Services.RoleService;
-using BlazorShop.Server.Services.TokenService;
 using BlazorShop.Shared.Dtos;
 using BlazorShop.Shared.Models;
 using Microsoft.Extensions.Options;
@@ -23,35 +24,38 @@ public sealed class AuthService : IAuthService
     private readonly IPasswordProvider _passwordProvider;
     private readonly IUserRepository _userRepository;
     private readonly IRoleService _roleService;
-    private readonly ITokenService _tokenService;
+    private readonly IAuthTokenProvider _authTokenProvider;
     private readonly IMapper _mapper;
     private readonly IPaymentService _paymentService;
     private readonly ISessionRepository _sessionRepository;
     private readonly ISecurityRepository _securityRepository;
     private readonly IMailService _mailService;
     private readonly UrlOptions _urlOptions;
+    private readonly IConfirmationLinkProvider _confirmationLinkProvider;
 
     public AuthService(
         IUserRepository userRepository,
         IRoleService roleService,
         IPasswordProvider passwordProvider,
         IMapper mapper,
-        ITokenService tokenService,
+        IAuthTokenProvider authTokenProvider,
         IPaymentService paymentService,
         ISessionRepository sessionRepository,
         ISecurityRepository securityRepository,
         IMailService mailService,
-        IOptions<UrlOptions> urlOptions)
+        IOptions<UrlOptions> urlOptions, 
+        IConfirmationLinkProvider confirmationLinkProvider)
     {
         _userRepository = userRepository;
         _roleService = roleService;
         _passwordProvider = passwordProvider;
         _mapper = mapper;
-        _tokenService = tokenService;
+        _authTokenProvider = authTokenProvider;
         _paymentService = paymentService;
         _sessionRepository = sessionRepository;
         _securityRepository = securityRepository;
         _mailService = mailService;
+        _confirmationLinkProvider = confirmationLinkProvider;
         _urlOptions = urlOptions.Value;
     }
 
@@ -102,7 +106,7 @@ public sealed class AuthService : IAuthService
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
         if (!user.IsTwoAuth) return GenerateLoginLink(_urlOptions.DefaultLoginUrl, loginInfoDto.Login);
-        
+
         await _securityRepository.GenerateConfirmationCode(user.Id);
         return GenerateLoginLink(_urlOptions.TwoAuthLoginUrl, loginInfoDto.Login);
     }
@@ -130,8 +134,8 @@ public sealed class AuthService : IAuthService
 
         if (!user.IsEmailConfirmed) throw new BusinessException(ExceptionMessages.EmailNotConfirmed(user.Email));
 
-        var accessToken = await _tokenService.GenerateAccessTokenAsync(user);
-        var refreshToken = _tokenService.GenerateRefreshToken();
+        var accessToken = await _authTokenProvider.GenerateAccessTokenAsync(user);
+        var refreshToken = _authTokenProvider.GenerateRefreshToken();
 
         await _sessionRepository.CreateSessionAsync(user.Id, accessToken, refreshToken);
 
@@ -166,13 +170,13 @@ public sealed class AuthService : IAuthService
 
         await _securityRepository.VerifyConfirmationCode(user.Id, twoAuthLoginDto.ConfirmationCode);
 
-        var accessToken = await _tokenService.GenerateAccessTokenAsync(user);
-        var refreshToken = _tokenService.GenerateRefreshToken();
+        var accessToken = await _authTokenProvider.GenerateAccessTokenAsync(user);
+        var refreshToken = _authTokenProvider.GenerateRefreshToken();
 
         await _sessionRepository.CreateSessionAsync(user.Id, accessToken, refreshToken);
 
-        await _securityRepository.RemoveConfirmationCode(user.Id);
-        
+        await _securityRepository.RemoveConfirmationCodes(user.Id);
+
         return new AuthDto
         {
             IsSucceeded = true,
@@ -181,30 +185,9 @@ public sealed class AuthService : IAuthService
         };
     }
 
-    // public async Task<TokenDto> LoginAsync(DefaultLoginDto defaultLoginDto)
-    // {
-    //     var userByUsername = await _userRepository.GetByUsernameAsync(defaultLoginDto.Login);
-    //     var userByEmail = await _userRepository.GetByEmailAsync(defaultLoginDto.Login);
-    //     var user = userByUsername ?? userByEmail;
-    //
-    //     if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
-    //
-    //     if (!_passwordProvider.VerifyPassword(defaultLoginDto.Password, user.PasswordHash))
-    //         throw new NotFoundException(ExceptionMessages.WrongPassword);
-    //
-    //     if (!user.IsEmailConfirmed) throw new BusinessException(ExceptionMessages.EmailNotConfirmed(user.Email));
-    //
-    //     var accessToken = await _tokenService.GenerateAccessTokenAsync(user);
-    //     var refreshToken = _tokenService.GenerateRefreshToken();
-    //
-    //     await _sessionRepository.CreateSessionAsync(user.Id, accessToken, refreshToken);
-    //
-    //     return new TokenDto(accessToken, refreshToken);
-    // }
-
     public async Task<TokenDto> RefreshAsync(TokenDto tokenDto)
     {
-        var principal = _tokenService.GetPrincipalFromExpiredToken(tokenDto.AccessToken);
+        var principal = _authTokenProvider.GetPrincipalFromExpiredToken(tokenDto.AccessToken);
 
         var userId = Guid.Parse(principal.FindFirstValue(ClaimTypes.NameIdentifier));
 
@@ -212,8 +195,8 @@ public sealed class AuthService : IAuthService
 
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
-        var accessToken = await _tokenService.GenerateAccessTokenAsync(user);
-        var refreshToken = _tokenService.GenerateRefreshToken();
+        var accessToken = await _authTokenProvider.GenerateAccessTokenAsync(user);
+        var refreshToken = _authTokenProvider.GenerateRefreshToken();
 
         await _sessionRepository.UpdateSessionAsync(user.Id, accessToken, refreshToken);
 
@@ -231,6 +214,17 @@ public sealed class AuthService : IAuthService
         await _mailService.SendEmailAsync(email, Emails.ConfirmationCode(code));
     }
 
+    public async Task GetNewEmailConfirmationCodesAsync(string newEmail)
+    {
+        var user = await _userRepository.GetByEmailAsync(newEmail);
+
+        if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
+
+        var code = await _securityRepository.GenerateNewEmailConfirmationCode(user.Id);
+
+        await _mailService.SendEmailAsync(newEmail, Emails.ConfirmationCode(code));
+    }
+
     public async Task GetEmailConfirmationLinkAsync(string email)
     {
         var user = await _userRepository.GetByEmailAsync(email);
@@ -243,7 +237,7 @@ public sealed class AuthService : IAuthService
 
         var parameters = new ConfirmationParameters(token, user.Email);
 
-        var link = GenerateConfirmationLink(_urlOptions.EmailConfirmationUrl, parameters);
+        var link = _confirmationLinkProvider.GenerateConfirmationLink(_urlOptions.EmailConfirmationUrl, parameters);
 
         await _mailService.SendEmailAsync(user.Email, Emails.EmailConfirmation(link));
     }
@@ -258,7 +252,7 @@ public sealed class AuthService : IAuthService
 
         var parameters = new ConfirmationParameters(token, user.Email);
 
-        var link = GenerateConfirmationLink(_urlOptions.PasswordResetUrl, parameters);
+        var link = _confirmationLinkProvider.GenerateConfirmationLink(_urlOptions.PasswordResetUrl, parameters);
 
         await _mailService.SendEmailAsync(user.Email, Emails.PasswordReset(link));
     }
@@ -285,20 +279,15 @@ public sealed class AuthService : IAuthService
 
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
-        if (!passwordResetDto.Password.Equals(passwordResetDto.ConfirmPassword))
+        if (!passwordResetDto.NewPassword.Equals(passwordResetDto.ConfirmPassword))
             throw new BusinessException(ExceptionMessages.PasswordsNotMatch);
 
         if (await _securityRepository.VerifyConfirmationToken(user.Id, passwordResetDto.ConfirmationParameters.Token))
         {
-            user.PasswordHash = _passwordProvider.GetPasswordHash(passwordResetDto.Password);
+            user.PasswordHash = _passwordProvider.GetPasswordHash(passwordResetDto.NewPassword);
             await _securityRepository.RemoveConfirmationToken(user.Id);
             await _userRepository.SaveAsync();
         }
-    }
-
-    private static string GenerateConfirmationLink(string url, ConfirmationParameters parameters)
-    {
-        return $"https://{url}?token={parameters.Token}&email={parameters.Email}";
     }
 
     private static string GenerateLoginLink(string url, string login)

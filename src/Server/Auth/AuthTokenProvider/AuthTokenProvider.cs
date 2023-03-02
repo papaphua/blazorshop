@@ -11,16 +11,16 @@ using BlazorShop.Shared.Auth;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace BlazorShop.Server.Services.TokenService;
+namespace BlazorShop.Server.Auth.AuthTokenProvider;
 
-public sealed class TokenService : ITokenService
+public class AuthTokenProvider : IAuthTokenProvider
 {
-    private readonly JwtOptions _options;
+        private readonly JwtOptions _options;
     private readonly SecretOptions _secrets;
     private readonly IPermissionRepository _permissionRepository;
     private readonly IUserRepository _userRepository;
 
-    public TokenService(IOptions<JwtOptions> options, IOptions<SecretOptions> secrets, IUserRepository userRepository,
+    public AuthTokenProvider(IOptions<JwtOptions> options, IOptions<SecretOptions> secrets, IUserRepository userRepository,
         IPermissionRepository permissionRepository)
     {
         _options = options.Value;

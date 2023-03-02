@@ -9,4 +9,5 @@ public interface IUserService
     Task<PagedList<UserDto>> GetUsersByParametersAsync(BaseParameters parameters);
     Task<UserDto?> GetUserByIdAsync(Guid id);
     Task<UserDto?> GetUserByUsernameAsync(string username);
+    Task DeleteUserAsync(Guid id);
 }

@@ -1,3 +1,5 @@
+using BlazorShop.Server.Auth.AuthTokenProvider;
+using BlazorShop.Server.Auth.ConfirmationLinkProvider;
 using BlazorShop.Server.Auth.PasswordProvider;
 using BlazorShop.Server.Auth.PermissionHandler;
 using BlazorShop.Server.Data;
@@ -16,7 +18,6 @@ using BlazorShop.Server.Services.PaymentService;
 using BlazorShop.Server.Services.ProductService;
 using BlazorShop.Server.Services.ProfileService;
 using BlazorShop.Server.Services.RoleService;
-using BlazorShop.Server.Services.TokenService;
 using BlazorShop.Server.Services.UserService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -41,7 +42,6 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
-builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
@@ -53,6 +53,8 @@ builder.Services.ConfigureOptions<SecurityOptionsSetup>();
 builder.Services.ConfigureOptions<UrlOptionsSetup>();
 
 builder.Services.AddScoped<IPasswordProvider, PasswordProvider>();
+builder.Services.AddScoped<IConfirmationLinkProvider, ConfirmationLinkProvider>();
+builder.Services.AddScoped<IAuthTokenProvider, AuthTokenProvider>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 

@@ -54,6 +54,19 @@ public sealed class SecurityRepository : BaseRepository<Security>, ISecurityRepo
         return security.ConfirmationCode;
     }
 
+    public async Task<string> GenerateNewEmailConfirmationCode(Guid userId)
+    {
+        var security = await FindSecurityAsync(userId);
+        
+        if(security is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
+
+        security.NewEmailConfirmationCode = GenerateCode(6);
+
+        await Context.SaveChangesAsync();
+     
+        return security.NewEmailConfirmationCode;
+    }
+
     public async Task<bool> VerifyConfirmationCode(Guid userId, string code)
     {
         var security = await FindSecurityAsync(userId);
@@ -66,6 +79,23 @@ public sealed class SecurityRepository : BaseRepository<Security>, ISecurityRepo
             throw new BusinessException(ExceptionMessages.ExpiredCode);
 
         if (!security.ConfirmationCode.Equals(code))
+            throw new BusinessException(ExceptionMessages.WrongCode);
+
+        return true;
+    }
+
+    public async Task<bool> VerifyNewEmailConfirmationCode(Guid userId, string code)
+    {
+        var security = await FindSecurityAsync(userId);
+
+        if (security is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
+
+        if(security.NewEmailConfirmationCode is null || 
+           security.ConfirmationCodeExpiry is null || 
+           DateTime.Now > security.ConfirmationCodeExpiry) 
+            throw new BusinessException(ExceptionMessages.ExpiredCode);
+
+        if (!security.NewEmailConfirmationCode.Equals(code))
             throw new BusinessException(ExceptionMessages.WrongCode);
 
         return true;
@@ -89,13 +119,14 @@ public sealed class SecurityRepository : BaseRepository<Security>, ISecurityRepo
         return true;
     }
 
-    public async Task RemoveConfirmationCode(Guid userId)
+    public async Task RemoveConfirmationCodes(Guid userId)
     {
         var security = await FindSecurityAsync(userId);
 
         if (security is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
         security.ConfirmationCode = null;
+        security.NewEmailConfirmationCode = null;
         security.ConfirmationCodeExpiry = null;
 
         await Context.SaveChangesAsync();

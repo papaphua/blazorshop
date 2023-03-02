@@ -8,4 +8,7 @@ public interface IProductService
 {
     Task<PagedList<ProductDto>> GetProductsByParametersAsync(ProductParameters parameters);
     Task<ProductDto?> GetProductByUriAsync(string uri);
+    Task CreateProductAsync(ProductDto dto);
+    Task UpdateProductAsync(ProductDto dto);
+    Task DeleteProductAsync(Guid id);
 }

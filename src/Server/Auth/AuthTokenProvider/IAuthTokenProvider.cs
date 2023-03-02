@@ -1,9 +1,9 @@
 ﻿using System.Security.Claims;
 using BlazorShop.Server.Data.Entities;
 
-namespace BlazorShop.Server.Services.TokenService;
+namespace BlazorShop.Server.Auth.AuthTokenProvider;
 
-public interface ITokenService
+public interface IAuthTokenProvider
 {
     Task<string> GenerateAccessTokenAsync(User user);
     string GenerateRefreshToken();

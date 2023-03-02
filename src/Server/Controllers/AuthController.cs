@@ -60,6 +60,12 @@ public sealed class AuthController : ControllerBase
         await _authService.GetConfirmationCodeAsync(email);
     }
     
+    [HttpPost("new-email/confirmation-code")]
+    public async Task GetNewEmailConfirmationCode(string newEmail)
+    { 
+        await _authService.GetNewEmailConfirmationCodesAsync(newEmail);
+    }
+    
     [HttpPost("email/confirmation/request")]
     public async Task GetEmailConfirmationLink(string email)
     {
