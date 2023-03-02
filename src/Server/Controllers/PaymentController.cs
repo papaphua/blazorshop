@@ -1,4 +1,5 @@
 ﻿using BlazorShop.Server.Services.PaymentService;
+using BlazorShop.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +14,14 @@ public sealed class PaymentController : ControllerBase
     public PaymentController(IPaymentService paymentService)
     {
         _paymentService = paymentService;
+    }
+    
+    [HttpPost("checkout")]
+    public ActionResult CheckoutSession(List<CartItem> cartItems)
+    {
+        var session = _paymentService.CreateCheckoutSessionAsync(HttpContext, cartItems);
+
+        return Ok(session.Url);
     }
     
     [AllowAnonymous]

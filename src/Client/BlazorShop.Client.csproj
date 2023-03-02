@@ -16,4 +16,8 @@
     <ProjectReference Include="..\Shared\BlazorShop.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Auth\StateProvider" />
+  </ItemGroup>
+
 </Project>

@@ -3,6 +3,7 @@ using BlazorShop.Server.Data.Entities;
 using BlazorShop.Server.Data.Repositories.UserRepository;
 using BlazorShop.Server.Exceptions;
 using BlazorShop.Server.Options;
+using BlazorShop.Shared.Auth;
 using BlazorShop.Shared.Models;
 using Microsoft.Extensions.Options;
 using Stripe;
@@ -30,7 +31,7 @@ public sealed class PaymentService : IPaymentService
         StripeConfiguration.ApiKey = _secrets.StripePrivateKey;
     }
 
-    public Session CreateCheckoutSessionAsync(string customerId, List<CartItem> cart)
+    public Session CreateCheckoutSessionAsync(HttpContext context, List<CartItem> cart)
     {
         var lineItems = new List<SessionLineItemOptions>();
 
@@ -50,6 +51,8 @@ public sealed class PaymentService : IPaymentService
             }
         ));
 
+        var customerId = context.User.Claims.First(c => c.Type == CustomClaims.CustomerId).Value;
+        
         if (string.IsNullOrEmpty(customerId)) throw new BusinessException(ExceptionMessages.Unauthorized);
 
         var options = new SessionCreateOptions
