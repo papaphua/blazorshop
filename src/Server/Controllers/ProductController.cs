@@ -35,4 +35,22 @@ public sealed class ProductController : ControllerBase
     {
         return await _productService.GetProductByUriAsync(uri);
     }
+    
+    [HttpPost]
+    public async Task CreateProduct(ProductDto dto)
+    {
+        await _productService.CreateProductAsync(dto);
+    }
+    
+    [HttpPut]
+    public async Task UpdateProduct(ProductDto dto)
+    {
+        await _productService.UpdateProductAsync(dto);
+    }
+    
+    [HttpDelete("{uri}")]
+    public async Task DeleteProduct(string uri)
+    {
+        await _productService.DeleteProductAsync(uri);
+    }
 }

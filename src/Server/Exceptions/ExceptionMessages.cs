@@ -13,6 +13,7 @@ public static class ExceptionMessages
     public const string WrongLink = "Link is incorrect.";
     public const string EmailAlreadyConfirmed = "Email is already confirmed.";
     public const string TwoAuthRequired = "Two Factor Authentication is enabled for this user.";
+    public const string ProductNotFound = "Product is not found.";
 
     public static string UsernameAndEmailAlreadyExist(string username, string email)
     {

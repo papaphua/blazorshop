@@ -147,5 +147,11 @@ public sealed class ProfileService : IProfileService
         var user = await _userRepository.GetByEmailAsync(parameters.Email);
 
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
+        
+        await _securityRepository.VerifyConfirmationToken(user.Id, parameters.Token);
+
+        await _paymentService.DeletePaymentProfileAsync(user.Id);
+        
+        await _userRepository.DeleteAndSaveAsync(user);
     }
 }

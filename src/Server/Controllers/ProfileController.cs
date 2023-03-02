@@ -1,6 +1,7 @@
 ﻿using BlazorShop.Server.Auth.AuthTokenProvider;
 using BlazorShop.Server.Services.ProfileService;
 using BlazorShop.Shared.Dtos;
+using BlazorShop.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorShop.Server.Controllers;
@@ -50,5 +51,19 @@ public sealed class ProfileController : ControllerBase
         var userId = _authAuthTokenProvider.GetUserIdFromContext(HttpContext);
         
         await _profileService.ChangePasswordAsync(userId, passwordChangeDto);
+    }
+    
+    [HttpPost("delete/request")]
+    public async Task CreateDeleteProfileLink()
+    {
+        var userId = _authAuthTokenProvider.GetUserIdFromContext(HttpContext);
+
+        await _profileService.GetDeleteProfileLinkAsync(userId);
+    }
+    
+    [HttpPost("delete/confirmation")]
+    public async Task DeleteProfile(ConfirmationParameters parameters)
+    {
+        await _profileService.DeleteProfileAsync(parameters);
     }
 }

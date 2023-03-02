@@ -38,4 +38,10 @@ public sealed class UserController : ControllerBase
     {
         return await _userService.GetUserByUsernameAsync(username);
     }
+    
+    [HttpDelete("{id:guid}")]
+    public async Task DeleteUser(Guid id)
+    {
+        await _userService.DeleteUserAsync(id);
+    }
 }

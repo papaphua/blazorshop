@@ -30,7 +30,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class
 
     public async Task DeleteAndSaveAsync(T entity)
     {
-        Context.Set<T>().Update(entity);
+        Context.Set<T>().Remove(entity);
         await Context.SaveChangesAsync();
     }
 

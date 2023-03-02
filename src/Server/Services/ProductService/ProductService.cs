@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BlazorShop.Server.Data.Entities;
 using BlazorShop.Server.Data.Repositories.ProductRepository;
 using BlazorShop.Server.Exceptions;
 using BlazorShop.Server.Primitives;
@@ -39,16 +40,28 @@ public sealed class ProductService : IProductService
 
     public async Task CreateProductAsync(ProductDto dto)
     {
-        throw new BusinessException("s");
+        var product = _mapper.Map<Product>(dto);
+
+        await _productRepository.CreateAndSaveAsync(product);
     }
 
     public async Task UpdateProductAsync(ProductDto dto)
     {
-        throw new BusinessException("s");
+        var product = await _productRepository.GetByUriAsync(dto.Uri);
+
+        if (product is null) throw new NotFoundException(ExceptionMessages.ProductNotFound);
+
+        _mapper.Map(dto, product);
+
+        await _productRepository.SaveAsync();
     }
 
-    public async Task DeleteProductAsync(Guid id)
+    public async Task DeleteProductAsync(string uri)
     {
-        throw new BusinessException("s");
+        var product = await _productRepository.GetByUriAsync(uri);
+
+        if (product is null) throw new NotFoundException(ExceptionMessages.ProductNotFound);
+
+        await _productRepository.DeleteAndSaveAsync(product);
     }
 }
