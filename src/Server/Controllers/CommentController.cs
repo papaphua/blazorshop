@@ -22,15 +22,6 @@ public sealed class CommentController : ControllerBase
         _authTokenProvider = authTokenProvider;
     }
 
-    [HasPermission(Permissions.CustomerPermission)]
-    [HttpPost]
-    public async Task AddComment(NewCommentDto newCommentDto)
-    {
-        var userId = _authTokenProvider.GetUserIdFromContext(HttpContext);
-
-        await _commentService.AddCommentAsync(userId, newCommentDto);
-    }
-
     [AllowAnonymous]
     [HttpGet]
     public async Task<List<CommentDto>> GetCommentsForProductByParameters([FromQuery] CommentParameters parameters)
@@ -40,6 +31,15 @@ public sealed class CommentController : ControllerBase
         Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(pagedList.MetaData));
 
         return pagedList;
+    }
+    
+    [HasPermission(Permissions.CustomerPermission)]
+    [HttpPost]
+    public async Task AddComment(NewCommentDto newCommentDto)
+    {
+        var userId = _authTokenProvider.GetUserIdFromContext(HttpContext);
+
+        await _commentService.AddCommentAsync(userId, newCommentDto);
     }
 
     [HasPermission(Permissions.CustomerPermission)]

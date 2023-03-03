@@ -1,4 +1,5 @@
-﻿using BlazorShop.Server.Services.AuthService;
+﻿using BlazorShop.Server.Auth.AuthTokenProvider;
+using BlazorShop.Server.Services.AuthService;
 using BlazorShop.Shared.Dtos;
 using BlazorShop.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -12,10 +13,12 @@ namespace BlazorShop.Server.Controllers;
 public sealed class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
+    private readonly IAuthTokenProvider _authTokenProvider;
     
-    public AuthController(IAuthService authService)
+    public AuthController(IAuthService authService, IAuthTokenProvider authTokenProvider)
     {
         _authService = authService;
+        _authTokenProvider = authTokenProvider;
     }
     
     [HttpPost("registration")]
@@ -23,17 +26,11 @@ public sealed class AuthController : ControllerBase
     {
         await _authService.RegisterAsync(registerDto);
     }
-    
-    // [HttpPost("login")]
-    // public async Task<TokenDto> Login(DefaultLoginDto defaultLoginDto)
-    // {
-    //     return await _authService.LoginAsync(defaultLoginDto);
-    // }
-    
+
     [HttpPost("login")]
-    public async Task<string> FindLoginInfo(LoginInfoDto loginInfoDto)
+    public async Task<string> FindLoginInfo(LoginDto loginDto)
     {
-        return await _authService.FindLoginInfoAsync(loginInfoDto);
+        return await _authService.FindLoginInfoAsync(loginDto);
     }
     
     [HttpPost("login/default")]
@@ -54,28 +51,36 @@ public sealed class AuthController : ControllerBase
         return await _authService.RefreshAsync(tokenDto);
     }
     
-    [HttpPost("confirmation-code")]
-    public async Task GetConfirmationCode(string email)
-    { 
-        await _authService.GetConfirmationCodeAsync(email);
-    }
-    
-    [HttpPost("new-email/confirmation-code")]
-    public async Task GetNewEmailConfirmationCode(string newEmail)
-    { 
-        await _authService.GetNewEmailConfirmationCodesAsync(newEmail);
-    }
-    
-    [HttpPost("email/confirmation/request")]
-    public async Task GetEmailConfirmationLink(string email)
+    [HttpGet("confirmation-code")]
+    public async Task GetConfirmationCode()
     {
-        await _authService.GetEmailConfirmationLinkAsync(email);
+        var userId = _authTokenProvider.GetUserIdFromContext(HttpContext);
+        
+        await _authService.GetConfirmationCodeAsync(userId);
     }
     
-    [HttpPost("password/reset/request")]
-    public async Task GetPasswordResetLink(string email)
+    [HttpGet("new-email/confirmation-code")]
+    public async Task GetNewEmailConfirmationCode()
+    { 
+        var userId = _authTokenProvider.GetUserIdFromContext(HttpContext);
+        
+        await _authService.GetNewEmailConfirmationCodesAsync(userId);
+    }
+    
+    [HttpGet("email/confirmation/request")]
+    public async Task GetEmailConfirmationLink()
     {
-        await _authService.GetPasswordResetLinkAsync(email);
+        var userId = _authTokenProvider.GetUserIdFromContext(HttpContext);
+        
+        await _authService.GetEmailConfirmationLinkAsync(userId);
+    }
+    
+    [HttpGet("password/reset/request")]
+    public async Task GetPasswordResetLink()
+    {
+        var userId = _authTokenProvider.GetUserIdFromContext(HttpContext);
+        
+        await _authService.GetPasswordResetLinkAsync(userId);
     }
     
     [HttpPost("email/confirmation")]

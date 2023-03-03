@@ -94,21 +94,21 @@ public sealed class AuthService : IAuthService
 
         await _securityRepository.CreateSecurityForUserAsync(user.Id);
 
-        await GetEmailConfirmationLinkAsync(user.Email);
+        await GetEmailConfirmationLinkAsync(user.Id);
     }
 
-    public async Task<string> FindLoginInfoAsync(LoginInfoDto loginInfoDto)
+    public async Task<string> FindLoginInfoAsync(LoginDto loginDto)
     {
-        var userByUsername = await _userRepository.GetByUsernameAsync(loginInfoDto.Login);
-        var userByEmail = await _userRepository.GetByEmailAsync(loginInfoDto.Login);
+        var userByUsername = await _userRepository.GetByUsernameAsync(loginDto.Login);
+        var userByEmail = await _userRepository.GetByEmailAsync(loginDto.Login);
         var user = userByUsername ?? userByEmail;
 
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
-        if (!user.IsTwoAuth) return GenerateLoginLink(_urlOptions.DefaultLoginUrl, loginInfoDto.Login);
+        if (!user.IsTwoAuth) return GenerateLoginLink(_urlOptions.DefaultLoginUrl, loginDto.Login);
 
         await _securityRepository.GenerateConfirmationCode(user.Id);
-        return GenerateLoginLink(_urlOptions.TwoAuthLoginUrl, loginInfoDto.Login);
+        return GenerateLoginLink(_urlOptions.TwoAuthLoginUrl, loginDto.Login);
     }
 
     public async Task<AuthDto> DefaultLoginAsync(DefaultLoginDto defaultLoginDto)
@@ -203,31 +203,31 @@ public sealed class AuthService : IAuthService
         return new TokenDto(accessToken, refreshToken);
     }
 
-    public async Task GetConfirmationCodeAsync(string email)
+    public async Task GetConfirmationCodeAsync(Guid userId)
     {
-        var user = await _userRepository.GetByEmailAsync(email);
+        var user = await _userRepository.GetByIdAsync(userId);
 
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
         var code = await _securityRepository.GenerateConfirmationCode(user.Id);
 
-        await _mailService.SendEmailAsync(email, Emails.ConfirmationCode(code));
+        await _mailService.SendEmailAsync(user.Email, Emails.ConfirmationCode(code));
     }
 
-    public async Task GetNewEmailConfirmationCodesAsync(string newEmail)
+    public async Task GetNewEmailConfirmationCodesAsync(Guid userId)
     {
-        var user = await _userRepository.GetByEmailAsync(newEmail);
+        var user = await _userRepository.GetByIdAsync(userId);
 
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
         var code = await _securityRepository.GenerateNewEmailConfirmationCode(user.Id);
 
-        await _mailService.SendEmailAsync(newEmail, Emails.ConfirmationCode(code));
+        await _mailService.SendEmailAsync(user.Email, Emails.ConfirmationCode(code));
     }
 
-    public async Task GetEmailConfirmationLinkAsync(string email)
+    public async Task GetEmailConfirmationLinkAsync(Guid userId)
     {
-        var user = await _userRepository.GetByEmailAsync(email);
+        var user = await _userRepository.GetByIdAsync(userId);
 
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
@@ -242,9 +242,9 @@ public sealed class AuthService : IAuthService
         await _mailService.SendEmailAsync(user.Email, Emails.EmailConfirmation(link));
     }
 
-    public async Task GetPasswordResetLinkAsync(string email)
+    public async Task GetPasswordResetLinkAsync(Guid userId)
     {
-        var user = await _userRepository.GetByEmailAsync(email);
+        var user = await _userRepository.GetByIdAsync(userId);
 
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 

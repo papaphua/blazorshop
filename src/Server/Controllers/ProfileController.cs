@@ -28,15 +28,15 @@ public sealed class ProfileController : ControllerBase
         return await _profileService.GetUserProfileAsync(userId);
     }
     
-    [HttpPost]
-    public async Task UpdateUserProfile(ProfileDto newProfileDto)
+    [HttpPut]
+    public async Task<TokenDto> UpdateUserProfile(ProfileDto newProfileDto)
     {
         var userId = _authAuthTokenProvider.GetUserIdFromContext(HttpContext);
         
-        await _profileService.UpdateUserProfileAsync(userId, newProfileDto);
+        return await _profileService.UpdateUserProfileAsync(userId, newProfileDto);
     }
     
-    [HttpPost("email/change")]
+    [HttpPatch("email/change")]
     public async Task<TokenDto> ChangeEmail(EmailChangeDto emailChangeDto)
     {
         var userId = _authAuthTokenProvider.GetUserIdFromContext(HttpContext);
@@ -45,7 +45,7 @@ public sealed class ProfileController : ControllerBase
     }
     
     
-    [HttpPost("password/change")]
+    [HttpPatch("password/change")]
     public async Task ChangePassword(PasswordChangeDto passwordChangeDto)
     {
         var userId = _authAuthTokenProvider.GetUserIdFromContext(HttpContext);
@@ -53,7 +53,7 @@ public sealed class ProfileController : ControllerBase
         await _profileService.ChangePasswordAsync(userId, passwordChangeDto);
     }
     
-    [HttpPost("delete/request")]
+    [HttpGet("delete/request")]
     public async Task CreateDeleteProfileLink()
     {
         var userId = _authAuthTokenProvider.GetUserIdFromContext(HttpContext);

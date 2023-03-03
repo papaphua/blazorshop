@@ -6,14 +6,14 @@ namespace BlazorShop.Server.Services.AuthService;
 public interface IAuthService
 {
     Task RegisterAsync(RegisterDto registerDto);
-    Task<string> FindLoginInfoAsync(LoginInfoDto loginInfoDto);
+    Task<string> FindLoginInfoAsync(LoginDto loginDto);
     Task<AuthDto> DefaultLoginAsync(DefaultLoginDto defaultLoginDto);
     Task<AuthDto> TwoAuthLoginAsync(TwoAuthLoginDto twoAuthLoginDto);
     Task<TokenDto> RefreshAsync(TokenDto tokenDto);
-    Task GetConfirmationCodeAsync(string email);
-    Task GetNewEmailConfirmationCodesAsync(string newEmail);
-    Task GetEmailConfirmationLinkAsync(string email);
-    Task GetPasswordResetLinkAsync(string email);
+    Task GetConfirmationCodeAsync(Guid userId);
+    Task GetNewEmailConfirmationCodesAsync(Guid userId);
+    Task GetEmailConfirmationLinkAsync(Guid userId);
+    Task GetPasswordResetLinkAsync(Guid userId);
     Task ConfirmEmailAsync(ConfirmationParameters parameters);
     Task ResetPasswordAsync(PasswordResetDto passwordResetDto);
 }

@@ -2,7 +2,7 @@
 
 namespace BlazorShop.Shared.Dtos;
 
-public sealed class LoginInfoDto
+public sealed class LoginDto
 {
     [Required(ErrorMessage = "Username or email is required.")]
     public string Login { get; set; } = null!;
