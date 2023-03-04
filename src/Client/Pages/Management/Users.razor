@@ -1,0 +1,43 @@
+﻿@page "/management/users"
+
+<div class="users">
+    <div class="search background">
+        <input type="text" class="form-control" placeholder="Search..."
+               @bind-Value="@_userParameters.Search" @bind-Value:event="oninput" @onkeyup="async () => await GetUsers()">
+    </div>
+
+    @foreach (var user in Items)
+    {
+        var profileLink = "/profile/view/" + user.Username;
+
+        <div class="user background">
+            <div class="text">
+                <ul class="text--property">
+                    <li>Email:</li>
+                    <li>Username:</li>
+                    <li>First name:</li>
+                    <li>Last name:</li>
+                </ul>
+
+                <ul class="text--value">
+                    <li>@user.Email</li>
+                    <li>@user.Username</li>
+                    <li>@user.FirstName</li>
+                    <li>@user.LastName</li>
+                </ul>
+            </div>
+
+            <div class="buttons">
+                <button class="btn btn-success" onclick="location.href='mailto:@user.Email'">Contact</button>
+
+                <button class="btn btn-primary" onclick="location.href='@profileLink'">View</button>
+
+                <button class="btn btn-danger" @onclick="() => DeleteAction(user)">Delete</button>
+            </div>
+        </div>
+    }
+
+    <div class="paging background">
+        <Pagination MetaData="MetaData" Spread="1" SelectedPage="() => SelectPageAction(MetaData.CurrentPage)"/>
+    </div>
+</div>

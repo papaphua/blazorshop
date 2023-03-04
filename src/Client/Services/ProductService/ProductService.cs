@@ -53,7 +53,7 @@ public sealed class ProductService : IProductService
 
     public async Task UpdateProduct(ProductDto dto)
     {
-        await _http.PostAsJsonAsync("api/products", dto);
+        await _http.PutAsJsonAsync("api/products", dto);
     }
 
     public async Task CreateProduct(ProductDto dto)

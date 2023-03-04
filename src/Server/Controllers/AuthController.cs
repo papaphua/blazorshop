@@ -75,12 +75,10 @@ public sealed class AuthController : ControllerBase
         await _authService.GetEmailConfirmationLinkAsync(userId);
     }
     
-    [HttpGet("password/reset/request")]
-    public async Task GetPasswordResetLink()
+    [HttpPost("password/reset/request")]
+    public async Task GetPasswordResetLink(EmailDto emailDto)
     {
-        var userId = _authTokenProvider.GetUserIdFromContext(HttpContext);
-        
-        await _authService.GetPasswordResetLinkAsync(userId);
+        await _authService.GetPasswordResetLinkAsync(emailDto);
     }
     
     [HttpPost("email/confirmation")]

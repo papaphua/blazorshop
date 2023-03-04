@@ -1,0 +1,26 @@
+﻿button {
+    font-size: 28px;
+}
+
+.management {
+    display: flex;
+    flex-direction: column;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+}
+
+.users {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+    padding: 20px;
+}
+
+.products {
+    display: flex;
+    flex-direction: row;
+    padding: 20px;
+}

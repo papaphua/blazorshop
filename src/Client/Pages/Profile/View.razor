@@ -1,0 +1,42 @@
+﻿@page "/profile/view/{username}"
+
+<div class="view background">
+    <div class="form">
+        <div class="content">
+            <div class="title">
+                <h2>View</h2>
+            </div>
+
+            <div class="fields">
+                <div>
+                    <label class="form-label" for="@User.Email">Email</label>
+                    <input class="form-control" type="email" value="@User.Email" disabled/>
+                </div>
+
+                <div>
+                    <label class="form-label" for="@User.Username">Username</label>
+                    <input class="form-control" type="email" value="@User.Username" disabled/>
+                </div>
+
+                <div>
+                    <label class="form-label mt-2" for="@User.FirstName">First Name</label>
+                    <input class="form-control" type="email" value="@User.FirstName" disabled/>
+                </div>
+                <div>
+                    <label class="form-label mt-2" for="@User.LastName">Last Name</label>
+                    <input class="form-control" type="email" value="@User.LastName" disabled/>
+                </div>
+
+                <div>
+                    <label class="form-label mt-2" for="@User.Gender">Gender</label>
+                    <input class="form-control" type="email" value="@User.Gender" disabled/>
+                </div>
+
+                <div>
+                    <label class="form-label mt-2" for="@User.BirthDate">Birth Date</label>
+                    <input class="form-control" type="email" value="@User.BirthDate" disabled/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

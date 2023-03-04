@@ -10,4 +10,5 @@ public interface IAuthTokenProvider
     ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
     Guid GetUserIdFromContext(HttpContext context);
     Task<User> GetUserFromContextAsync(HttpContext context);
+    string CreateToken(IEnumerable<Claim> claims);
 }

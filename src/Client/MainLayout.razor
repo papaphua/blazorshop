@@ -1,5 +1,17 @@
 ﻿@inherits LayoutComponentBase
 
-<main>
-    @Body
-</main>
+<div class="layout">
+    <header class="headline">
+        <Headline/>
+    </header>
+
+    <main class="body">
+        <div class="sider">
+            <Sider/>
+        </div>
+
+        <div class="content">
+            @Body
+        </div>
+    </main>
+</div>

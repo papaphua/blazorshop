@@ -13,7 +13,7 @@ public interface IAuthService
     Task GetConfirmationCodeAsync(Guid userId);
     Task GetNewEmailConfirmationCodesAsync(Guid userId);
     Task GetEmailConfirmationLinkAsync(Guid userId);
-    Task GetPasswordResetLinkAsync(Guid userId);
+    Task GetPasswordResetLinkAsync(EmailDto emailDto);
     Task ConfirmEmailAsync(ConfirmationParameters parameters);
     Task ResetPasswordAsync(PasswordResetDto passwordResetDto);
 }

@@ -5,6 +5,7 @@ namespace BlazorShop.Client.Services.ProfileService;
 
 public interface IProfileService
 {
+    Task<UserDto?> GetAuthUser();
     Task<ProfileDto> GetUserProfile();
     Task UpdateUserProfile(ProfileDto newProfileDto);
     Task ChangeEmail(EmailChangeDto emailChangeDto);

@@ -1,0 +1,52 @@
+﻿@page "/profile"
+
+<div class="profile background">
+    <div class="form">
+        <EditForm Model="UserProfile" OnValidSubmit="SaveAction">
+            <DataAnnotationsValidator/>
+
+            <div class="content">
+                <div class="title">
+                    <h2>Profile</h2>
+                </div>
+
+                <div class="fields">
+
+                    <div>
+                        <label class="form-label" for="@UserProfile.Username">Username</label>
+                        <InputText class="form-control" @bind-Value="UserProfile.Username"/>
+                        <ValidationMessage For="@(() => UserProfile.Username)"></ValidationMessage>
+                    </div>
+
+                    <div>
+                        <label class="form-label mt-2" for="@UserProfile.FirstName">First Name</label>
+                        <InputText class="form-control" @bind-Value="UserProfile.FirstName"/>
+                        <ValidationMessage For="@(() => UserProfile.FirstName)"></ValidationMessage>
+                    </div>
+
+                    <div>
+                        <label class="form-label mt-2" for="@UserProfile.LastName">Last Name</label>
+                        <InputText class="form-control" @bind-Value="UserProfile.LastName"/>
+                        <ValidationMessage For="@(() => UserProfile.LastName)"></ValidationMessage>
+                    </div>
+
+                    <div>
+                        <label class="form-label mt-2" for="@UserProfile.Gender">Gender</label>
+                        <InputText class="form-control" @bind-Value="UserProfile.Gender"/>
+                        <ValidationMessage For="@(() => UserProfile.Gender)"></ValidationMessage>
+                    </div>
+
+                    <div>
+                        <label class="form-label mt-2" for="@UserProfile.BirthDate">Birth Date</label>
+                        <InputDate class="form-control" @bind-Value="UserProfile.BirthDate"/>
+                        <ValidationMessage For="@(() => UserProfile.BirthDate)"></ValidationMessage>
+                    </div>
+                </div>
+
+                <div class="buttons">
+                    <button class="btn btn-primary" type="submit">Save</button>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+</div>

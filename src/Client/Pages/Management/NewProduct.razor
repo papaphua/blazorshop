@@ -1,0 +1,61 @@
+﻿@page "/management/products/new"
+
+<div class="product background">
+    <div class="form">
+        <EditForm Model="Product" OnSubmit="CreateAction">
+            <DataAnnotationsValidator/>
+
+            <div class="content">
+                <div class="title">
+                    <h2>Product</h2>
+                </div>
+
+                <div class="fields">
+                    <div>
+                        <label class="form-label" for="@Product.Name">Name</label>
+                        <InputText class="form-control" @bind-Value="Product.Name"/>
+                        <ValidationMessage For="@(() => Product.Name)"></ValidationMessage>
+                    </div>
+
+                    <div>
+                        <label class="form-label" for="@Product.Description">Description</label>
+                        <InputText class="form-control" @bind-Value="Product.Description"/>
+                        <ValidationMessage For="@(() => Product.Description)"></ValidationMessage>
+                    </div>
+
+                    <div>
+                        <label class="form-label" for="@Product.Uri">Uri</label>
+                        <InputText class="form-control" @bind-Value="Product.Uri"/>
+                        <ValidationMessage For="@(() => Product.Uri)"></ValidationMessage>
+                    </div>
+
+                    <div>
+                        <label for="category">Category</label>
+                        <InputSelect class="form-control" id="category" @bind-Value="SelectedCategory ">
+                            @foreach (var c in Categories)
+                            {
+                                <option value="@c.Id">@c.Name</option>
+                            }
+                        </InputSelect>
+                    </div>
+
+                    <div>
+                        <label class="form-label mt-2" for="@Product.Price">Price</label>
+                        <InputNumber min="0.01" TValue="decimal" class="form-control" @bind-Value="Product.Price"/>
+                        <ValidationMessage For="@(() => Product.Price)"></ValidationMessage>
+                    </div>
+
+                    <div>
+                        <label class="form-label mt-2" for="@Product.ImageUrl">ImageUrl</label>
+                        <InputText class="form-control" @bind-Value="Product.ImageUrl"/>
+                        <ValidationMessage For="@(() => Product.ImageUrl)"></ValidationMessage>
+                    </div>
+                </div>
+
+                <div class="buttons">
+                    <button class="btn btn-primary" type="submit">Create</button>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+</div>

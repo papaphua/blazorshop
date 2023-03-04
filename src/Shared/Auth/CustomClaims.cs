@@ -3,5 +3,5 @@
 public static class CustomClaims
 {
     public const string Permissions = "permissions";
-    public const string CustomerId = "customerId";
+    public const string PaymentProfileId = "paymentProfileId";
 }

@@ -1,0 +1,35 @@
+﻿@page "/order"
+
+<div class="order">
+    <div class="form background">
+        <button @onclick="ConfirmAction">Confirm</button>
+    </div>
+    <div class="products background">
+        <table>
+            <thead>
+            <tr>
+                <th class="table-head" scope="col">#</th>
+                <th class="table-head" scope="col">Image</th>
+                <th class="table-head" scope="col">Name</th>
+                <th class="table-head" scope="col">Quantity</th>
+                <th class="table-head" scope="col">Price</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            @foreach (var item in Cart)
+            {
+                <tr class="table-row" style="cursor: pointer" onclick="@(() => ViewAction(item))">
+                    <th scope="row">@(Cart.IndexOf(item) + 1)</th>
+                    <td class="image">
+                        <img src="@item.Product.ImageUrl" alt="@item.Product.Name"/>
+                    </td>
+                    <td>@item.Product.Name</td>
+                    <td>@item.Quantity</td>
+                    <td style="color: green">@item.TotalPrice</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

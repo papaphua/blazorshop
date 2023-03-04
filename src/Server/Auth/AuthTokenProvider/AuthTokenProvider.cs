@@ -34,6 +34,7 @@ public class AuthTokenProvider : IAuthTokenProvider
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(CustomClaims.PaymentProfileId, user.PaymentProfileId),
             new(ClaimTypes.Name, user.Username),
             new(ClaimTypes.Email, user.Email)
         };
@@ -99,7 +100,7 @@ public class AuthTokenProvider : IAuthTokenProvider
         return user;
     }
 
-    private string CreateToken(IEnumerable<Claim> claims)
+    public string CreateToken(IEnumerable<Claim> claims)
     {
         var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secrets.JwtSecretKey));
 

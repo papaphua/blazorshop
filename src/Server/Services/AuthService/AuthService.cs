@@ -105,6 +105,8 @@ public sealed class AuthService : IAuthService
 
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
+        if (!user.IsEmailConfirmed) throw new BusinessException(ExceptionMessages.EmailNotConfirmed(user.Email));
+        
         if (!user.IsTwoAuth) return GenerateLoginLink(_urlOptions.DefaultLoginUrl, loginDto.Login);
 
         await _securityRepository.GenerateConfirmationCode(user.Id);
@@ -242,9 +244,9 @@ public sealed class AuthService : IAuthService
         await _mailService.SendEmailAsync(user.Email, Emails.EmailConfirmation(link));
     }
 
-    public async Task GetPasswordResetLinkAsync(Guid userId)
+    public async Task GetPasswordResetLinkAsync(EmailDto emailDto)
     {
-        var user = await _userRepository.GetByIdAsync(userId);
+        var user = await _userRepository.GetByEmailAsync(emailDto.Email);
 
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 

@@ -34,15 +34,17 @@ public sealed class AuthService : IAuthService
     {
         var response = await _http.PostAsJsonAsync("api/authentication/login", loginDto);
 
-        var link = await response.Content.ReadFromJsonAsync<string>();
+        var link = await response.Content.ReadAsStringAsync();
 
-        _navigation.NavigateTo(link);
+        if (response.IsSuccessStatusCode) _navigation.NavigateTo(link);
     }
 
     public async Task DefaultLogin(DefaultLoginDto defaultLoginDto)
     {
         var response = await _http.PostAsJsonAsync("api/authentication/login/default", defaultLoginDto);
 
+        if(!response.IsSuccessStatusCode) return;   
+        
         var content = await response.Content.ReadFromJsonAsync<AuthDto>();
 
         if (!content.IsSucceeded)
@@ -63,6 +65,8 @@ public sealed class AuthService : IAuthService
     {
         var response = await _http.PostAsJsonAsync("api/authentication/login/2fa", twoAuthLoginDto);
 
+        if(!response.IsSuccessStatusCode) return; 
+        
         var content = await response.Content.ReadFromJsonAsync<AuthDto>();
 
         if (!content.IsSucceeded)
@@ -92,9 +96,9 @@ public sealed class AuthService : IAuthService
     public async Task Refresh(TokenDto tokenDto)
     {
         var response = await _http.PostAsJsonAsync("api/authentication/refresh", tokenDto);
-        
+
         var content = await response.Content.ReadFromJsonAsync<TokenDto>();
-        
+
         await _localStorage.SetItemAsync(AuthNamings.AccessToken, tokenDto.AccessToken);
         await _localStorage.SetItemAsync(AuthNamings.RefreshToken, tokenDto.RefreshToken);
 
@@ -116,9 +120,9 @@ public sealed class AuthService : IAuthService
         await _http.GetAsync("api/authentication/email/confirmation/request");
     }
 
-    public async Task GetPasswordResetLink()
+    public async Task GetPasswordResetLink(EmailDto emailDto)
     {
-        await _http.GetAsync("api/authentication/password/reset/request");
+        await _http.PostAsJsonAsync("api/authentication/password/reset/request", emailDto);
     }
 
     public async Task ConfirmEmail(ConfirmationParameters parameters)

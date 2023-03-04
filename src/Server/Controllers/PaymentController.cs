@@ -19,7 +19,7 @@ public sealed class PaymentController : ControllerBase
     [HttpPost("checkout")]
     public ActionResult CheckoutSession(List<CartItem> cartItems)
     {
-        var session = _paymentService.CreateCheckoutSessionAsync(HttpContext, cartItems);
+        var session = _paymentService.CreateCheckoutSession(HttpContext, cartItems);
 
         return Ok(session.Url);
     }

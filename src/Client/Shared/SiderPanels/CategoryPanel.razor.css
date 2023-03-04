@@ -1,0 +1,10 @@
+﻿.category {
+    padding: 20px;
+    font-size: 28px;
+    color: #b211ca;
+
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: center;
+}

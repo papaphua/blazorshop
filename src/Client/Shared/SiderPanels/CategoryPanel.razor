@@ -1,0 +1,15 @@
+﻿<div class="category background">
+    <h3>Categories</h3>
+
+    <NavLink class="nav-link" href="/products" Match="NavLinkMatch.All">
+        <span aria-hidden="true"></span> All products
+    </NavLink>
+
+    @foreach (var category in Categories)
+    {
+        var link = "/products/category/" + category.Uri;
+        <NavLink class="nav-link" href="@link" Match="NavLinkMatch.All">
+            <span aria-hidden="true">@category.Name</span>
+        </NavLink>
+    }
+</div>

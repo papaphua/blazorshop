@@ -18,20 +18,20 @@ public sealed class PaymentService : IPaymentService
     private const string Card = "card";
     private const string Payment = "payment";
     private const string StripeSignature = "Stripe-Signature";
-    private const string OrderSuccessUrl = "localhost:7005/order/success";
-    private const string OrderCancelUrl = "localhost:7005/order/cancel";
 
     private readonly SecretOptions _secrets;
     private readonly IUserRepository _userRepository;
+    private readonly UrlOptions _urlOptions;
 
-    public PaymentService(IOptions<SecretOptions> secrets, IUserRepository userRepository)
+    public PaymentService(IOptions<SecretOptions> secrets, IUserRepository userRepository, IOptions<UrlOptions> urlOptions)
     {
         _userRepository = userRepository;
+        _urlOptions = urlOptions.Value;
         _secrets = secrets.Value;
         StripeConfiguration.ApiKey = _secrets.StripePrivateKey;
     }
 
-    public Session CreateCheckoutSessionAsync(HttpContext context, List<CartItem> cart)
+    public Session CreateCheckoutSession(HttpContext context, List<CartItem> cart)
     {
         var lineItems = new List<SessionLineItemOptions>();
 
@@ -51,7 +51,7 @@ public sealed class PaymentService : IPaymentService
             }
         ));
 
-        var customerId = context.User.Claims.First(c => c.Type == CustomClaims.CustomerId).Value;
+        var customerId = context.User.Claims.First(c => c.Type == CustomClaims.PaymentProfileId).Value;
         
         if (string.IsNullOrEmpty(customerId)) throw new BusinessException(ExceptionMessages.Unauthorized);
 
@@ -64,8 +64,8 @@ public sealed class PaymentService : IPaymentService
             },
             LineItems = lineItems,
             Mode = Payment,
-            SuccessUrl = OrderSuccessUrl,
-            CancelUrl = OrderCancelUrl
+            SuccessUrl = _urlOptions.OrderSuccessUrl,
+            CancelUrl = _urlOptions.OrderCancelUrl
         };
 
         var service = new SessionService();

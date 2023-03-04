@@ -1,0 +1,39 @@
+﻿@page "/profile/email/change"
+
+<div class="email-change background">
+    <div class="form">
+        <EditForm Model="EmailChangeDto" OnValidSubmit="ChangeEmailAction">
+            <DataAnnotationsValidator/>
+
+            <div class="content">
+                <div class="title">
+                    <h2>Email change</h2>
+                </div>
+
+                <div class="fields">
+                    <div>
+                        <label class="form-label" for="@EmailChangeDto.NewEmail">New email</label>
+                        <InputText class="form-control" type="email" @bind-Value="EmailChangeDto.NewEmail"/>
+                        <ValidationMessage For="@(() => EmailChangeDto.NewEmail)"></ValidationMessage>
+                    </div>
+
+                    <div>
+                        <label class="form-label mt-2" for="@EmailChangeDto.CurrentConfirmationCode">Code from current email</label>
+                        <InputText class="form-control" type="password" @bind-Value="EmailChangeDto.CurrentConfirmationCode"/>
+                        <ValidationMessage For="@(() => EmailChangeDto.CurrentConfirmationCode)"></ValidationMessage>
+                    </div>
+
+                    <div>
+                        <label class="form-label mt-2" for="@EmailChangeDto.NewConfirmationCode">Code from new email</label>
+                        <InputText class="form-control" type="text" @bind-Value="EmailChangeDto.NewConfirmationCode"/>
+                        <ValidationMessage For="@(() => EmailChangeDto.NewConfirmationCode)"></ValidationMessage>
+                    </div>
+                </div>
+
+                <div class="buttons">
+                    <button class="btn btn-primary" type="submit">Change</button>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+</div>

@@ -1,0 +1,10 @@
+﻿<div class="notifications background">
+    <h3>Notifications</h3>
+
+    <div class="text">
+        @foreach (var notification in NotificationService.Notifications)
+        {
+            <span style="margin-bottom: 10px">@notification</span>
+        }
+    </div>
+</div>
