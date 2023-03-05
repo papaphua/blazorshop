@@ -8,9 +8,11 @@ namespace BlazorShop.Server.Options.OptionSetups;
 public sealed class BearerOptionsSetup : IPostConfigureOptions<JwtBearerOptions>
 {
     private readonly JwtOptions _jwtOptions;
+    private readonly SecretOptions _secrets;
 
-    public BearerOptionsSetup(IOptions<JwtOptions> jwtOptions)
+    public BearerOptionsSetup(IOptions<JwtOptions> jwtOptions, IOptions<SecretOptions> secrets)
     {
+        _secrets = secrets.Value;
         _jwtOptions = jwtOptions.Value;
     }
 
@@ -25,7 +27,7 @@ public sealed class BearerOptionsSetup : IPostConfigureOptions<JwtBearerOptions>
             ValidIssuer = _jwtOptions.Issuer,
             ValidAudience = _jwtOptions.Audience,
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes("set me"))
+                Encoding.UTF8.GetBytes(_secrets.JwtSecretKey))
         };
     }
 }

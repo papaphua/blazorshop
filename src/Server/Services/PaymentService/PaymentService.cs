@@ -8,7 +8,6 @@ using BlazorShop.Shared.Models;
 using Microsoft.Extensions.Options;
 using Stripe;
 using Stripe.Checkout;
-using Session = Stripe.Checkout.Session;
 
 namespace BlazorShop.Server.Services.PaymentService;
 
@@ -31,7 +30,7 @@ public sealed class PaymentService : IPaymentService
         StripeConfiguration.ApiKey = _secrets.StripePrivateKey;
     }
 
-    public Session CreateCheckoutSession(HttpContext context, List<CartItem> cart)
+    public Stripe.Checkout.Session CreateCheckoutSession(HttpContext context, List<CartItem> cart)
     {
         var lineItems = new List<SessionLineItemOptions>();
 

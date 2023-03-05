@@ -35,4 +35,4 @@ public sealed class HttpInterceptorService
     }
 
     public void DisposeEvent() => _interceptor.BeforeSendAsync -= InterceptBeforeHttpAsync;
-    }
+}

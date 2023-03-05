@@ -19,7 +19,7 @@
 
                     <div>
                         <label class="form-label mt-2" for="@EmailChangeDto.CurrentConfirmationCode">Code from current email</label>
-                        <InputText class="form-control" type="password" @bind-Value="EmailChangeDto.CurrentConfirmationCode"/>
+                        <InputText class="form-control" type="text" @bind-Value="EmailChangeDto.CurrentConfirmationCode"/>
                         <ValidationMessage For="@(() => EmailChangeDto.CurrentConfirmationCode)"></ValidationMessage>
                     </div>
 

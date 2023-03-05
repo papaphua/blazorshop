@@ -1,4 +1,5 @@
-﻿using BlazorShop.Server.Services.PaymentService;
+﻿using BlazorShop.Server.Auth.PermissionHandler;
+using BlazorShop.Server.Services.PaymentService;
 using BlazorShop.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,7 @@ public sealed class PaymentController : ControllerBase
         _paymentService = paymentService;
     }
     
+    [HasPermission(Permissions.CustomerPermission)]
     [HttpPost("checkout")]
     public ActionResult CheckoutSession(List<CartItem> cartItems)
     {

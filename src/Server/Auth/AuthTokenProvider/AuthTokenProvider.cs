@@ -82,8 +82,10 @@ public class AuthTokenProvider : IAuthTokenProvider
 
     public Guid GetUserIdFromContext(HttpContext context)
     {
-        var id = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var id = context.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
+        Console.Write(id);
+        
         if (id is null) throw new NotFoundException(ExceptionMessages.Unauthorized);
 
         return Guid.Parse(id);

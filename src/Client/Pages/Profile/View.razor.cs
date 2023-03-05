@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazorShop.Client.Pages.Profile;
 
-[HasPermission(Permissions.AdminPermission)]
+[HasPermission(Permissions.CustomerPermission)]
 public sealed partial class View : IDisposable
 {
     [Inject] private IUserService UserService { get; set; } = null!;

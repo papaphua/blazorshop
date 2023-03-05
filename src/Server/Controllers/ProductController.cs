@@ -1,4 +1,5 @@
-﻿using BlazorShop.Server.Services.ProductService;
+﻿using BlazorShop.Server.Auth.PermissionHandler;
+using BlazorShop.Server.Services.ProductService;
 using BlazorShop.Shared.Dtos;
 using BlazorShop.Shared.Pagination.Parameters;
 using Microsoft.AspNetCore.Authorization;
@@ -36,18 +37,21 @@ public sealed class ProductController : ControllerBase
         return await _productService.GetProductByUriAsync(uri);
     }
     
+    [HasPermission(Permissions.AdminPermission)]
     [HttpPost]
     public async Task CreateProduct(ProductDto dto)
     {
         await _productService.CreateProductAsync(dto);
     }
     
+    [HasPermission(Permissions.AdminPermission)]
     [HttpPut]
     public async Task UpdateProduct(ProductDto dto)
     {
         await _productService.UpdateProductAsync(dto);
     }
     
+    [HasPermission(Permissions.AdminPermission)]
     [HttpDelete("{uri}")]
     public async Task DeleteProduct(string uri)
     {

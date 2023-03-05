@@ -51,6 +51,7 @@ builder.Services.AddScoped<ICommentService, CommentService>();
 
 builder.Services.ConfigureOptions<HashingOptionsSetup>();
 builder.Services.ConfigureOptions<JwtOptionsSetup>();
+builder.Services.ConfigureOptions<BearerOptionsSetup>();
 builder.Services.ConfigureOptions<MailingOptionsSetup>();
 builder.Services.ConfigureOptions<SecretOptionsSetup>();
 builder.Services.ConfigureOptions<SecurityOptionsSetup>();

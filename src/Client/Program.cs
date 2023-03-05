@@ -22,6 +22,7 @@ using Toolbelt.Blazor.Extensions.DependencyInjection;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
+builder.Services.AddHttpClientInterceptor();
 
 builder.Services.AddHttpClient("BlazorShop.ServerAPI",
     (sp, client) =>
@@ -46,8 +47,6 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 
 builder.Services.AddScoped<HttpInterceptorService>();
-
-builder.Services.AddHttpClientInterceptor();
 
 builder.Services.AddBlazoredLocalStorage();
 

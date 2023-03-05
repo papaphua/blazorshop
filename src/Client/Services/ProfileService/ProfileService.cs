@@ -60,6 +60,8 @@ public sealed class ProfileService : IProfileService
     {
         var response = await _http.PatchAsJsonAsync("api/profile/email/change", emailChangeDto);
 
+        if(!response.IsSuccessStatusCode) return;
+
         var tokenDto = await response.Content.ReadFromJsonAsync<TokenDto>();
 
         await _localStorage.SetItemAsync(AuthNamings.AccessToken, tokenDto.AccessToken);
@@ -70,7 +72,7 @@ public sealed class ProfileService : IProfileService
 
     public async Task ChangePassword(PasswordChangeDto passwordChangeDto)
     {
-        await _http.PatchAsJsonAsync("api/profile/email/change", passwordChangeDto);
+        await _http.PatchAsJsonAsync("api/profile/password/change", passwordChangeDto);
     }
 
     public async Task CreateDeleteProfileLink()

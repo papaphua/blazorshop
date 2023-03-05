@@ -37,5 +37,7 @@ public sealed class CommentRepository : BaseRepository<Comment>, ICommentReposit
         var linkedEntity = new ProductComment(productId, commentId); 
         
         await Context.Set<ProductComment>().AddAsync(linkedEntity);
+        
+        await Context.SaveChangesAsync();
     }
 }

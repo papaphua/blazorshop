@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components;
 namespace BlazorShop.Client.Pages.Profile;
 
 [HasPermission(Permissions.CustomerPermission)]
-public sealed partial class EmailChangeConfirmation : IDisposable
+public sealed partial class EmailChange : IDisposable
 {
     [Inject] private IProfileService ProfileService { get; set; } = null!;
     [Inject] private HttpInterceptorService HttpInterceptorService { get; set; } = null!;

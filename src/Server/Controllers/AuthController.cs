@@ -1,4 +1,5 @@
 ﻿using BlazorShop.Server.Auth.AuthTokenProvider;
+using BlazorShop.Server.Auth.PermissionHandler;
 using BlazorShop.Server.Services.AuthService;
 using BlazorShop.Shared.Dtos;
 using BlazorShop.Shared.Models;
@@ -7,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorShop.Server.Controllers;
 
-[AllowAnonymous]
 [Route("api/authentication")]
 [ApiController]
 public sealed class AuthController : ControllerBase
@@ -21,36 +21,42 @@ public sealed class AuthController : ControllerBase
         _authTokenProvider = authTokenProvider;
     }
     
+    [AllowAnonymous]
     [HttpPost("registration")]
     public async Task Register(RegisterDto registerDto)
     {
         await _authService.RegisterAsync(registerDto);
     }
 
+    [AllowAnonymous]
     [HttpPost("login")]
     public async Task<string> FindLoginInfo(LoginDto loginDto)
     {
         return await _authService.FindLoginInfoAsync(loginDto);
     }
     
+    [AllowAnonymous]
     [HttpPost("login/default")]
     public async Task<AuthDto> DefaultLogin(DefaultLoginDto defaultLoginDto)
     {
         return await _authService.DefaultLoginAsync(defaultLoginDto);
     }
     
+    [AllowAnonymous]
     [HttpPost("login/2fa")]
     public async Task<AuthDto> TwoAuthLogin(TwoAuthLoginDto twoAuthLoginDto)
     {
         return await _authService.TwoAuthLoginAsync(twoAuthLoginDto);
     }
     
+    [HasPermission(Permissions.CustomerPermission)]
     [HttpPost("refresh")]
     public async Task<TokenDto> Refresh(TokenDto tokenDto)
     {
         return await _authService.RefreshAsync(tokenDto);
     }
     
+    [HasPermission(Permissions.CustomerPermission)]
     [HttpGet("confirmation-code")]
     public async Task GetConfirmationCode()
     {
@@ -59,6 +65,7 @@ public sealed class AuthController : ControllerBase
         await _authService.GetConfirmationCodeAsync(userId);
     }
     
+    [HasPermission(Permissions.CustomerPermission)]
     [HttpGet("new-email/confirmation-code")]
     public async Task GetNewEmailConfirmationCode()
     { 
@@ -67,6 +74,7 @@ public sealed class AuthController : ControllerBase
         await _authService.GetNewEmailConfirmationCodesAsync(userId);
     }
     
+    [HasPermission(Permissions.CustomerPermission)]
     [HttpGet("email/confirmation/request")]
     public async Task GetEmailConfirmationLink()
     {
@@ -75,18 +83,21 @@ public sealed class AuthController : ControllerBase
         await _authService.GetEmailConfirmationLinkAsync(userId);
     }
     
+    [AllowAnonymous]
     [HttpPost("password/reset/request")]
     public async Task GetPasswordResetLink(EmailDto emailDto)
     {
         await _authService.GetPasswordResetLinkAsync(emailDto);
     }
     
+    [AllowAnonymous]
     [HttpPost("email/confirmation")]
     public async Task ConfirmEmail(ConfirmationParameters parameters)
     {
         await _authService.ConfirmEmailAsync(parameters);
     }
     
+    [AllowAnonymous]
     [HttpPost("password/reset")]
     public async Task ResetPassword(PasswordResetDto passwordResetDto)
     {

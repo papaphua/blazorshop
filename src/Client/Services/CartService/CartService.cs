@@ -7,13 +7,11 @@ namespace BlazorShop.Client.Services.CartService;
 
 public sealed class CartService : ICartService
 {
-    private readonly HttpClient _http;
     private readonly ILocalStorageService _localStorage;
 
-    public CartService(ILocalStorageService localStorage, HttpClient http)
+    public CartService(ILocalStorageService localStorage)
     {
         _localStorage = localStorage;
-        _http = http;
     }
 
     public async Task<List<CartItem>> GetAllItems()

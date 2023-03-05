@@ -13,6 +13,13 @@ public sealed class AutoMapperProfile : Profile
         
         CreateMap<Category, CategoryDto>();
 
+        CreateMap<Comment, CommentDto>()
+            .ForMember(dest => dest.UserId,
+                opt => opt.MapFrom(src => src.UserId))
+            .ForMember(dest => dest.Username,
+                opt => opt.MapFrom(src => src.User.Username));
+
+        
         CreateMap<RegisterDto, User>()
             .ForSourceMember(src => src.Password,
                 opt => opt.DoNotValidate())
