@@ -1,10 +1,11 @@
-﻿<div class="profile background">
+﻿@using System.Security.Claims
+<div class="profile background">
     <h3>Profile</h3>
 
     <AuthorizeView>
         <Authorized>
 
-            @if (context.User.HasClaim(CustomClaims.Permissions, Permissions.AdminPermission.ToString()))
+            @if (context.User.HasClaim(c => c.Value.Contains(Permissions.AdminPermission.ToString())))
             {
                 <NavLink class="nav-link" href="/management" Match="NavLinkMatch.All">
                     <span aria-hidden="true">Management</span>
