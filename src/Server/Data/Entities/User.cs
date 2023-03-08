@@ -7,7 +7,7 @@ public sealed class User
     public User()
     {
         Id = Guid.NewGuid();
-        RegisterDate = DateTime.Now;
+        RegisterDate = DateTime.UtcNow;
     }
     
     [Required] public Guid Id { get; set; }

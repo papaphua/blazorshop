@@ -15,6 +15,7 @@ using BlazorShop.Server.Services.PaymentService;
 using BlazorShop.Server.Services.RoleService;
 using BlazorShop.Shared.Dtos;
 using BlazorShop.Shared.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace BlazorShop.Server.Services.AuthService;
@@ -43,7 +44,7 @@ public sealed class AuthService : IAuthService
         ISessionRepository sessionRepository,
         ISecurityRepository securityRepository,
         IMailService mailService,
-        IOptions<UrlOptions> urlOptions, 
+        IOptions<UrlOptions> urlOptions,
         IConfirmationLinkProvider confirmationLinkProvider)
     {
         _userRepository = userRepository;
@@ -106,7 +107,7 @@ public sealed class AuthService : IAuthService
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
         if (!user.IsEmailConfirmed) throw new BusinessException(ExceptionMessages.EmailNotConfirmed(user.Email));
-        
+
         if (!user.IsTwoAuth) return GenerateLoginLink(_urlOptions.DefaultLoginUrl, loginDto.Login);
 
         await _securityRepository.GenerateConfirmationCode(user.Id);
@@ -187,7 +188,7 @@ public sealed class AuthService : IAuthService
         };
     }
 
-    public async Task<TokenDto> RefreshAsync(TokenDto tokenDto)
+    public async Task<AuthDto> RefreshAsync([FromBody] TokenDto tokenDto)
     {
         var principal = _authTokenProvider.GetPrincipalFromExpiredToken(tokenDto.AccessToken);
 
@@ -197,12 +198,23 @@ public sealed class AuthService : IAuthService
 
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
+        var session = await _sessionRepository.GetSessionInfoAsync(userId);
+
+        if (session is null) return new AuthDto { IsSucceeded = false };
+
+        if (session.RefreshToken != tokenDto.RefreshToken ||
+            session.RefreshTokenExpiryTime <= DateTime.UtcNow)
+        {
+            await _sessionRepository.DeleteAndSaveAsync(session);
+            return new AuthDto { IsSucceeded = false };
+        }
+
         var accessToken = await _authTokenProvider.GenerateAccessTokenAsync(user);
         var refreshToken = _authTokenProvider.GenerateRefreshToken();
 
         await _sessionRepository.UpdateSessionAsync(user.Id, accessToken, refreshToken);
 
-        return new TokenDto(accessToken, refreshToken);
+        return new AuthDto { IsSucceeded = true, Tokens = new TokenDto(accessToken, refreshToken) };
     }
 
     public async Task GetConfirmationCodeAsync(Guid userId)

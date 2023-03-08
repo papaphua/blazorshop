@@ -112,8 +112,8 @@ public class AuthTokenProvider : IAuthTokenProvider
             issuer: _options.Issuer,
             audience: _options.Audience,
             claims: claims,
-            notBefore: DateTime.Now,
-            expires: DateTime.Now.AddMinutes(_options.AccessTokenExpiryInMinutes),
+            notBefore: DateTime.UtcNow,
+            expires: DateTime.UtcNow.AddMinutes(_options.AccessTokenExpiryInMinutes),
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

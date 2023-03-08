@@ -9,7 +9,7 @@ public interface IAuthService
     Task<string> FindLoginInfoAsync(LoginDto loginDto);
     Task<AuthDto> DefaultLoginAsync(DefaultLoginDto defaultLoginDto);
     Task<AuthDto> TwoAuthLoginAsync(TwoAuthLoginDto twoAuthLoginDto);
-    Task<TokenDto> RefreshAsync(TokenDto tokenDto);
+    Task<AuthDto> RefreshAsync(TokenDto tokenDto);
     Task GetConfirmationCodeAsync(Guid userId);
     Task GetNewEmailConfirmationCodesAsync(Guid userId);
     Task GetEmailConfirmationLinkAsync(Guid userId);

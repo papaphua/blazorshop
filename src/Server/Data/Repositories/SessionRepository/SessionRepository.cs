@@ -16,6 +16,12 @@ public sealed class SessionRepository : BaseRepository<Session>, ISessionReposit
         _options = options.Value;
     }
 
+    public async Task<Session?> GetSessionInfoAsync(Guid userId)
+    {
+        return await Context.Set<Session>()
+            .FirstOrDefaultAsync(session => session.UserId == userId);
+    }
+
     public async Task CreateSessionAsync(Guid userId, string accessToken, string refreshToken)
     {
         if (await FindSessionsAsync(userId) is not null)
@@ -27,7 +33,7 @@ public sealed class SessionRepository : BaseRepository<Session>, ISessionReposit
         var session = new Session
         {
             UserId = userId, AccessToken = accessToken, RefreshToken = refreshToken,
-            RefreshTokenExpiryTime = DateTime.Now.AddMinutes(_options.RefreshTokenExpiryInMinutes)
+            RefreshTokenExpiryTime = DateTime.UtcNow.AddMinutes(_options.RefreshTokenExpiryInMinutes)
         };
         
         await Context.AddAsync(session);
@@ -42,7 +48,7 @@ public sealed class SessionRepository : BaseRepository<Session>, ISessionReposit
         
         session.AccessToken = accessToken;
         session.RefreshToken = refreshToken;
-        session.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(_options.RefreshTokenExpiryInMinutes);
+        session.RefreshTokenExpiryTime = DateTime.UtcNow.AddMinutes(_options.RefreshTokenExpiryInMinutes);
         
         await Context.SaveChangesAsync();
     }

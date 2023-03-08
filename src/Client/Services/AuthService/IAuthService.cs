@@ -10,7 +10,7 @@ public interface IAuthService
     Task DefaultLogin(DefaultLoginDto defaultLoginDto);
     Task TwoAuthLogin(TwoAuthLoginDto twoAuthLoginDto);
     Task Logout();
-    Task Refresh(TokenDto tokenDto);
+    Task TryRefreshToken();
     Task GetConfirmationCode();
     Task GetNewEmailConfirmationCode();
     Task GetEmailConfirmationLink();

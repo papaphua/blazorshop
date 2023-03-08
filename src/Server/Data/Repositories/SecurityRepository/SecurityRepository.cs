@@ -37,7 +37,7 @@ public sealed class SecurityRepository : BaseRepository<Security>, ISecurityRepo
         if(security is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
         security.ConfirmationToken = _authTokenProvider.CreateToken(new List<Claim>());
-        security.ConfirmationTokenExpiry = DateTime.Now.AddMinutes(_options.ConfirmationTokenExpiryInMinutes);
+        security.ConfirmationTokenExpiry = DateTime.UtcNow.AddMinutes(_options.ConfirmationTokenExpiryInMinutes);
 
         await Context.SaveChangesAsync();
      
@@ -51,7 +51,7 @@ public sealed class SecurityRepository : BaseRepository<Security>, ISecurityRepo
         if(security is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
         security.ConfirmationCode = GenerateCode(6);
-        security.ConfirmationCodeExpiry = DateTime.Now.AddMinutes(_options.ConfirmationCodeExpiryInMinutes);
+        security.ConfirmationCodeExpiry = DateTime.UtcNow.AddMinutes(_options.ConfirmationCodeExpiryInMinutes);
         
         await Context.SaveChangesAsync();
      
@@ -79,7 +79,7 @@ public sealed class SecurityRepository : BaseRepository<Security>, ISecurityRepo
 
         if(security.ConfirmationCode is null || 
            security.ConfirmationCodeExpiry is null || 
-           DateTime.Now > security.ConfirmationCodeExpiry) 
+           DateTime.UtcNow > security.ConfirmationCodeExpiry) 
             throw new BusinessException(ExceptionMessages.ExpiredCode);
 
         if (!security.ConfirmationCode.Equals(code))
@@ -96,7 +96,7 @@ public sealed class SecurityRepository : BaseRepository<Security>, ISecurityRepo
 
         if(security.NewEmailConfirmationCode is null || 
            security.ConfirmationCodeExpiry is null || 
-           DateTime.Now > security.ConfirmationCodeExpiry) 
+           DateTime.UtcNow > security.ConfirmationCodeExpiry) 
             throw new BusinessException(ExceptionMessages.ExpiredCode);
 
         if (!security.NewEmailConfirmationCode.Equals(code))
@@ -113,7 +113,7 @@ public sealed class SecurityRepository : BaseRepository<Security>, ISecurityRepo
         
         if(security.ConfirmationToken is null || 
            security.ConfirmationTokenExpiry is null ||
-           DateTime.Now > security.ConfirmationTokenExpiry) 
+           DateTime.UtcNow > security.ConfirmationTokenExpiry) 
             throw new BusinessException(ExceptionMessages.ExpiredLink);
         
 

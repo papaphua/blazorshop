@@ -49,9 +49,9 @@ public sealed class AuthController : ControllerBase
         return await _authService.TwoAuthLoginAsync(twoAuthLoginDto);
     }
     
-    [HasPermission(Permissions.CustomerPermission)]
+    [AllowAnonymous]
     [HttpPost("refresh")]
-    public async Task<TokenDto> Refresh(TokenDto tokenDto)
+    public async Task<AuthDto> Refresh(TokenDto tokenDto)
     {
         return await _authService.RefreshAsync(tokenDto);
     }

@@ -43,8 +43,8 @@ public sealed class AuthService : IAuthService
     {
         var response = await _http.PostAsJsonAsync("api/authentication/login/default", defaultLoginDto);
 
-        if(!response.IsSuccessStatusCode) return;   
-        
+        if (!response.IsSuccessStatusCode) return;
+
         var content = await response.Content.ReadFromJsonAsync<AuthDto>();
 
         if (!content.IsSucceeded)
@@ -65,8 +65,8 @@ public sealed class AuthService : IAuthService
     {
         var response = await _http.PostAsJsonAsync("api/authentication/login/2fa", twoAuthLoginDto);
 
-        if(!response.IsSuccessStatusCode) return; 
-        
+        if (!response.IsSuccessStatusCode) return;
+
         var content = await response.Content.ReadFromJsonAsync<AuthDto>();
 
         if (!content.IsSucceeded)
@@ -93,16 +93,22 @@ public sealed class AuthService : IAuthService
         _navigation.NavigateTo("/");
     }
 
-    public async Task Refresh(TokenDto tokenDto)
+    public async Task TryRefreshToken()
     {
-        var response = await _http.PostAsJsonAsync("api/authentication/refresh", tokenDto);
+        var state = await _authStateProvider.GetAuthenticationStateAsync();
+        var expClaim = state.User.FindFirst(c => c.Type.Equals("exp"));
+        
+        if(expClaim is null) return;
 
-        var content = await response.Content.ReadFromJsonAsync<TokenDto>();
+        var exp = expClaim.Value;
 
-        await _localStorage.SetItemAsync(AuthNamings.AccessToken, tokenDto.AccessToken);
-        await _localStorage.SetItemAsync(AuthNamings.RefreshToken, tokenDto.RefreshToken);
-
-        (_authStateProvider as CustomAuthStateProvider).NotifyUserAuth(tokenDto.AccessToken);
+        var expTime = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(exp));
+        var diff = expTime - DateTime.UtcNow;
+        
+        if (diff.TotalMinutes is > 0 and <= 2)
+            await RefreshToken();
+        else if (diff.TotalMinutes <= 0)
+            await Logout();
     }
 
     public async Task GetConfirmationCode()
@@ -133,5 +139,28 @@ public sealed class AuthService : IAuthService
     public async Task ResetPassword(PasswordResetDto passwordResetDto)
     {
         await _http.PostAsJsonAsync("api/authentication/password/reset", passwordResetDto);
+    }
+
+    private async Task RefreshToken()
+    {
+        var accessToken = await _localStorage.GetItemAsync<string>(AuthNamings.AccessToken);
+        var refreshToken = await _localStorage.GetItemAsync<string>(AuthNamings.RefreshToken);
+
+        if (accessToken is null || refreshToken is null) return;
+
+        var tokenDto = new TokenDto(accessToken, refreshToken);
+
+        var response = await _http.PostAsJsonAsync("api/authentication/refresh", tokenDto);
+
+        var content = await response.Content.ReadFromJsonAsync<AuthDto>();
+
+        if(content is null) return;
+
+        if (!content.IsSucceeded) await Logout();
+        
+        await _localStorage.SetItemAsync(AuthNamings.AccessToken, content.Tokens.AccessToken);
+        await _localStorage.SetItemAsync(AuthNamings.RefreshToken, content.Tokens.RefreshToken);
+
+        (_authStateProvider as CustomAuthStateProvider).NotifyUserAuth(content.Tokens.AccessToken);
     }
 }

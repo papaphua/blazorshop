@@ -5,6 +5,7 @@ namespace BlazorShop.Server.Data.Repositories.SessionRepository;
 
 public interface ISessionRepository : IBaseRepository<Session>
 {
+    Task<Session?> GetSessionInfoAsync(Guid userId);
     Task CreateSessionAsync(Guid userId, string accessToken, string refreshToken);
     Task UpdateSessionAsync(Guid userId, string accessToken, string refreshToken);
 }
