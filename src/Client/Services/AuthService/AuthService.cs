@@ -116,9 +116,9 @@ public sealed class AuthService : IAuthService
         await _http.GetAsync("api/authentication/confirmation-code");
     }
 
-    public async Task GetNewEmailConfirmationCode()
+    public async Task GetNewEmailConfirmationCode(EmailDto emailDto)
     {
-        await _http.GetAsync("api/authentication/new-email/confirmation-code");
+        await _http.PostAsJsonAsync("api/authentication/new-email/confirmation-code", emailDto);
     }
 
     public async Task GetEmailConfirmationLink()

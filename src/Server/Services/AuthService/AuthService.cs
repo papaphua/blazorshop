@@ -228,15 +228,15 @@ public sealed class AuthService : IAuthService
         await _mailService.SendEmailAsync(user.Email, Emails.ConfirmationCode(code));
     }
 
-    public async Task GetNewEmailConfirmationCodesAsync(Guid userId)
+    public async Task GetNewEmailConfirmationCodesAsync(Guid userId, string email)
     {
         var user = await _userRepository.GetByIdAsync(userId);
 
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
-        var code = await _securityRepository.GenerateNewEmailConfirmationCode(user.Id);
+        var code = await _securityRepository.GenerateNewEmailConfirmationCode(userId);
 
-        await _mailService.SendEmailAsync(user.Email, Emails.ConfirmationCode(code));
+        await _mailService.SendEmailAsync(email, Emails.ConfirmationCode(code));
     }
 
     public async Task GetEmailConfirmationLinkAsync(Guid userId)

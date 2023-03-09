@@ -66,12 +66,12 @@ public sealed class AuthController : ControllerBase
     }
     
     [HasPermission(Permissions.CustomerPermission)]
-    [HttpGet("new-email/confirmation-code")]
-    public async Task GetNewEmailConfirmationCode()
+    [HttpPost("new-email/confirmation-code")]
+    public async Task GetNewEmailConfirmationCode(EmailDto emailDto)
     { 
         var userId = _authTokenProvider.GetUserIdFromContext(HttpContext);
         
-        await _authService.GetNewEmailConfirmationCodesAsync(userId);
+        await _authService.GetNewEmailConfirmationCodesAsync(userId, emailDto.Email);
     }
     
     [HasPermission(Permissions.CustomerPermission)]

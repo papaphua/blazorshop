@@ -11,7 +11,7 @@ public interface IAuthService
     Task<AuthDto> TwoAuthLoginAsync(TwoAuthLoginDto twoAuthLoginDto);
     Task<AuthDto> RefreshAsync(TokenDto tokenDto);
     Task GetConfirmationCodeAsync(Guid userId);
-    Task GetNewEmailConfirmationCodesAsync(Guid userId);
+    Task GetNewEmailConfirmationCodesAsync(Guid userId, string email);
     Task GetEmailConfirmationLinkAsync(Guid userId);
     Task GetPasswordResetLinkAsync(EmailDto emailDto);
     Task ConfirmEmailAsync(ConfirmationParameters parameters);

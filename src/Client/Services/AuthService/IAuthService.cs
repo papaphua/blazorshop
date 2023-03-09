@@ -12,7 +12,7 @@ public interface IAuthService
     Task Logout();
     Task TryRefreshToken();
     Task GetConfirmationCode();
-    Task GetNewEmailConfirmationCode();
+    Task GetNewEmailConfirmationCode(EmailDto emailDto);
     Task GetEmailConfirmationLink();
     Task GetPasswordResetLink(EmailDto emailDto);
     Task ConfirmEmail(ConfirmationParameters parameters);
