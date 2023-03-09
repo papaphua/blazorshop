@@ -41,6 +41,11 @@
                         <InputDate class="form-control" @bind-Value="UserProfile.BirthDate"/>
                         <ValidationMessage For="@(() => UserProfile.BirthDate)"></ValidationMessage>
                     </div>
+                    
+                    <div>
+                        <label class="form-label mt-2" for="@UserProfile.IsTwoAuth">2FA</label>
+                        <InputCheckbox class="form-check" @bind-Value="UserProfile.IsTwoAuth"/>
+                    </div>
                 </div>
 
                 <div class="buttons">

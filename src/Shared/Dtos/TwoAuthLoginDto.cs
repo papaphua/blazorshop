@@ -17,7 +17,6 @@ public sealed class TwoAuthLoginDto
     public string Password { get; set; } = null!;
     
     [Required(ErrorMessage = "Code is required.")]
-    [StringLength(8, ErrorMessage = "The {0} must be {2} characters long.", MinimumLength = 8)]
     [DisplayName("Confirmation code from email")]
     public string ConfirmationCode { get; set; } = null!;
 }

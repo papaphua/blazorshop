@@ -13,7 +13,11 @@
                 <div class="fields">
                     <div>
                         <label class="form-label" for="@TwoAuthLoginDto.Login">Login</label>
-                        <InputText class="form-control" type="text" @bind-Value="TwoAuthLoginDto.Login"/>
+                        <InputText class="form-control" type="text" disabled
+                                   Value="@TwoAuthLoginDto.Login"
+                                   ValueExpression="() => TwoAuthLoginDto.Login"
+                                   ValueChanged="(v) => v = TwoAuthLoginDto.Login"/>
+                        <ValidationMessage For="@(() => TwoAuthLoginDto.Login)"></ValidationMessage>
                         <ValidationMessage For="@(() => TwoAuthLoginDto.Login)"></ValidationMessage>
                     </div>
 
@@ -26,7 +30,7 @@
 
                     <div>
                         <label class="form-label mt-2" for="@TwoAuthLoginDto.ConfirmationCode">Confirmation Code From Email</label>
-                        <InputText class="form-control" type="password" @bind-Value="TwoAuthLoginDto.ConfirmationCode"/>
+                        <InputText class="form-control" type="text" @bind-Value="TwoAuthLoginDto.ConfirmationCode"/>
                         <ValidationMessage For="@(() => TwoAuthLoginDto.ConfirmationCode)"></ValidationMessage>
                     </div>
                 </div>
