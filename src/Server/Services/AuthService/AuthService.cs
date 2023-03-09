@@ -111,6 +111,7 @@ public sealed class AuthService : IAuthService
         if (!user.IsTwoAuth) return GenerateLoginLink(_urlOptions.DefaultLoginUrl, loginDto.Login);
 
         await _securityRepository.GenerateConfirmationCode(user.Id);
+        await GetConfirmationCodeAsync(user.Id);
         return GenerateLoginLink(_urlOptions.TwoAuthLoginUrl, loginDto.Login);
     }
 

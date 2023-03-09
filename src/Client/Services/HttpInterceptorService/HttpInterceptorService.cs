@@ -28,8 +28,7 @@ public sealed class HttpInterceptorService
         {
             await _authService.TryRefreshToken();
         }
-        
-        if (!e.Response.IsSuccessStatusCode)
+        else if (!e.Response.IsSuccessStatusCode)
         {
             var content = await e.GetCapturedContentAsync();
 
@@ -40,6 +39,10 @@ public sealed class HttpInterceptorService
             if (exceptionMessage is null) return;
 
             await _notificationService.AddNotification(exceptionMessage.Message);
+        }
+        else
+        {
+            e.Cancel = true;
         }
     }
 
