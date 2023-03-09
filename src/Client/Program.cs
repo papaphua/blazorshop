@@ -22,6 +22,7 @@ using Toolbelt.Blazor.Extensions.DependencyInjection;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
+
 builder.Services.AddHttpClientInterceptor();
 
 builder.Services.AddHttpClient("BlazorShop.ServerAPI",

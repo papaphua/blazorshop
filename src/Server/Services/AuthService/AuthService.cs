@@ -271,7 +271,7 @@ public sealed class AuthService : IAuthService
         await _mailService.SendEmailAsync(user.Email, Emails.PasswordReset(link));
     }
 
-    public async Task ConfirmEmailAsync(ConfirmationParameters parameters)
+    public async Task<ResponseDto> ConfirmEmailAsync(ConfirmationParameters parameters)
     {
         var user = await _userRepository.GetByEmailAsync(parameters.Email);
 
@@ -285,6 +285,8 @@ public sealed class AuthService : IAuthService
             await _securityRepository.RemoveConfirmationToken(user.Id);
             await _userRepository.SaveAsync();
         }
+        
+        return new ResponseDto("Email confirmed");
     }
 
     public async Task ResetPasswordAsync(PasswordResetDto passwordResetDto)

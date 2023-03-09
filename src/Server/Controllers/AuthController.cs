@@ -92,9 +92,9 @@ public sealed class AuthController : ControllerBase
     
     [AllowAnonymous]
     [HttpPost("email/confirmation")]
-    public async Task ConfirmEmail(ConfirmationParameters parameters)
+    public async Task<ResponseDto> ConfirmEmail(ConfirmationParameters parameters)
     {
-        await _authService.ConfirmEmailAsync(parameters);
+        return await _authService.ConfirmEmailAsync(parameters);
     }
     
     [AllowAnonymous]

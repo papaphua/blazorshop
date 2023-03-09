@@ -15,6 +15,6 @@ public interface IAuthService
     Task GetNewEmailConfirmationCode(EmailDto emailDto);
     Task GetEmailConfirmationLink();
     Task GetPasswordResetLink(EmailDto emailDto);
-    Task ConfirmEmail(ConfirmationParameters parameters);
+    Task<ResponseDto> ConfirmEmail(ConfirmationParameters parameters);
     Task ResetPassword(PasswordResetDto passwordResetDto);
 }

@@ -131,14 +131,19 @@ public sealed class AuthService : IAuthService
         await _http.PostAsJsonAsync("api/authentication/password/reset/request", emailDto);
     }
 
-    public async Task ConfirmEmail(ConfirmationParameters parameters)
+    public async Task<ResponseDto> ConfirmEmail(ConfirmationParameters parameters)
     {
-        await _http.PostAsJsonAsync("api/authentication/email/confirmation", parameters);
+        var response = await _http.PostAsJsonAsync("api/authentication/email/confirmation", parameters);
+
+        if (response is null) return new ResponseDto("Email not confirmed");
+
+        return await response.Content.ReadFromJsonAsync<ResponseDto>();
     }
 
     public async Task ResetPassword(PasswordResetDto passwordResetDto)
     {
         await _http.PostAsJsonAsync("api/authentication/password/reset", passwordResetDto);
+        _navigation.NavigateTo("accounts/login");
     }
 
     private async Task RefreshToken()
