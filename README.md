@@ -18,9 +18,9 @@
 
 ### Requirements
 
-* .Net 7.0
-* Microsoft SQL Server
-* [EF Core tools](https://learn.microsoft.com/en-us/ef/core/cli/dotnet)
+* .Net 7.0;
+* Microsoft SQL Server;
+* [EF Core tools](https://learn.microsoft.com/en-us/ef/core/cli/dotnet);
 * [Stripe CLI](https://stripe.com/docs/stripe-cli) and Stripe account for test purchases;
 * SendGrid account for sending emails;
 
