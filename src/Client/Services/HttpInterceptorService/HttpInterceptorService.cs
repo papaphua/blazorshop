@@ -20,28 +20,24 @@ public sealed class HttpInterceptorService
         _authService = authService;
     }
 
-    public void RegisterEvent() => _interceptor.AfterSendAsync += InterceptBeforeHttpAsync;
+    public void RegisterEvent() => _interceptor.AfterSendAsync += InterceptAfterHttpAsync;
 
-    private async Task InterceptBeforeHttpAsync(object sender, HttpClientInterceptorEventArgs e)
+    private async Task InterceptAfterHttpAsync(object sender, HttpClientInterceptorEventArgs args)
     {
-        if (!e.Request.RequestUri.AbsolutePath.Contains("refresh"))
+        if (!args.Request.RequestUri.AbsolutePath.Contains("refresh"))
         {
             await _authService.TryRefreshToken();
         }
         
-        if (!e.Response.IsSuccessStatusCode)
+        if (!args.Response.IsSuccessStatusCode)
         {
-            var content = await e.GetCapturedContentAsync();
-
-            if (content is null) return;
-
+            var content = args.Response.Content;
+            
             var exceptionMessage = await content.ReadFromJsonAsync<ExceptionDto>();
-
-            if (exceptionMessage is null) return;
 
             await _notificationService.AddNotification(exceptionMessage.Message);
         }
     }
 
-    public void DisposeEvent() => _interceptor.BeforeSendAsync -= InterceptBeforeHttpAsync;
+    public void DisposeEvent() => _interceptor.AfterSendAsync -= InterceptAfterHttpAsync;
 }
