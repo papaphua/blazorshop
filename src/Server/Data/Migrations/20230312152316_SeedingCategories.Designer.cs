@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorShop.Server.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230228163032_Initial")]
-    partial class Initial
+    [Migration("20230312152316_SeedingCategories")]
+    partial class SeedingCategories
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,6 +42,26 @@ namespace BlazorShop.Server.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Category", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("15400e57-5233-4099-967c-5b573242e32c"),
+                            Name = "Books",
+                            Uri = "books"
+                        },
+                        new
+                        {
+                            Id = new Guid("679d1ff2-4291-4ed0-9da4-8b7461312bb2"),
+                            Name = "Movies",
+                            Uri = "movies"
+                        },
+                        new
+                        {
+                            Id = new Guid("c4c8de44-d469-42c7-876b-918fc252e500"),
+                            Name = "Video Games",
+                            Uri = "video-games"
+                        });
                 });
 
             modelBuilder.Entity("BlazorShop.Server.Data.Entities.Comment", b =>
@@ -139,6 +159,10 @@ namespace BlazorShop.Server.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -174,6 +198,64 @@ namespace BlazorShop.Server.Data.Migrations
                     b.ToTable("Role", (string)null);
                 });
 
+            modelBuilder.Entity("BlazorShop.Server.Data.Entities.Security", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ConfirmationCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ConfirmationCodeExpiry")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ConfirmationToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ConfirmationTokenExpiry")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NewEmailConfirmationCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Security", (string)null);
+                });
+
+            modelBuilder.Entity("BlazorShop.Server.Data.Entities.Session", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccessToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Session", (string)null);
+                });
+
             modelBuilder.Entity("BlazorShop.Server.Data.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -196,11 +278,17 @@ namespace BlazorShop.Server.Data.Migrations
                     b.Property<bool>("IsEmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsTwoAuth")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentProfileId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("RegisterDate")
@@ -280,6 +368,28 @@ namespace BlazorShop.Server.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("BlazorShop.Server.Data.Entities.Security", b =>
+                {
+                    b.HasOne("BlazorShop.Server.Data.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BlazorShop.Server.Data.Entities.Session", b =>
+                {
+                    b.HasOne("BlazorShop.Server.Data.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

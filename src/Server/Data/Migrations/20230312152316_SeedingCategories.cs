@@ -18,9 +18,9 @@ namespace BlazorShop.Server.Data.Migrations
                 columns: new[] { "Id", "Name", "Uri" },
                 values: new object[,]
                 {
-                    { new Guid("280ef940-c13d-4b9d-9df8-57b853be7e01"), "Books", "books" },
-                    { new Guid("4f73b1ef-2287-4ef6-bb5a-12992b9a89f5"), "Movies", "movies" },
-                    { new Guid("e37b0c9e-8610-41b9-97d6-ff3e52dd3af7"), "Video Games", "video-games" }
+                    { new Guid("15400e57-5233-4099-967c-5b573242e32c"), "Books", "books" },
+                    { new Guid("679d1ff2-4291-4ed0-9da4-8b7461312bb2"), "Movies", "movies" },
+                    { new Guid("c4c8de44-d469-42c7-876b-918fc252e500"), "Video Games", "video-games" }
                 });
         }
 
@@ -30,17 +30,17 @@ namespace BlazorShop.Server.Data.Migrations
             migrationBuilder.DeleteData(
                 table: "Category",
                 keyColumn: "Id",
-                keyValue: new Guid("280ef940-c13d-4b9d-9df8-57b853be7e01"));
+                keyValue: new Guid("15400e57-5233-4099-967c-5b573242e32c"));
 
             migrationBuilder.DeleteData(
                 table: "Category",
                 keyColumn: "Id",
-                keyValue: new Guid("4f73b1ef-2287-4ef6-bb5a-12992b9a89f5"));
+                keyValue: new Guid("679d1ff2-4291-4ed0-9da4-8b7461312bb2"));
 
             migrationBuilder.DeleteData(
                 table: "Category",
                 keyColumn: "Id",
-                keyValue: new Guid("e37b0c9e-8610-41b9-97d6-ff3e52dd3af7"));
+                keyValue: new Guid("c4c8de44-d469-42c7-876b-918fc252e500"));
         }
     }
 }

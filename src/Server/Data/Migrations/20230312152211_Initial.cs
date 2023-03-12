@@ -60,6 +60,8 @@ namespace BlazorShop.Server.Data.Migrations
                     IsEmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RegisterDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsTwoAuth = table.Column<bool>(type: "bit", nullable: false),
+                    PaymentProfileId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Gender = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -78,6 +80,7 @@ namespace BlazorShop.Server.Data.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Uri = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
@@ -129,6 +132,50 @@ namespace BlazorShop.Server.Data.Migrations
                     table.PrimaryKey("PK_Comment", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Comment_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Security",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ConfirmationCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NewEmailConfirmationCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConfirmationCodeExpiry = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ConfirmationToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConfirmationTokenExpiry = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Security", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Security_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Session",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AccessToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RefreshTokenExpiryTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Session", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Session_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "Id",
@@ -204,6 +251,16 @@ namespace BlazorShop.Server.Data.Migrations
                 column: "PermissionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Security_UserId",
+                table: "Security",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Session_UserId",
+                table: "Session",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserRole_RoleId",
                 table: "UserRole",
                 column: "RoleId");
@@ -217,6 +274,12 @@ namespace BlazorShop.Server.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "RolePermission");
+
+            migrationBuilder.DropTable(
+                name: "Security");
+
+            migrationBuilder.DropTable(
+                name: "Session");
 
             migrationBuilder.DropTable(
                 name: "UserRole");
