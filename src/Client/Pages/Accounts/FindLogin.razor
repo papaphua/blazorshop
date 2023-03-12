@@ -1,0 +1,29 @@
+﻿@page "/accounts/login/find"
+
+<div class="login background">
+    <div class="form">
+        <EditForm Model="LoginDto" OnValidSubmit="FindLoginAction">
+            <DataAnnotationsValidator/>
+
+            <div class="content">
+                <div class="title">
+                    <h2>Find Login</h2>
+                </div>
+
+                <div class="fields">
+                    <div>
+                        <label class="form-label" for="@LoginDto.Login">Login</label>
+                        <InputText class="form-control" type="text" @bind-Value="LoginDto.Login"/>
+                        <ValidationMessage For="@(() => LoginDto.Login)"></ValidationMessage>
+                    </div>
+
+                    <a href="/accounts/register">Or create account, if you don't have one.</a>
+                </div>
+
+                <div class="buttons">
+                    <button class="btn btn-primary" type="submit">Find</button>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+</div>

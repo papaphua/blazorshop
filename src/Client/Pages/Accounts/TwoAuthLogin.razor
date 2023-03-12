@@ -1,0 +1,44 @@
+﻿@page "/accounts/login/2fa"
+
+<div class="login background">
+    <div class="form">
+        <EditForm Model="TwoAuthLoginDto" OnValidSubmit="LoginAction">
+            <DataAnnotationsValidator/>
+
+            <div class="content">
+                <div class="title">
+                    <h2>Log in to account</h2>
+                </div>
+
+                <div class="fields">
+                    <div>
+                        <label class="form-label" for="@TwoAuthLoginDto.Login">Login</label>
+                        <InputText class="form-control" type="text" disabled
+                                   Value="@TwoAuthLoginDto.Login"
+                                   ValueExpression="() => TwoAuthLoginDto.Login"
+                                   ValueChanged="(v) => v = TwoAuthLoginDto.Login"/>
+                        <ValidationMessage For="@(() => TwoAuthLoginDto.Login)"></ValidationMessage>
+                        <ValidationMessage For="@(() => TwoAuthLoginDto.Login)"></ValidationMessage>
+                    </div>
+
+                    <div>
+                        <label class="form-label mt-2" for="@TwoAuthLoginDto.Password">Password</label>
+                        <InputText class="form-control" type="password" @bind-Value="TwoAuthLoginDto.Password"/>
+                        <ValidationMessage For="@(() => TwoAuthLoginDto.Password)"></ValidationMessage>
+                        <a href="/accounts/password/reset/request">Forgot password</a>
+                    </div>
+
+                    <div>
+                        <label class="form-label mt-2" for="@TwoAuthLoginDto.ConfirmationCode">Confirmation Code From Email</label>
+                        <InputText class="form-control" type="text" @bind-Value="TwoAuthLoginDto.ConfirmationCode"/>
+                        <ValidationMessage For="@(() => TwoAuthLoginDto.ConfirmationCode)"></ValidationMessage>
+                    </div>
+                </div>
+
+                <div class="buttons">
+                    <button class="btn btn-primary" type="submit">Login</button>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+</div>

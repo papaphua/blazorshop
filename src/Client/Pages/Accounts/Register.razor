@@ -1,0 +1,47 @@
+﻿@page "/accounts/register"
+
+<div class="register background">
+    <div class="form">
+        <EditForm Model="RegisterDto" OnValidSubmit="RegisterAction">
+            <DataAnnotationsValidator/>
+
+            <div class="content">
+                <div class="title">
+                    <h2>Register</h2>
+                </div>
+
+                <div class="fields">
+                    <div>
+                        <label class="form-label" for="@RegisterDto.Username">Username</label>
+                        <InputText class="form-control" type="text" @bind-Value="RegisterDto.Username"/>
+                        <ValidationMessage For="@(() => RegisterDto.Username)"></ValidationMessage>
+                    </div>
+
+                    <div>
+                        <label class="form-label mt-2" for="@RegisterDto.Email">Email</label>
+                        <InputText class="form-control" type="email" @bind-Value="RegisterDto.Email"/>
+                        <ValidationMessage For="@(() => RegisterDto.Email)"></ValidationMessage>
+                    </div>
+
+                    <div>
+                        <label class="form-label mt-2" for="@RegisterDto.Password">Password</label>
+                        <InputText class="form-control" type="password" @bind-Value="RegisterDto.Password"/>
+                        <ValidationMessage For="@(() => RegisterDto.Password)"></ValidationMessage>
+                    </div>
+
+                    <div>
+                        <label class="form-label mt-2" for="@RegisterDto.ConfirmPassword">Confirm Password</label>
+                        <InputText class="form-control" type="password" @bind-Value="RegisterDto.ConfirmPassword"/>
+                        <ValidationMessage For="@(() => RegisterDto.ConfirmPassword)"></ValidationMessage>
+                    </div>
+                </div>
+
+                <div class="buttons">
+                    <button class="btn btn-primary" type="submit">Register</button>
+                </div>
+
+                <span>First user to create is going to be added to Admin role</span>
+            </div>
+        </EditForm>
+    </div>
+</div>

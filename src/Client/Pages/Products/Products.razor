@@ -1,0 +1,34 @@
+﻿@page "/products"
+@page "/products/category/{categoryUrl}"
+
+<div class="products">
+    <div class="search background">
+        <input type="text" class="form-control" placeholder="Search..."
+               @bind-Value="@_productParameters.Search" @bind-Value:event="oninput" @onkeyup="async () => await GetProducts()">
+    </div>
+
+    <div class="products--container">
+        @if (Items.Count == 0)
+        {
+        }
+        else
+        {
+            @foreach (var item in Items)
+            {
+                <a href="/products/@item.Uri">
+                    <div class="product background">
+                        <img class="image" src="@item.ImageUrl" alt="@item.Name"/>
+
+                        <span>@item.Name</span>
+
+                        <text class="price">$@item.Price</text>
+                    </div>
+                </a>
+            }
+        }
+    </div>
+
+    <div class="paging background">
+        <Pagination MetaData="MetaData" Spread="1" SelectedPage="() => SelectPageAction(MetaData.CurrentPage)"/>
+    </div>
+</div>

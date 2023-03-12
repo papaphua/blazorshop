@@ -1,0 +1,78 @@
+﻿@page "/products/{Uri}"
+
+<div class="product">
+    <div class="container background">
+        <img src="@Item.ImageUrl" alt="@Item.Name"/>
+
+        <div class="text">
+            <div class="title">
+                <h3>@Item.Name</h3>
+            </div>
+
+            <div class="description">
+                <h4 class="description--title">Description</h4>
+                <span class="description--text">@Item.Description</span>
+            </div>
+
+            <div class="price">
+                $@Item.Price
+            </div>
+
+            <div>
+                <button class="btn btn-primary" @onclick="() => AddToCartAction(Item)">Add to cart</button>
+            </div>
+        </div>
+    </div>
+
+    <AuthorizeView>
+        <Authorized Context="auth">
+            <div class="add-comment background">
+                <EditForm Model="NewComment" OnValidSubmit="AddCommentAction">
+                    <div>
+                        <label class="form-label" for="@NewComment.Text">Add comment</label>
+                        <InputText class="form-control" @bind-Value="NewComment.Text"/>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" type="submit">Save</button>
+                    </div>
+                </EditForm>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <a href="/accounts/login/find">Log in to leave a comment</a>
+        </NotAuthorized>
+    </AuthorizeView>
+
+    <div class="list-comments">
+        @foreach (var c in Comments)
+        {
+            var link = "profile/view/" + c.Username;
+
+            <div class="comment background">
+                <div class="user">
+                    <a href="@link">@c.Username</a>
+                </div>
+                <div class="text-value">
+                    @if (c.UserId == AuthUser?.Id)
+                    {
+                        <InputText @bind-Value="c.Text" class="form-control"/>
+                    }
+                    else
+                    {
+                        <InputText @bind-Value="c.Text" class="form-control" disabled/>
+                    }
+                </div>
+                <div class="edit">
+                    @if (c.UserId == AuthUser?.Id)
+                    {
+                        <button class="btn btn-primary" @onclick="() => UpdateCommentAction(c)">Update</button>
+                        <button class="btn btn-danger" @onclick="() => DeleteCommentAction(c.Id)">Delete</button>
+                    }
+                </div>
+            </div>
+        }
+        <div class="paging background">
+            <Pagination MetaData="MetaData" Spread="1" SelectedPage="() => SelectPageAction(MetaData.CurrentPage)"/>
+        </div>
+    </div>
+</div>

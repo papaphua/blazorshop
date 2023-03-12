@@ -1,0 +1,40 @@
+﻿@using System.Security.Claims
+<div class="profile background">
+    <h3>Profile</h3>
+
+    <AuthorizeView>
+        <Authorized>
+
+            @if (context.User.HasClaim(c => c.Value.Contains(Permissions.AdminPermission.ToString())))
+            {
+                <NavLink class="nav-link" href="/management" Match="NavLinkMatch.All">
+                    <span aria-hidden="true">Management</span>
+                </NavLink>
+            }
+
+            <NavLink class="nav-link" href="/profile/email/change" Match="NavLinkMatch.All">
+                <span aria-hidden="true">Change email</span>
+            </NavLink>
+
+            <NavLink class="nav-link" href="/profile/password/change" Match="NavLinkMatch.All">
+                <span aria-hidden="true">Change password</span>
+            </NavLink>
+
+            <NavLink class="nav-link" @onclick="DeleteAction" Match="NavLinkMatch.All">
+                <span aria-hidden="true">Delete profile</span>
+            </NavLink>
+
+            <button class="btn btn-primary" @onclick="LogoutAction">
+                Logout
+            </button>
+        </Authorized>
+
+        <NotAuthorized>
+            <div class="text">
+                <a href="/accounts/login/find">Login</a>
+                or
+                <a href="/accounts/register">create account</a>
+            </div>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
