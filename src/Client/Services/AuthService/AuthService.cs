@@ -43,8 +43,6 @@ public sealed class AuthService : IAuthService
     {
         var response = await _http.PostAsJsonAsync("api/authentication/login/default", defaultLoginDto);
 
-        if (!response.IsSuccessStatusCode) return;
-
         var content = await response.Content.ReadFromJsonAsync<AuthDto>();
 
         if (!content.IsSucceeded)
