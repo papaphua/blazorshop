@@ -30,20 +30,20 @@
 ```shell
 git clone https://github.com/papaphua/BlazorShop.git
 ```
-2) Apply migration within the server folder:
+2) Apply migration within the server project root folder:
 ```shell
 dotnet ef database update
 ```
-3) Set secrets within the server folder:
-```shell
-dotnet user-secrets set "Secrets:JwtSecretKey" "YOUR_JWT_SECRET_KEY"
-dotnet user-secrets set "Secrets:StripePrivateKey" "YOUR_STRIPE_PRIVATE_KEY"
-dotnet user-secrets set "Secrets:StripeWebHookSecret" "YOUR_STRIPE_WEBHOOK_SECRET"
-dotnet user-secrets set "Secrets:SendGridApiKey" "YOUR_SENDGRID_API_KEY"
-```
-4) 
+3) Execute stripe listen command to receive events
 ```shell
 stripe listen --forward-to localhost:7005/api/payments/webhook
+```
+4) Create .env file in server project root folder with following content:
+```text
+JwtSecretKey=YourValue        // any value to generate and verify tokens
+StripePrivateKey=YourValue    // from dashboard.stripe.com/test/apikeys
+StripeWebHookSecret=YourValue // stripe webhook secret received after executing stripe listen command
+SendGridApiKey=YourValue // from app.sendgrid.com/settings/api_keys
 ```
 5) Run BlazorShop.Server: https
 
