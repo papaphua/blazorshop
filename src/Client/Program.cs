@@ -8,7 +8,6 @@ using BlazorShop.Client.Services.CartService;
 using BlazorShop.Client.Services.CategoryService;
 using BlazorShop.Client.Services.CommentService;
 using BlazorShop.Client.Services.HttpInterceptorService;
-using BlazorShop.Client.Services.NotificationService;
 using BlazorShop.Client.Services.PaymentService;
 using BlazorShop.Client.Services.ProductService;
 using BlazorShop.Client.Services.ProfileService;
@@ -18,6 +17,10 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
+using Blazorise;
+using Blazorise.Material;
+using Blazorise.Icons.Material;
+using BlazorShop.Client.Services.ResponseService;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -35,6 +38,14 @@ builder.Services.AddHttpClient("BlazorShop.ServerAPI",
 // Supply HttpClient instances that include access tokens when making requests to the server project
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("BlazorShop.ServerAPI"));
 
+builder.Services
+    .AddBlazorise(options =>
+    {
+        options.Immediate = true;
+    })
+    .AddMaterialProviders()
+    .AddMaterialIcons();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
@@ -43,7 +54,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICartService, CartService>();
-builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IResponseService, ResponseService>();
 
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 

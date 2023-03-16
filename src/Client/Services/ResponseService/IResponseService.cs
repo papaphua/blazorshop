@@ -1,6 +1,6 @@
-﻿namespace BlazorShop.Client.Services.NotificationService;
+﻿namespace BlazorShop.Client.Services.ResponseService;
 
-public interface INotificationService
+public interface IResponseService
 {
     List<string> Notifications { get; set; }
     event Action? NotificationAdded;

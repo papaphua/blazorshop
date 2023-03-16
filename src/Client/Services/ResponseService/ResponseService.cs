@@ -1,14 +1,14 @@
 ﻿using Blazored.LocalStorage;
 
-namespace BlazorShop.Client.Services.NotificationService;
+namespace BlazorShop.Client.Services.ResponseService;
 
-public sealed class NotificationService : INotificationService
+public sealed class ResponseService : IResponseService
 {
     private const int MaxNotificationSize = 3;
 
     private readonly ILocalStorageService _localStorage;
 
-    public NotificationService(ILocalStorageService localStorage)
+    public ResponseService(ILocalStorageService localStorage)
     {
         _localStorage = localStorage;
     }
