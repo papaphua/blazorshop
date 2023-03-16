@@ -1,4 +1,5 @@
-﻿using BlazorShop.Client.Services.HttpInterceptorService;
+﻿using Blazorise;
+using BlazorShop.Client.Services.HttpInterceptorService;
 using BlazorShop.Client.Services.ProfileService;
 using BlazorShop.Shared.Dtos;
 using Microsoft.AspNetCore.Components;
@@ -15,6 +16,7 @@ public sealed partial class EmailChangeConfirmation : IDisposable
     private const string Email = "email";
     
     private EmailChangeDto EmailChangeDto { get; } = new();
+    private Validations _validations = new();
     
     protected override void OnInitialized()
     {
@@ -29,7 +31,10 @@ public sealed partial class EmailChangeConfirmation : IDisposable
 
     private async Task ChangeEmailAction()
     {
-        await ProfileService.ChangeEmail(EmailChangeDto);
+        if (await _validations.ValidateAll())
+        {
+            await ProfileService.ChangeEmail(EmailChangeDto);
+        }
     }
 
     public void Dispose()

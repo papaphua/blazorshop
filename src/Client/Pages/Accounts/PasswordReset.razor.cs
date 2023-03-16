@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Components;
 namespace BlazorShop.Client.Pages.Accounts;
 
 [AllowAnonymous]
-public sealed partial class PasswordResetRequest : IDisposable
+public sealed partial class PasswordReset : IDisposable
 {
     [Inject] private IAuthService AuthService { get; set; } = null!;
     [Inject] private HttpInterceptorService HttpInterceptorService { get; set; } = null!;

@@ -36,6 +36,6 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class
 
     public async Task<bool> IsEmptyAsync()
     {
-        return await Context.Set<T>().AnyAsync();
+        return !await Context.Set<T>().AnyAsync();
     }
 }

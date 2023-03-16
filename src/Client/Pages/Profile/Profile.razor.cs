@@ -1,4 +1,5 @@
-﻿using BlazorShop.Client.Auth.PermissionHandler;
+﻿using Blazorise;
+using BlazorShop.Client.Auth.PermissionHandler;
 using BlazorShop.Client.Services.HttpInterceptorService;
 using BlazorShop.Client.Services.ProfileService;
 using BlazorShop.Shared.Dtos;
@@ -13,6 +14,7 @@ public sealed partial class Profile : IDisposable
     [Inject] private HttpInterceptorService HttpInterceptorService { get; set; } = null!;
 
     private ProfileDto UserProfile { get; set; } = new();
+    private Validations _validations = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -22,7 +24,10 @@ public sealed partial class Profile : IDisposable
 
     private async Task SaveAction()
     {
-        await ProfileService.UpdateUserProfile(UserProfile);
+        if (await _validations.ValidateAll())
+        {
+            await ProfileService.UpdateUserProfile(UserProfile);
+        }
     }
     
     public void Dispose()
