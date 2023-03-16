@@ -4,11 +4,12 @@
     <Row>
         <CardDeck>
             <Image Width="Width.Is25" Margin="Margin.Is1.FromEnd" Shadow="Shadow.Small" Border="Border.Rounded" Source="@Item.ImageUrl" Alt="@Item.Name"/>
-            <Card>
+            <Card Background="Background.White">
                 <CardBody>
+                    <CardTitle TextColor="TextColor.Primary" Size="5">@Item.Name</CardTitle>
                     <CardTitle Size="5">@Item.Description</CardTitle>
                     <CardTitle TextColor="TextColor.Success" Size="5">$@Item.Price</CardTitle>
-                    <Button Background="Background.Primary" Type="ButtonType.Link" Clicked="() => AddToCartAction(Item)">
+                    <Button Background="Background.Secondary" Type="ButtonType.Link" Clicked="() => AddToCartAction(Item)">
                         Add to cart
                     </Button>
                 </CardBody>
@@ -16,7 +17,7 @@
         </CardDeck>
     </Row>
     <Row>
-        <Card Width="Width.Is100" Margin="Margin.Is2.FromTop">
+        <Card Background="Background.White" Shadow="Shadow.Small" Width="Width.Is100" Margin="Margin.Is2.FromTop">
             <CardBody>
                 <AuthorizeView>
                     <Authorized Context="auth">
@@ -42,7 +43,7 @@
         var isActive = false;
 
         <Row Margin="Margin.Is2.FromTop">
-            <Card Width="Width.Is100">
+            <Card Shadow="Shadow.Small" Width="Width.Is100">
                 <CardHeader>
                     <CardTitle>
                         <Button Background="Background.Secondary" Type="ButtonType.Link" To="@link">

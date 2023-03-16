@@ -3,7 +3,7 @@
 
 
 <Div>
-    <TextEdit Border="Border.Rounded" Size="Size.Medium" Shadow="Shadow.Small" Role="TextRole.Search" Placeholder="Search..."
+    <TextEdit Background="Background.White" Border="Border.Rounded" Size="Size.Medium" Shadow="Shadow.Small" Role="TextRole.Search" Placeholder="Search..."
               @bind-Text="@_productParameters.Search" @onkeyup="async () => await GetProducts()" Margin="Margin.Is3.FromBottom"/>
 
     <Row RowColumns="RowColumns.Are5">
@@ -16,10 +16,8 @@
                     <CardImage Source="@product.ImageUrl" Alt="@product.Name">
                     </CardImage>
                     <CardBody>
-                        <CardTitle Size="5">@product.Name</CardTitle>
-                        <CardText>
-                            <Small TextColor="TextColor.Success">$@product.Price</Small>
-                        </CardText>
+                        <CardTitle Size="4">@product.Name</CardTitle>
+                        <CardTitle TextColor="TextColor.Success" Size="5">$@product.Price</CardTitle>
                         <Button Background="Background.Primary" Type="ButtonType.Link" To="@link">
                             <Icon Name="IconName.ArrowRight"/>
                         </Button>

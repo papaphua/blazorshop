@@ -11,7 +11,7 @@
     </BarBrand>
     <BarMenu>
         <BarStart>
-            <BarItem> 
+            <BarItem>
                 <BarDropdown @bind-Visible="_categoriesVisible">
                     <BarDropdownToggle>
                         <BarIcon IconName="IconName.ListUl"/>
@@ -51,7 +51,7 @@
                 </BarDropdown>
             </BarItem>
             <AuthorizeView>
-                @if (context.User.HasClaim(claim => 
+                @if (context.User.HasClaim(claim =>
                     claim.Value.Contains(Permissions.AdminPermission.ToString())))
                 {
                     <BarItem>
@@ -69,6 +69,14 @@
                 }
             </AuthorizeView>
         </BarStart>
+        <BarEnd>
+            <BarItem>
+                <BarLink To="https://github.com/papaphua/BlazorShop">
+                    <BarIcon IconName="_githubLogo"/>
+                    View on github
+                </BarLink>
+            </BarItem>
+        </BarEnd>
     </BarMenu>
 </Bar>
 
@@ -78,6 +86,8 @@
     private bool _managementVisible = false;
     private bool _categoriesVisible = true;
 
-    private RenderFragment _smallLogo = @<img src="images/logo-small.png" alt="logo" style="width:42px; height: 32px"/>;
+    private RenderFragment _smallLogo = @<img src="images/logo-small.png" alt="logo" style="width:36px; height: 27px"/>;
+
+    private RenderFragment _githubLogo = @<img src="images/github-mark-white.png" alt="repository" style="width: 35px; height: 35px;">;
 
 }
