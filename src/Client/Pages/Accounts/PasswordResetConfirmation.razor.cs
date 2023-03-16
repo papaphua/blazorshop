@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using Blazorise;
 using BlazorShop.Client.Auth;
 using BlazorShop.Client.Services.AuthService;
 using BlazorShop.Client.Services.HttpInterceptorService;
@@ -20,6 +21,7 @@ public sealed partial class PasswordResetConfirmation : IDisposable
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 
     private PasswordResetDto PasswordResetDto { get; } = new();
+    private Validations _validations = new();
 
     protected override void OnInitialized()
     {
@@ -44,6 +46,9 @@ public sealed partial class PasswordResetConfirmation : IDisposable
 
     private async Task ResetAction()
     {
-        await AuthService.ResetPassword(PasswordResetDto);
+        if (await _validations.ValidateAll())
+        {
+            await AuthService.ResetPassword(PasswordResetDto);
+        }
     }
 }

@@ -1,47 +1,61 @@
 ﻿@page "/accounts/register"
 
-<div class="register background">
-    <div class="form">
-        <EditForm Model="RegisterDto" OnValidSubmit="RegisterAction">
-            <DataAnnotationsValidator/>
-
-            <div class="content">
-                <div class="title">
-                    <h2>Register</h2>
-                </div>
-
-                <div class="fields">
-                    <div>
-                        <label class="form-label" for="@RegisterDto.Username">Username</label>
-                        <InputText class="form-control" type="text" @bind-Value="RegisterDto.Username"/>
-                        <ValidationMessage For="@(() => RegisterDto.Username)"></ValidationMessage>
-                    </div>
-
-                    <div>
-                        <label class="form-label mt-2" for="@RegisterDto.Email">Email</label>
-                        <InputText class="form-control" type="email" @bind-Value="RegisterDto.Email"/>
-                        <ValidationMessage For="@(() => RegisterDto.Email)"></ValidationMessage>
-                    </div>
-
-                    <div>
-                        <label class="form-label mt-2" for="@RegisterDto.Password">Password</label>
-                        <InputText class="form-control" type="password" @bind-Value="RegisterDto.Password"/>
-                        <ValidationMessage For="@(() => RegisterDto.Password)"></ValidationMessage>
-                    </div>
-
-                    <div>
-                        <label class="form-label mt-2" for="@RegisterDto.ConfirmPassword">Confirm Password</label>
-                        <InputText class="form-control" type="password" @bind-Value="RegisterDto.ConfirmPassword"/>
-                        <ValidationMessage For="@(() => RegisterDto.ConfirmPassword)"></ValidationMessage>
-                    </div>
-                </div>
-
-                <div class="buttons">
-                    <button class="btn btn-primary" type="submit">Register</button>
-                </div>
-
-                <span>First user to create is going to be added to Admin role</span>
-            </div>
-        </EditForm>
-    </div>
-</div>
+<Row Flex="Flex.JustifyContent.Center.AlignItems.Center" Margin="Margin.Is5.FromTop">
+    <Column ColumnSize="ColumnSize.Is6.OnDesktop">
+        <Card>
+            <CardHeader>
+                <CardTitle>Registration</CardTitle>
+            </CardHeader>
+            <CardBody>
+                <EditForm Model="@RegisterDto" OnValidSubmit="RegisterAction">
+                    <Validations @ref="_validations" ValidateOnLoad="false" Mode="ValidationMode.Auto" Model="RegisterDto">
+                        <DataAnnotationsValidator/>
+                        <Validation>
+                            <Field>
+                                <FieldLabel>Username</FieldLabel>
+                                <FieldBody>
+                                    <TextEdit Placeholder="Enter username" @bind-Text="@RegisterDto.Username">
+                                        <ValidationError/>
+                                    </TextEdit>
+                                </FieldBody>
+                            </Field>
+                        </Validation>
+                        <Validation>
+                            <Field>
+                                <FieldLabel>Email address</FieldLabel>
+                                <FieldBody>
+                                    <TextEdit Placeholder="Enter email address" @bind-Text="@RegisterDto.Email">
+                                        <ValidationError/>
+                                    </TextEdit>
+                                </FieldBody>
+                            </Field>
+                        </Validation>
+                        <Validation>
+                            <Field>
+                                <FieldLabel>Password</FieldLabel>
+                                <FieldBody>
+                                    <TextEdit Role="TextRole.Password"
+                                              Placeholder="Enter password" @bind-Text="@RegisterDto.Password">
+                                        <ValidationError/>
+                                    </TextEdit>
+                                </FieldBody>
+                            </Field>
+                        </Validation>
+                        <Validation>
+                            <Field>
+                                <FieldLabel>Confirm password</FieldLabel>
+                                <FieldBody>
+                                    <TextEdit Role="TextRole.Password"
+                                              Placeholder="Confirm password" @bind-Text="@RegisterDto.ConfirmPassword">
+                                        <ValidationError/>
+                                    </TextEdit>
+                                </FieldBody>
+                            </Field>
+                        </Validation>
+                        <Button Color="Color.Primary" Type="ButtonType.Submit">Sign up</Button>
+                    </Validations>
+                </EditForm>
+            </CardBody>
+        </Card>
+    </Column>
+</Row>

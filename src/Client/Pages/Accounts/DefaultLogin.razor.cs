@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using Blazorise;
 using BlazorShop.Client.Auth;
 using BlazorShop.Client.Services.AuthService;
 using BlazorShop.Client.Services.HttpInterceptorService;
@@ -19,6 +20,7 @@ public partial class DefaultLogin : IDisposable
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 
     private DefaultLoginDto DefaultLoginDto { get; } = new();
+    private Validations _validations = new();
 
     protected override void OnInitialized()
     {
@@ -38,6 +40,9 @@ public partial class DefaultLogin : IDisposable
 
     private async Task LoginAction()
     {
-        await AuthService.DefaultLogin(DefaultLoginDto);
+        if (await _validations.ValidateAll())
+        {
+            await AuthService.DefaultLogin(DefaultLoginDto);
+        }
     }
 }

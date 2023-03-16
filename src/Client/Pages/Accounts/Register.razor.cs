@@ -1,4 +1,5 @@
-﻿using BlazorShop.Client.Services.AuthService;
+﻿using Blazorise;
+using BlazorShop.Client.Services.AuthService;
 using BlazorShop.Client.Services.HttpInterceptorService;
 using BlazorShop.Shared.Dtos;
 using Microsoft.AspNetCore.Authorization;
@@ -13,6 +14,7 @@ public sealed partial class Register : IDisposable
     [Inject] private HttpInterceptorService HttpInterceptorService { get; set; } = null!;
 
     private RegisterDto RegisterDto { get; } = new();
+    private Validations _validations = new();
 
     protected override void OnInitialized()
     {
@@ -25,6 +27,9 @@ public sealed partial class Register : IDisposable
     
     private async Task RegisterAction()
     {
-        await AuthService.Register(RegisterDto);
+        if (await _validations.ValidateAll())
+        {
+            await AuthService.Register(RegisterDto);
+        }
     }
 }

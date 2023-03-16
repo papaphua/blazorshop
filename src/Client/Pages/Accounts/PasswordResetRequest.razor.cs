@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Blazorise;
 using BlazorShop.Client.Services.AuthService;
 using BlazorShop.Client.Services.HttpInterceptorService;
 using BlazorShop.Shared.Dtos;
@@ -14,6 +15,7 @@ public sealed partial class PasswordResetRequest : IDisposable
     [Inject] private HttpInterceptorService HttpInterceptorService { get; set; } = null!;
     
     private EmailDto EmailDto { get; set; } = new();
+    private Validations _validations = new();
 
     protected override void OnInitialized()
     {
@@ -25,8 +27,11 @@ public sealed partial class PasswordResetRequest : IDisposable
         HttpInterceptorService.DisposeEvent();
     }
 
-    private async Task SendAction()
+    private async Task SendLinkAction()
     {
-        await AuthService.GetPasswordResetLink(EmailDto);
+        if (await _validations.ValidateAll())
+        {
+            await AuthService.GetPasswordResetLink(EmailDto);
+        }
     }
 }
