@@ -2,9 +2,9 @@
 using BlazorShop.Shared.Dtos;
 using Microsoft.AspNetCore.Components;
 
-namespace BlazorShop.Client.Shared.SiderPanels;
+namespace BlazorShop.Client.Shared;
 
-public partial class CategoryPanel
+public sealed partial class SideMenu
 {
     [Inject] private ICategoryService CategoryService { get; set; } = null!;
 

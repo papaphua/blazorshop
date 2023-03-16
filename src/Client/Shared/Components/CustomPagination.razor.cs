@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazorShop.Client.Shared.Components;
 
-public partial class Pagination
+public partial class CustomPagination
 {
     public const string Previous = nameof(Previous);
     public const string Next = nameof(Next);
