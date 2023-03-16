@@ -1,34 +1,35 @@
 ﻿@page "/products"
 @page "/products/category/{categoryUrl}"
 
-<div class="products">
-    <div class="search background">
-        <input type="text" class="form-control" placeholder="Search..."
-               @bind-Value="@_productParameters.Search" @bind-Value:event="oninput" @onkeyup="async () => await GetProducts()">
-    </div>
 
-    <div class="products--container">
-        @if (Items.Count == 0)
+<Div>
+    <TextEdit Border="Border.Rounded" Size="Size.Medium" Shadow="Shadow.Small" Role="TextRole.Search" Placeholder="Search..."
+              @bind-Text="@_productParameters.Search" @onkeyup="async () => await GetProducts()" Margin="Margin.Is3.FromBottom"/>
+
+    <Row RowColumns="RowColumns.Are5">
+        @foreach (var product in Items)
         {
+            var link = "/products/" + product.Uri;
+
+            <Column>
+                <Card>
+                    <CardImage Source="@product.ImageUrl" Alt="@product.Name">
+                    </CardImage>
+                    <CardBody>
+                        <CardTitle Size="5">@product.Name</CardTitle>
+                        <CardText>
+                            <Small TextColor="TextColor.Success">$@product.Price</Small>
+                        </CardText>
+                        <Button Background="Background.Primary" Type="ButtonType.Link" To="@link">
+                            <Icon Name="IconName.ArrowRight"/>
+                        </Button>
+                    </CardBody>
+                </Card>
+            </Column>
         }
-        else
-        {
-            @foreach (var item in Items)
-            {
-                <a href="/products/@item.Uri">
-                    <div class="product background">
-                        <img class="image" src="@item.ImageUrl" alt="@item.Name"/>
+    </Row>
 
-                        <span>@item.Name</span>
-
-                        <text class="price">$@item.Price</text>
-                    </div>
-                </a>
-            }
-        }
-    </div>
-
-    <div class="paging background">
+    <Row Margin="Margin.Is3.FromTop" Flex="Flex.JustifyContent.Center">
         <CustomPagination MetaData="MetaData" Spread="1" SelectedPage="() => SelectPageAction(MetaData.CurrentPage)"/>
-    </div>
-</div>
+    </Row>
+</Div>
