@@ -44,7 +44,9 @@
                                 <BarDropdownItem To="/profile/email/change">Change email</BarDropdownItem>
                                 <BarDropdownItem To="/profile/password/change">Change password</BarDropdownItem>
                                 <BarDropdownItem To="/accounts/register">Log out</BarDropdownItem>
-                                <BarDropdownItem To="/accounts/register">Delete profile</BarDropdownItem>
+                                <BarDropdownItem Style="cursor: pointer" Clicked="@(async () => await ProfileService.CreateDeleteProfileLink())">
+                                    Delete profile
+                                </BarDropdownItem>
                             </Authorized>
                         </AuthorizeView>
                     </BarDropdownMenu>

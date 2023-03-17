@@ -1,6 +1,51 @@
 ﻿@page "/cart"
 
-
+<Div>
+    <Column>
+        <Card>
+            <CardBody Display="Display.Flex.Row" Flex="Flex.JustifyContent.Between">
+                <Div>
+                    <Button Background="Background.Primary" Clicked="ConfirmAction">
+                        Proceed to payment
+                    </Button>
+                    <Button Background="Background.Danger" Clicked="ClearAction">
+                        Clear
+                    </Button>
+                </Div>
+                <Text Style="font-size: 22px">
+                    Total price:
+                    <Text TextColor="TextColor.Success">$@CartService.GetCartPrice(CartItems)</Text>
+                </Text>
+            </CardBody>
+        </Card>
+        <Repeater Context="item" Items="CartItems">
+            <Card Padding="Padding.Is3.OnAll" Margin="Margin.Is2.FromTop" Display="Display.Flex.Row">
+                <CardImage Border="Border.Rounded" Style="height: 325px; width: 185px" Source="@item.Product.ImageUrl"/>
+                <CardBody Display="Display.Flex.Column" Flex="Flex.JustifyContent.Between">
+                    <Text Style="font-size: 26px">@item.Product.Name</Text>
+                    <Div>
+                        <NumericPicker Style="font-size: 22px" TValue="int" Min="1" Step="1" Placeholder="Enter product price"
+                                       Background="Background.Light" Border="Border.Rounded"
+                                       ValueExpression="() => item.Quantity"
+                                       Value="item.Quantity"
+                                       ValueChanged="value => { item.Quantity = value; CartService.SaveCart(CartItems); }"/>
+                        <Text Style="font-size: 22px">
+                            ×
+                            <Text TextColor="TextColor.Success">
+                                $@item.Product.Price
+                            </Text>
+                            =
+                            <Text TextColor="TextColor.Success">
+                                $@(item.Quantity * item.Product.Price)
+                            </Text>
+                        </Text>
+                    </Div>
+                    <Button Background="Background.Danger" Clicked="() => DeleteAction(item)">Remove</Button>
+                </CardBody>
+            </Card>
+        </Repeater>
+    </Column>
+</Div>
 
 @* <div class="cart"> *@
 @*     <div class="header background"> *@
