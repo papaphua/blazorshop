@@ -6,25 +6,30 @@
     <TextEdit Background="Background.White" Border="Border.Rounded" Size="Size.Medium" Shadow="Shadow.Small" Role="TextRole.Search" Placeholder="Search..."
               @bind-Text="@_productParameters.Search" @onkeyup="async () => await GetProducts()" Margin="Margin.Is3.FromBottom"/>
 
-    <Row RowColumns="RowColumns.Are5">
-        @foreach (var product in Items)
-        {
-            var link = "/products/" + product.Uri;
+    <Row RowColumns="RowColumns.Are5.OnDesktop.Are1.OnMobile" Display="Display.Flex.Row" Flex="Flex.Shrink.Is1">
+        <Repeater Items="Items">
 
-            <Column>
+            @{ var link = "/products/" + context.Uri; }
+            <Column Margin="Margin.Is3.FromBottom">
                 <Card>
-                    <CardImage Source="@product.ImageUrl" Alt="@product.Name">
-                    </CardImage>
+                    <CardImage Style="height: 325px;" Source="@context.ImageUrl" Alt="@context.Name"/>
                     <CardBody>
-                        <CardTitle Size="4">@product.Name</CardTitle>
-                        <CardTitle TextColor="TextColor.Success" Size="5">$@product.Price</CardTitle>
+                        <CardTitle TextOverflow="TextOverflow.Truncate" Size="5">
+                            @context.Name
+                        </CardTitle>
+                    </CardBody>
+                    <CardFooter Flex="Flex.JustifyContent.Between">
                         <Button Background="Background.Primary" Type="ButtonType.Link" To="@link">
                             <Icon Name="IconName.ArrowRight"/>
                         </Button>
-                    </CardBody>
+                        <Text Style="font-size: 22px" TextColor="TextColor.Success">
+                            $@context.Price
+                        </Text>
+                    </CardFooter>
                 </Card>
             </Column>
-        }
+
+        </Repeater>
     </Row>
 
     <Row Margin="Margin.Is3.FromTop" Flex="Flex.JustifyContent.Center">
