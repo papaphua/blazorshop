@@ -43,8 +43,8 @@ public sealed class AuthService : IAuthService
     {
         var response = await _http.PostAsJsonAsync("api/authentication/login/default", defaultLoginDto);
 
-        if(!response.IsSuccessStatusCode) return;
-        
+        if (!response.IsSuccessStatusCode) return;
+
         var content = await response.Content.ReadFromJsonAsync<AuthDto>();
 
         if (!content.IsSucceeded)
@@ -97,15 +97,15 @@ public sealed class AuthService : IAuthService
     {
         var state = await _authStateProvider.GetAuthenticationStateAsync();
         var expClaim = state.User.FindFirst(c => c.Type.Equals("exp"));
-        
-        if(expClaim is null) return;
+
+        if (expClaim is null) return;
 
         var exp = expClaim.Value;
 
         var expTime = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(exp));
         var diff = expTime - DateTime.UtcNow;
-        
-        if (diff.TotalMinutes is > 0 and <= 2)
+
+        if (diff.TotalMinutes is > 0 and <= 3)
             await RefreshToken();
         else if (diff.TotalMinutes <= 0)
             await Logout();
@@ -151,7 +151,7 @@ public sealed class AuthService : IAuthService
         var accessToken = await _localStorage.GetItemAsync<string>(AuthNamings.AccessToken);
         var refreshToken = await _localStorage.GetItemAsync<string>(AuthNamings.RefreshToken);
 
-        if (accessToken is null || refreshToken is null) return;
+        if (accessToken is null || refreshToken is null) await Logout();
 
         var tokenDto = new TokenDto(accessToken, refreshToken);
 
@@ -159,10 +159,12 @@ public sealed class AuthService : IAuthService
 
         var content = await response.Content.ReadFromJsonAsync<AuthDto>();
 
-        if(content is null) return;
+        if (content is null || !content.IsSucceeded)
+        {
+            await Logout();
+            return;
+        }
 
-        if (!content.IsSucceeded) await Logout();
-        
         await _localStorage.SetItemAsync(AuthNamings.AccessToken, content.Tokens.AccessToken);
         await _localStorage.SetItemAsync(AuthNamings.RefreshToken, content.Tokens.RefreshToken);
 

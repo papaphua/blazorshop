@@ -24,11 +24,14 @@ public sealed partial class Cart : IDisposable
 
     private async Task ConfirmAction()
     {
-        var paymentUrl = await PaymentService.GeneratePaymentLink();
+        if (CartItems.Any())
+        {
+            var paymentUrl = await PaymentService.GeneratePaymentLink();
 
-        Navigation.NavigateTo(paymentUrl);
+            Navigation.NavigateTo(paymentUrl);
 
-        await CartService.ClearCart(CartItems);
+            await CartService.ClearCart(CartItems);
+        }
     }
     
     private async Task DeleteAction(CartItem item)

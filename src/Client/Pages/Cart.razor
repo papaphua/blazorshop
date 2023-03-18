@@ -5,7 +5,7 @@
         <Card>
             <CardBody Display="Display.Flex.Row" Flex="Flex.JustifyContent.Between">
                 <Div>
-                    <Button Background="Background.Primary" Clicked="ConfirmAction">
+                    <Button Background="Background.Primary" Clicked="ConfirmAction" Class="@(CartItems.Any() ? "" : "disabled")">
                         Proceed to payment
                     </Button>
                     <Button Background="Background.Danger" Clicked="ClearAction">
