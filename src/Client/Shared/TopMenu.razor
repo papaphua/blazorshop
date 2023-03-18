@@ -1,0 +1,37 @@
+﻿<Bar @bind-Visible="@_topbarVisible" Breakpoint="Breakpoint.Desktop" Background="Background.White"
+     Shadow="Shadow.Default" ThemeContrast="ThemeContrast.Light">
+    <BarBrand>
+        <BarItem>
+            <BarLink To="">
+                <BarIcon IconName="_logo"/>
+            </BarLink>
+        </BarItem>
+    </BarBrand>
+    <BarMenu>
+        <BarEnd>
+            <AuthorizeView>
+                <NotAuthorized>
+                    <Button Color="Color.Primary" Type="ButtonType.Link" To="/accounts/login/find">
+                        Log in
+                    </Button>
+                </NotAuthorized>
+                <Authorized>
+                    <Button Margin="Margin.Is1.FromEnd" Color="Color.Dark" Type="ButtonType.Link" To="/cart">
+                        Cart
+                    </Button>
+                    <Button Color="Color.Danger" Clicked="async () => await AuthService.Logout()">
+                        Log out
+                    </Button>
+                </Authorized>
+            </AuthorizeView>
+        </BarEnd>
+    </BarMenu>
+</Bar>
+
+@code {
+
+    private bool _topbarVisible = true;
+
+    private RenderFragment _logo = @<img src="images/logo-text.png" alt="logo" style="width:326px; height: 41px"/>;
+
+}

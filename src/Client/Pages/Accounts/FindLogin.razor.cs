@@ -1,4 +1,5 @@
-﻿using BlazorShop.Client.Services.AuthService;
+﻿using Blazorise;
+using BlazorShop.Client.Services.AuthService;
 using BlazorShop.Client.Services.HttpInterceptorService;
 using BlazorShop.Shared.Dtos;
 using Microsoft.AspNetCore.Authorization;
@@ -13,6 +14,7 @@ public sealed partial class FindLogin : IDisposable
     [Inject] private HttpInterceptorService HttpInterceptorService { get; set; } = null!;
 
     private LoginDto LoginDto { get; } = new();
+    private Validations _validations = new();
 
     protected override void OnInitialized()
     {
@@ -24,8 +26,11 @@ public sealed partial class FindLogin : IDisposable
         HttpInterceptorService.DisposeEvent();
     }
 
-    private async Task FindLoginAction()
+    private async Task ContinueAction()
     {
-        await AuthService.FindLoginInfo(LoginDto);
+        if (await _validations.ValidateAll())
+        {
+            await AuthService.FindLoginInfo(LoginDto);
+        }
     }
 }

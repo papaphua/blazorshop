@@ -1,4 +1,5 @@
-﻿using BlazorShop.Client.Auth.PermissionHandler;
+﻿using Blazorise;
+using BlazorShop.Client.Auth.PermissionHandler;
 using BlazorShop.Client.Services.CategoryService;
 using BlazorShop.Client.Services.HttpInterceptorService;
 using BlazorShop.Client.Services.ProductService;
@@ -16,10 +17,11 @@ public sealed partial class Products : IDisposable
     [Inject] private ICategoryService CategoryService { get; set; } = null!;
     [Inject] private HttpInterceptorService HttpInterceptorService { get; set; } = null!;
 
-    private readonly ProductParameters _productParameters = new() { PageSize = 5 };
+    private readonly ProductParameters _productParameters = new() { PageSize = 6 };
     private List<ProductDto> Items { get; set; } = new();
     private MetaData MetaData { get; set; } = new();
     private List<CategoryDto> Categories { get; set; } = new();
+    private Validations _validations = new();
 
     protected override void OnInitialized()
     {
@@ -36,7 +38,10 @@ public sealed partial class Products : IDisposable
 
     private async Task UpdateAction(ProductDto product)
     {
-        await ProductService.UpdateProduct(product);
+        if (await _validations.ValidateAll())
+        {
+            await ProductService.UpdateProduct(product);
+        }
     }
 
     private async Task DeleteAction(ProductDto product)
@@ -44,7 +49,7 @@ public sealed partial class Products : IDisposable
         Items.Remove(product);
         await ProductService.DeleteProduct(product.Uri);
     }
-    
+
     private async Task GetProducts()
     {
         var pagingResponse = await ProductService.GetProducts(_productParameters);
@@ -52,7 +57,7 @@ public sealed partial class Products : IDisposable
         Items = pagingResponse.Items;
         MetaData = pagingResponse.MetaData;
     }
-    
+
     private async Task SelectPageAction(int page)
     {
         _productParameters.PageNumber = page;

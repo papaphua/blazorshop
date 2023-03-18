@@ -1,4 +1,5 @@
-﻿using BlazorShop.Client.Auth.PermissionHandler;
+﻿using Blazorise;
+using BlazorShop.Client.Auth.PermissionHandler;
 using BlazorShop.Client.Services.AuthService;
 using BlazorShop.Client.Services.HttpInterceptorService;
 using BlazorShop.Client.Services.ProfileService;
@@ -15,6 +16,7 @@ public sealed partial class PasswordChange : IDisposable
     [Inject] private IAuthService AuthService { get; set; } = null!;
     
     private PasswordChangeDto PasswordChangeDto { get; } = new();
+    private Validations _validations = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -24,7 +26,10 @@ public sealed partial class PasswordChange : IDisposable
 
     private async Task ChangePasswordAction()
     {
-        await ProfileService.ChangePassword(PasswordChangeDto);
+        if (await _validations.ValidateAll())
+        {
+            await ProfileService.ChangePassword(PasswordChangeDto);
+        }
     }
 
     public void Dispose()

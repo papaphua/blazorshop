@@ -1,34 +1,38 @@
 ﻿@page "/products"
 @page "/products/category/{categoryUrl}"
 
-<div class="products">
-    <div class="search background">
-        <input type="text" class="form-control" placeholder="Search..."
-               @bind-Value="@_productParameters.Search" @bind-Value:event="oninput" @onkeyup="async () => await GetProducts()">
-    </div>
 
-    <div class="products--container">
-        @if (Items.Count == 0)
-        {
-        }
-        else
-        {
-            @foreach (var item in Items)
-            {
-                <a href="/products/@item.Uri">
-                    <div class="product background">
-                        <img class="image" src="@item.ImageUrl" alt="@item.Name"/>
+<Div>
+    <TextEdit Background="Background.White" Border="Border.Rounded" Size="Size.Medium" Shadow="Shadow.Small" Role="TextRole.Search" Placeholder="Search..."
+              @bind-Text="@_productParameters.Search" @onkeyup="async () => await GetProducts()" Margin="Margin.Is3.FromBottom"/>
 
-                        <span>@item.Name</span>
+    <Row RowColumns="RowColumns.Are5.OnDesktop.Are1.OnMobile" Display="Display.Flex.Row" Flex="Flex.Shrink.Is1">
+        <Repeater Items="Items">
 
-                        <text class="price">$@item.Price</text>
-                    </div>
-                </a>
-            }
-        }
-    </div>
+            @{ var link = "/products/" + context.Uri; }
+            <Column Margin="Margin.Is3.FromBottom">
+                <Card>
+                    <CardImage Style="height: 325px;" Source="@context.ImageUrl" Alt="@context.Name"/>
+                    <CardBody>
+                        <CardTitle TextOverflow="TextOverflow.Truncate" Size="5">
+                            @context.Name
+                        </CardTitle>
+                    </CardBody>
+                    <CardFooter Flex="Flex.JustifyContent.Between">
+                        <Button Background="Background.Primary" Type="ButtonType.Link" To="@link">
+                            <Icon Name="IconName.ArrowRight"/>
+                        </Button>
+                        <Text Style="font-size: 22px" TextColor="TextColor.Success">
+                            $@context.Price
+                        </Text>
+                    </CardFooter>
+                </Card>
+            </Column>
 
-    <div class="paging background">
-        <Pagination MetaData="MetaData" Spread="1" SelectedPage="() => SelectPageAction(MetaData.CurrentPage)"/>
-    </div>
-</div>
+        </Repeater>
+    </Row>
+
+    <Row Margin="Margin.Is3.FromTop" Flex="Flex.JustifyContent.Center">
+        <CustomPagination MetaData="MetaData" Spread="1" SelectedPage="() => SelectPageAction(MetaData.CurrentPage)"/>
+    </Row>
+</Div>

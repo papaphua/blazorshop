@@ -1,17 +1,17 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="layout">
-    <header class="headline">
-        <Headline/>
-    </header>
-
-    <main class="body">
-        <div class="sider">
-            <Sider/>
-        </div>
-
-        <div class="content">
+<Layout Sider>
+    <LayoutSider>
+        <LayoutSiderContent>
+            <SideMenu/>
+        </LayoutSiderContent>
+    </LayoutSider>
+    <Layout>
+        <LayoutHeader Fixed>
+            <TopMenu/>
+        </LayoutHeader>
+        <LayoutContent Style="background: #f2f2f2;" Padding="Padding.Is4.OnAll">
             @Body
-        </div>
-    </main>
-</div>
+        </LayoutContent>
+    </Layout>
+</Layout>

@@ -1,72 +1,164 @@
 ﻿@page "/management/products"
 
-<div class="products">
-    <div class="search background">
-        <input type="text" class="form-control" placeholder="Search..."
-               @bind-Value="@_productParameters.Search" @bind-Value:event="oninput" @onkeyup="async () => await GetProducts()">
-        <button class="btn btn-primary m-lg-1" onclick="location.href='/management/products/new'">Create</button>
-    </div>
+<Div>
+    <Div Display="Display.Flex.Row" Flex="Flex.Shrink">
+        <TextEdit Background="Background.White" Border="Border.Rounded" Size="Size.Medium" Shadow="Shadow.Small" Role="TextRole.Search" Placeholder="Search..."
+                  @bind-Text="@_productParameters.Search" @onkeyup="async () => await GetProducts()" Margin="Margin.Is3.FromBottom"/>
+        <Button Margin="Margin.Is2.FromStart" Type="ButtonType.Link" Background="Background.Primary" To="/management/products/new">
+            Create new
+        </Button>
+    </Div>
 
-    @foreach (var product in Items)
-    {
-        <div class="product background">
-            <div class="text">
-                <img src="@product.ImageUrl" alt="@product.Name">
+    <Row RowColumns="RowColumns.Are2.OnDesktop.Are1.OnMobile">
+        <Repeater Context="product" Items="Items">
+            <Column Margin="Margin.Is3.FromBottom">
+                <Card Display="Display.Flex.Row" Flex="Flex.JustifyContent.Around.Wrap">
+                    <CardImage Border="Border.Rounded" Style="height: 325px; width: 185px" Source="@product.ImageUrl"/>
+                    <CardBody>
+                        <EditForm Model="@product" OnValidSubmit="() => UpdateAction(product)">
+                            <Validations @ref="_validations" ValidateOnLoad="false" Mode="ValidationMode.Auto" Model="@product">
+                                <DataAnnotationsValidator/>
+                                <Validation>
+                                    <Field>
+                                        <FieldLabel>Name</FieldLabel>
+                                        <FieldBody>
+                                            <TextEdit Placeholder="Enter product name" @bind-Text="@product.Name">
+                                                <ValidationError/>
+                                            </TextEdit>
+                                        </FieldBody>
+                                    </Field>
+                                </Validation>
+                                <Validation>
+                                    <Field>
+                                        <FieldLabel>Desctiption</FieldLabel>
+                                        <FieldBody>
+                                            <MemoEdit Placeholder="Enter product description" @bind-Text="@product.Description">
+                                                <ValidationError/>
+                                            </MemoEdit>
+                                        </FieldBody>
+                                    </Field>
+                                </Validation>
+                                <Validation>
+                                    <Field>
+                                        <FieldLabel>Uri</FieldLabel>
+                                        <FieldBody>
+                                            <TextEdit Placeholder="Enter product uri" @bind-Text="@product.Uri">
+                                                <ValidationError/>
+                                            </TextEdit>
+                                        </FieldBody>
+                                    </Field>
+                                </Validation>
+                                <Validation>
+                                    <Field>
+                                        <FieldLabel>Category</FieldLabel>
+                                        <FieldBody>
+                                            <Select TValue="Guid" @bind-SelectedValue="product.CategoryId">
+                                                <Repeater Context="category" Items="Categories">
+                                                    <SelectItem Value="@category.Id">@category.Name</SelectItem>
+                                                </Repeater>
+                                                <ValidationError/>
+                                            </Select>
+                                        </FieldBody>
+                                    </Field>
+                                </Validation>
+                                <Validation>
+                                    <Field>
+                                        <FieldLabel>Image Url</FieldLabel>
+                                        <FieldBody>
+                                            <TextEdit Placeholder="Enter image url" @bind-Text="@product.ImageUrl">
+                                                <ValidationError/>
+                                            </TextEdit>
+                                        </FieldBody>
+                                    </Field>
+                                </Validation>
+                                <Validation>
+                                    <Field>
+                                        <FieldLabel>Price</FieldLabel>
+                                        <FieldBody>
+                                            <NumericPicker TValue="decimal" Min="0.01m" Step="1m" Placeholder="Enter product price" @bind-Value="@product.Price">
+                                                <ValidationError/>
+                                            </NumericPicker>
+                                        </FieldBody>
+                                    </Field>
+                                </Validation>
+                                <Buttons>
+                                    <Button Color="Color.Primary" Type="ButtonType.Submit">Update</Button>
+                                    <Button Color="Color.Danger" Clicked="() => DeleteAction(product)">Delete</Button>
+                                </Buttons>
+                            </Validations>
+                        </EditForm>
+                    </CardBody>
+                </Card>
+            </Column>
+        </Repeater>
+    </Row>
 
-                <div class="text--value">
-                    <div>
-                        <label for="name">Name</label>
-                        <InputText id="name"
-                                   size="100"
-                                   class="form-control"
-                                   ValueExpression="@(() => product.Name)"
-                                   Value="@product.Name"
-                                   ValueChanged="@(value => product.Name = value!)"/>
-                    </div>
-                    <div>
-                        <label for="description">Description</label>
-                        <InputText id="description"
-                                   class="form-control"
-                                   ValueExpression="@(() => product.Description)"
-                                   Value="@product.Description"
-                                   ValueChanged="@(value => product.Description = value!)"/>
-                    </div>
-                    <div>
-                        <label for="category">Category</label>
-                        <InputSelect class="form-control" id="category" @bind-Value="product.CategoryId">
-                            @foreach (var c in Categories)
-                            {
-                                <option value="@c.Id">@c.Name</option>
-                            }
-                        </InputSelect>
-                    </div>
-                    <div>
-                        <label for="price">Price</label>
-                        <InputNumber id="price"
-                                     class="form-control"
-                                     TValue="decimal"
-                                     ValueExpression="@(() => product.Price)"
-                                     Value="@product.Price"
-                                     ValueChanged="@(value => product.Price = value)"/>
-                    </div>
-                    <div>
-                        <label for="imageUrl">ImageUrl</label>
-                        <InputText id="imageUrl"
-                                   class="form-control"
-                                   ValueExpression="@(() => product.ImageUrl)"
-                                   Value="@product.ImageUrl"
-                                   ValueChanged="@(value => product.ImageUrl = value!)"/>
-                    </div>
-                </div>
-            </div>
+    <Row Margin="Margin.Is3.FromTop" Flex="Flex.JustifyContent.Center">
+        <CustomPagination MetaData="MetaData" Spread="1" SelectedPage="() => SelectPageAction(MetaData.CurrentPage)"/>
+    </Row>
+</Div>
 
-            <div class="buttons">
-                <button class="btn btn-success" @onclick="() => UpdateAction(product)">Update</button>
-                <button style="margin-left: 5px" class="btn btn-danger" @onclick="() => DeleteAction(product)">Delete</button>
-            </div>
-        </div>
-    }
-    <div class="paging background">
-        <Pagination MetaData="MetaData" Spread="1" SelectedPage="() => SelectPageAction(MetaData.CurrentPage)"/>
-    </div>
-</div>
+
+@* @foreach (var product in Items) *@
+@* { *@
+@*     <div class="product background"> *@
+@*         <div class="text"> *@
+@*             <img src="@product.ImageUrl" alt="@product.Name"> *@
+@* *@
+@*             <div class="text--value"> *@
+@*                 <div> *@
+@*                     <label for="name">Name</label> *@
+@*                     <InputText id="name" *@
+@*                                size="100" *@
+@*                                class="form-control" *@
+@*                                ValueExpression="@(() => product.Name)" *@
+@*                                Value="@product.Name" *@
+@*                                ValueChanged="@(value => product.Name = value!)"/> *@
+@*                 </div> *@
+@*                 <div> *@
+@*                     <label for="description">Description</label> *@
+@*                     <InputText id="description" *@
+@*                                class="form-control" *@
+@*                                ValueExpression="@(() => product.Description)" *@
+@*                                Value="@product.Description" *@
+@*                                ValueChanged="@(value => product.Description = value!)"/> *@
+@*                 </div> *@
+@*                 <div> *@
+@*                     <label for="category">Category</label> *@
+@*                     <InputSelect class="form-control" id="category" @bind-Value="product.CategoryId"> *@
+@*                         @foreach (var c in Categories) *@
+@*                         { *@
+@*                             <option value="@c.Id">@c.Name</option> *@
+@*                         } *@
+@*                     </InputSelect> *@
+@*                 </div> *@
+@*                 <div> *@
+@*                     <label for="price">Price</label> *@
+@*                     <InputNumber id="price" *@
+@*                                  class="form-control" *@
+@*                                  TValue="decimal" *@
+@*                                  ValueExpression="@(() => product.Price)" *@
+@*                                  Value="@product.Price" *@
+@*                                  ValueChanged="@(value => product.Price = value)"/> *@
+@*                 </div> *@
+@*                 <div> *@
+@*                     <label for="imageUrl">ImageUrl</label> *@
+@*                     <InputText id="imageUrl" *@
+@*                                class="form-control" *@
+@*                                ValueExpression="@(() => product.ImageUrl)" *@
+@*                                Value="@product.ImageUrl" *@
+@*                                ValueChanged="@(value => product.ImageUrl = value!)"/> *@
+@*                 </div> *@
+@*             </div> *@
+@*         </div> *@
+@* *@
+@*         <div class="buttons"> *@
+@*             <button class="btn btn-success" @onclick="() => UpdateAction(product)">Update</button> *@
+@*             <button style="margin-left: 5px" class="btn btn-danger" @onclick="() => DeleteAction(product)">Delete</button> *@
+@*         </div> *@
+@*     </div> *@
+@* } *@
+@* <div class="paging background"> *@
+@*     <CustomPagination MetaData="MetaData" Spread="1" SelectedPage="() => SelectPageAction(MetaData.CurrentPage)"/> *@
+@* </div> *@
+@* </div> *@

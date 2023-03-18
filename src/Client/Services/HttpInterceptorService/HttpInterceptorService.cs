@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Json;
+using Blazorise;
 using BlazorShop.Client.Services.AuthService;
-using BlazorShop.Client.Services.NotificationService;
 using BlazorShop.Shared.Dtos;
 using Toolbelt.Blazor;
 
@@ -9,15 +9,15 @@ namespace BlazorShop.Client.Services.HttpInterceptorService;
 public sealed class HttpInterceptorService
 {
     private readonly HttpClientInterceptor _interceptor;
-    private readonly INotificationService _notificationService;
     private readonly IAuthService _authService;
+    private readonly INotificationService _notification;
 
-    public HttpInterceptorService(HttpClientInterceptor interceptor, INotificationService notificationService,
-        IAuthService authService)
+    public HttpInterceptorService(HttpClientInterceptor interceptor,
+        IAuthService authService, INotificationService notification)
     {
         _interceptor = interceptor;
-        _notificationService = notificationService;
         _authService = authService;
+        _notification = notification;
     }
 
     public void RegisterEvent() => _interceptor.AfterSendAsync += InterceptAfterHttpAsync;
@@ -35,7 +35,7 @@ public sealed class HttpInterceptorService
             
             var exceptionMessage = await content.ReadFromJsonAsync<ExceptionDto>();
 
-            await _notificationService.AddNotification(exceptionMessage.Message);
+            await _notification.Error(exceptionMessage.Message);
         }
     }
 

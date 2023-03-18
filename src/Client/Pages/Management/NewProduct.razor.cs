@@ -1,4 +1,5 @@
-﻿using BlazorShop.Client.Auth.PermissionHandler;
+﻿using Blazorise;
+using BlazorShop.Client.Auth.PermissionHandler;
 using BlazorShop.Client.Services.CategoryService;
 using BlazorShop.Client.Services.HttpInterceptorService;
 using BlazorShop.Client.Services.ProductService;
@@ -16,21 +17,22 @@ public sealed partial class NewProduct : IDisposable
 
     private ProductDto Product { get; set; } = new();
     private List<CategoryDto> Categories { get; set; } = new();
-    private Guid SelectedCategory { get; set; }
-    
+    private Validations _validations = new();
+
     protected override async Task OnInitializedAsync()
     {
         HttpInterceptorService.RegisterEvent();
         Categories = await CategoryService.GetCategories();
-        Product.CategoryId = SelectedCategory;
     }
 
-    private async Task CreateAction()
+    private async Task AddAction()
     {
-        Product.CategoryId = SelectedCategory;
-        await ProductService.CreateProduct(Product);
+        if (await _validations.ValidateAll())
+        {
+            await ProductService.CreateProduct(Product);
+        }
     }
-    
+
     public void Dispose()
     {
         HttpInterceptorService.DisposeEvent();

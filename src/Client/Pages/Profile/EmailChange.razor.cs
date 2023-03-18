@@ -1,4 +1,5 @@
-﻿using BlazorShop.Client.Auth.PermissionHandler;
+﻿using Blazorise;
+using BlazorShop.Client.Auth.PermissionHandler;
 using BlazorShop.Client.Services.AuthService;
 using BlazorShop.Client.Services.HttpInterceptorService;
 using BlazorShop.Client.Services.ProfileService;
@@ -17,19 +18,23 @@ public sealed partial class EmailChange : IDisposable
     private const string ConfirmationUrl = "/profile/email/change/confirmation";
     
     private EmailDto EmailDto { get; } = new();
+    private Validations _validations = new();
     
     protected override void OnInitialized()
     {
         HttpInterceptorService.RegisterEvent();
     }
 
-    private async Task ConfirmAction()
+    private async Task SendCodesAction()
     {
-        await AuthService.GetConfirmationCode();
-        await AuthService.GetNewEmailConfirmationCode(EmailDto);
+        if (await _validations.ValidateAll())
+        {
+            await AuthService.GetConfirmationCode();
+            await AuthService.GetNewEmailConfirmationCode(EmailDto);
         
-        var url = ConfirmationUrl + $"?email={EmailDto.Email}";
-        NavigationManager.NavigateTo(url);
+            var url = ConfirmationUrl + $"?email={EmailDto.Email}";
+            NavigationManager.NavigateTo(url);
+        }
     }
 
     public void Dispose()

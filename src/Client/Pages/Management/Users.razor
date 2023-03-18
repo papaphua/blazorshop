@@ -1,43 +1,36 @@
 ﻿@page "/management/users"
 
-<div class="users">
-    <div class="search background">
-        <input type="text" class="form-control" placeholder="Search..."
-               @bind-Value="@_userParameters.Search" @bind-Value:event="oninput" @onkeyup="async () => await GetUsers()">
-    </div>
+<Div>
+    <TextEdit Background="Background.White" Border="Border.Rounded" Size="Size.Medium" Shadow="Shadow.Small" Role="TextRole.Search" Placeholder="Search..."
+              @bind-Text="@_userParameters.Search" @onkeyup="async () => await GetUsers()" Margin="Margin.Is3.FromBottom"/>
 
-    @foreach (var user in Items)
-    {
-        var profileLink = "/profile/view/" + user.Username;
 
-        <div class="user background">
-            <div class="text">
-                <ul class="text--property">
-                    <li>Email:</li>
-                    <li>Username:</li>
-                    <li>First name:</li>
-                    <li>Last name:</li>
-                </ul>
+    <Row RowColumns="RowColumns.Are1">
+        <Repeater Items="Items">
+            <Column>
+                <Card>
+                    <CardTitle Padding="Padding.Is2">
+                        @context.Username
+                    </CardTitle>
+                    <CardText Padding="Padding.Is2" Display="Display.Flex.Column">
+                        <Text>Email: @context.Email</Text>
+                        <Text>First Name: @context.FirstName</Text>
+                        <Text>Last Name: @context.LastName</Text>
+                    </CardText>
+                    <CardFooter Display="Display.Flex.Row" Flex="Flex.JustifyContent.Between">
+                        <Buttons>
+                            <Button Background="Background.Primary">View</Button>
+                            <Button Background="Background.Secondary">Contact</Button>
+                        </Buttons>
+                        <Button Background="Background.Danger">Delete</Button>
+                    </CardFooter>
+                </Card>
+            </Column>
+        </Repeater>
+    </Row>
 
-                <ul class="text--value">
-                    <li>@user.Email</li>
-                    <li>@user.Username</li>
-                    <li>@user.FirstName</li>
-                    <li>@user.LastName</li>
-                </ul>
-            </div>
 
-            <div class="buttons">
-                <button class="btn btn-success" onclick="location.href='mailto:@user.Email'">Contact</button>
-
-                <button class="btn btn-primary" onclick="location.href='@profileLink'">View</button>
-
-                <button class="btn btn-danger" @onclick="() => DeleteAction(user)">Delete</button>
-            </div>
-        </div>
-    }
-
-    <div class="paging background">
-        <Pagination MetaData="MetaData" Spread="1" SelectedPage="() => SelectPageAction(MetaData.CurrentPage)"/>
-    </div>
-</div>
+    <Row Margin="Margin.Is3.FromTop" Flex="Flex.JustifyContent.Center">
+        <CustomPagination MetaData="MetaData" Spread="1" SelectedPage="() => SelectPageAction(MetaData.CurrentPage)"/>
+    </Row>
+</Div>

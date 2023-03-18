@@ -23,7 +23,7 @@ public sealed class CartService : ICartService
 
     public decimal GetCartPrice(List<CartItem> cart)
     {
-        return cart.Sum(item => item.TotalPrice);
+        return cart.Sum(item => item.Product.Price * item.Quantity);
     }
 
     public async Task AddToCart(ProductDto product)
@@ -37,7 +37,6 @@ public sealed class CartService : ICartService
             var itemToUpdate = cart.Single(item => item.Product.Uri == product.Uri);
 
             itemToUpdate.Quantity++;
-            itemToUpdate.TotalPrice = itemToUpdate.Quantity * itemToUpdate.Product.Price;
         }
         else
         {

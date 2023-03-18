@@ -1,4 +1,5 @@
-﻿using BlazorShop.Client.Services.AuthService;
+﻿using Blazorise;
+using BlazorShop.Client.Services.AuthService;
 using BlazorShop.Client.Services.HttpInterceptorService;
 using BlazorShop.Shared.Dtos;
 using Microsoft.AspNetCore.Authorization;
@@ -15,6 +16,7 @@ public sealed partial class TwoAuthLogin : IDisposable
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     
     private TwoAuthLoginDto TwoAuthLoginDto { get; } = new();
+    private Validations _validations = new();
 
     protected override void OnInitialized()
     {
@@ -34,6 +36,9 @@ public sealed partial class TwoAuthLogin : IDisposable
 
     private async Task LoginAction()
     {
-        await AuthService.TwoAuthLogin(TwoAuthLoginDto);
+        if (await _validations.ValidateAll())
+        {
+            await AuthService.TwoAuthLogin(TwoAuthLoginDto);
+        }
     }
 }

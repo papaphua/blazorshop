@@ -1,37 +1,43 @@
 ﻿@page "/accounts/login/default"
 
-<div class="login background">
-    <div class="form">
-        <EditForm Model="DefaultLoginDto" OnValidSubmit="LoginAction">
-            <DataAnnotationsValidator/>
-
-            <div class="content">
-                <div class="title">
-                    <h2>Log in to account</h2>
-                </div>
-
-                <div class="fields">
-                    <div>
-                        <label class="form-label" for="@DefaultLoginDto.Login">Login</label>
-                        <InputText class="form-control" type="text" disabled
-                                   Value="@DefaultLoginDto.Login"
-                                   ValueExpression="() => DefaultLoginDto.Login"
-                                   ValueChanged="(v) => v = DefaultLoginDto.Login"/>
-                        <ValidationMessage For="@(() => DefaultLoginDto.Login)"></ValidationMessage>
-                    </div>
-
-                    <div>
-                        <label class="form-label mt-2" for="@DefaultLoginDto.Password">Password</label>
-                        <InputText class="form-control" type="password" @bind-Value="DefaultLoginDto.Password"/>
-                        <ValidationMessage For="@(() => DefaultLoginDto.Password)"></ValidationMessage>
-                        <a href="/accounts/password/reset/request">Forgot password</a>
-                    </div>
-                </div>
-
-                <div class="buttons">
-                    <button class="btn btn-primary" type="submit">Login</button>
-                </div>
-            </div>
-        </EditForm>
-    </div>
-</div>
+<Row Flex="Flex.JustifyContent.Center.AlignItems.Center" Margin="Margin.Is5.FromTop">
+    <Column ColumnSize="ColumnSize.Is6.OnDesktop">
+        <Card>
+            <CardHeader>
+                <CardTitle>Login</CardTitle>
+            </CardHeader>
+            <CardBody>
+                <EditForm Model="@DefaultLoginDto" OnValidSubmit="LoginAction">
+                    <Validations @ref="_validations" ValidateOnLoad="false" Mode="ValidationMode.Auto" Model="DefaultLoginDto">
+                        <DataAnnotationsValidator/>
+                        <Validation>
+                            <Field>
+                                <FieldLabel>Username or email address</FieldLabel>
+                                <FieldBody>
+                                    <TextEdit Placeholder="Enter username or email address" @bind-Text="@DefaultLoginDto.Login" Disabled>
+                                        <ValidationError/>
+                                    </TextEdit>
+                                </FieldBody>
+                            </Field>
+                        </Validation>
+                        <Validation>
+                            <Field>
+                                <FieldLabel>Password</FieldLabel>
+                                <FieldBody>
+                                    <TextEdit Role="TextRole.Password"
+                                              Placeholder="Enter password" @bind-Text="@DefaultLoginDto.Password">
+                                        <ValidationError/>
+                                    </TextEdit>
+                                </FieldBody>
+                            </Field>
+                        </Validation>
+                        <Button Color="Color.Primary" Type="ButtonType.Submit">Log in</Button>
+                    </Validations>
+                </EditForm>
+            </CardBody>
+            <CardFooter>
+                <Link To="/accounts/password/reset">Forgot password?</Link>
+            </CardFooter>
+        </Card>
+    </Column>
+</Row>

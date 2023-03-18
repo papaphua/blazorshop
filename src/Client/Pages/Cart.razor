@@ -1,57 +1,104 @@
 ﻿@page "/cart"
 
-<div class="cart">
-    <div class="header background">
-        <div class="total-price">
-            <span class="total-price--key">Total price:</span>
+<Div>
+    <Column>
+        <Card>
+            <CardBody Display="Display.Flex.Row" Flex="Flex.JustifyContent.Between">
+                <Div>
+                    <Button Background="Background.Primary" Clicked="ConfirmAction">
+                        Proceed to payment
+                    </Button>
+                    <Button Background="Background.Danger" Clicked="ClearAction">
+                        Clear
+                    </Button>
+                </Div>
+                <Text Style="font-size: 22px">
+                    Total price:
+                    <Text TextColor="TextColor.Success">$@CartService.GetCartPrice(CartItems)</Text>
+                </Text>
+            </CardBody>
+        </Card>
+        <Repeater Context="item" Items="CartItems">
+            <Card Padding="Padding.Is3.OnAll" Margin="Margin.Is2.FromTop" Display="Display.Flex.Row">
+                <CardImage Border="Border.Rounded" Style="height: 325px; width: 185px" Source="@item.Product.ImageUrl"/>
+                <CardBody Display="Display.Flex.Column" Flex="Flex.JustifyContent.Between">
+                    <Text Style="font-size: 26px">@item.Product.Name</Text>
+                    <Div>
+                        <NumericPicker Style="font-size: 22px" TValue="int" Min="1" Step="1" Placeholder="Enter product price"
+                                       Background="Background.Light" Border="Border.Rounded"
+                                       ValueExpression="() => item.Quantity"
+                                       Value="item.Quantity"
+                                       ValueChanged="value => { item.Quantity = value; CartService.SaveCart(CartItems); }"/>
+                        <Text Style="font-size: 22px">
+                            ×
+                            <Text TextColor="TextColor.Success">
+                                $@item.Product.Price
+                            </Text>
+                            =
+                            <Text TextColor="TextColor.Success">
+                                $@(item.Quantity * item.Product.Price)
+                            </Text>
+                        </Text>
+                    </Div>
+                    <Button Background="Background.Danger" Clicked="() => DeleteAction(item)">Remove</Button>
+                </CardBody>
+            </Card>
+        </Repeater>
+    </Column>
+</Div>
 
-            <span class="total-price--value">$@CartService.GetCartPrice(CartItems)</span>
-        </div>
-
-        <div>
-            <button class="btn btn-primary" onclick="location.href='/order'">Order</button>
-
-            <button class="btn btn-danger" style="margin-left: 10px" @onclick="ClearAction">Clear</button>
-        </div>
-    </div>
-
-    <div class="container">
-        @foreach (var item in CartItems)
-        {
-            <div class="item background">
-                <img src="@item.Product.ImageUrl" alt="product img">
-
-                <div class="text">
-                    <ul class="text-keys">
-                        <li>Title:</li>
-
-                        <li class="text-keys--quantity">Quantity:</li>
-
-                        <li class="text-keys--price">Price:</li>
-                    </ul>
-
-                    <ul class="text-values">
-                        <li class="text-values--title">@item.Product.Name</li>
-
-                        <li class="text-values--quantity">
-                            <InputNumber class="form-control"
-                                         min="1" TValue="int"
-                                         ValueExpression="() => item.Quantity"
-                                         Value="item.Quantity"
-                                         ValueChanged="value => { item.Quantity = value; CartService.SaveCart(CartItems); }"/>
-                        </li>
-
-                        <li class="text-values--price">$@(item.Quantity * item.Product.Price)</li>
-                    </ul>
-                </div>
-
-                <div class="buttons">
-
-                    <button class="btn btn-primary" style="margin-right: auto;" @onclick="() => ViewAction(item)">View</button>
-
-                    <button class="btn btn-danger" @onclick="() => DeleteAction(item)">Delete</button>
-                </div>
-            </div>
-        }
-    </div>
-</div>
+@* <div class="cart"> *@
+@*     <div class="header background"> *@
+@*         <div class="total-price"> *@
+@*             <span class="total-price--key">Total price:</span> *@
+@* *@
+@*             <span class="total-price--value">$@CartService.GetCartPrice(CartItems)</span> *@
+@*         </div> *@
+@* *@
+@*         <div> *@
+@*             <button class="btn btn-primary" onclick="location.href='/order'">Order</button> *@
+@* *@
+@*             <button class="btn btn-danger" style="margin-left: 10px" @onclick="ClearAction">Clear</button> *@
+@*         </div> *@
+@*     </div> *@
+@* *@
+@*     <div class="container"> *@
+@*         @foreach (var item in CartItems) *@
+@*         { *@
+@*             <div class="item background"> *@
+@*                 <img src="@item.Product.ImageUrl" alt="product img"> *@
+@* *@
+@*                 <div class="text"> *@
+@*                     <ul class="text-keys"> *@
+@*                         <li>Title:</li> *@
+@* *@
+@*                         <li class="text-keys--quantity">Quantity:</li> *@
+@* *@
+@*                         <li class="text-keys--price">Price:</li> *@
+@*                     </ul> *@
+@* *@
+@*                     <ul class="text-values"> *@
+@*                         <li class="text-values--title">@item.Product.Name</li> *@
+@* *@
+@*                         <li class="text-values--quantity"> *@
+@*                             <InputNumber class="form-control" *@
+@*                                          min="1" TValue="int" *@
+@*                                          ValueExpression="() => item.Quantity" *@
+@*                                          Value="item.Quantity" *@
+@*                                          ValueChanged="value => { item.Quantity = value; CartService.SaveCart(CartItems); }"/> *@
+@*                         </li> *@
+@* *@
+@*                         <li class="text-values--price">$@(item.Quantity * item.Product.Price)</li> *@
+@*                     </ul> *@
+@*                 </div> *@
+@* *@
+@*                 <div class="buttons"> *@
+@* *@
+@*                     <button class="btn btn-primary" style="margin-right: auto;" @onclick="() => ViewAction(item)">View</button> *@
+@* *@
+@*                     <button class="btn btn-danger" @onclick="() => DeleteAction(item)">Delete</button> *@
+@*                 </div> *@
+@*             </div> *@
+@*         } *@
+@*     </div> *@
+@* </div> *@

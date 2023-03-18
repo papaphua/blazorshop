@@ -1,33 +1,39 @@
 ﻿@page "/profile/email/change/confirmation"
 
-<div class="email-change background">
-    <div class="form">
-        <EditForm Model="EmailChangeDto" OnValidSubmit="ChangeEmailAction">
-            <DataAnnotationsValidator/>
-
-            <div class="content">
-                <div class="title">
-                    <h2>Email change</h2>
-                </div>
-
-                <div class="fields">
-                    <div>
-                        <label class="form-label mt-2" for="@EmailChangeDto.CurrentConfirmationCode">Code from current email</label>
-                        <InputText class="form-control" type="text" @bind-Value="EmailChangeDto.CurrentConfirmationCode"/>
-                        <ValidationMessage For="@(() => EmailChangeDto.CurrentConfirmationCode)"></ValidationMessage>
-                    </div>
-
-                    <div>
-                        <label class="form-label mt-2" for="@EmailChangeDto.NewConfirmationCode">Code from new email</label>
-                        <InputText class="form-control" type="text" @bind-Value="EmailChangeDto.NewConfirmationCode"/>
-                        <ValidationMessage For="@(() => EmailChangeDto.NewConfirmationCode)"></ValidationMessage>
-                    </div>
-                </div>
-
-                <div class="buttons">
-                    <button class="btn btn-primary" type="submit">Change</button>
-                </div>
-            </div>
-        </EditForm>
-    </div>
-</div>
+<Row Flex="Flex.JustifyContent.Center.AlignItems.Center" Margin="Margin.Is5.FromTop">
+    <Column ColumnSize="ColumnSize.Is6.OnDesktop">
+        <Card>
+            <CardHeader>
+                <CardTitle>Email address change</CardTitle>
+            </CardHeader>
+            <CardBody>
+                <EditForm Model="@EmailChangeDto" OnValidSubmit="ChangeEmailAction">
+                    <Validations @ref="_validations" ValidateOnLoad="false" Mode="ValidationMode.Auto" Model="EmailChangeDto">
+                        <DataAnnotationsValidator/>
+                        <Validation>
+                            <Field>
+                                <FieldLabel>Code from current email address</FieldLabel>
+                                <FieldBody>
+                                    <TextEdit Placeholder="Enter code from current email address" @bind-Text="@EmailChangeDto.CurrentConfirmationCode">
+                                        <ValidationError/>
+                                    </TextEdit>
+                                </FieldBody>
+                            </Field>
+                        </Validation>
+                        <Validation>
+                            <Field>
+                                <FieldLabel>Code form new email address</FieldLabel>
+                                <FieldBody>
+                                    <TextEdit Placeholder="Enter code form new email address" @bind-Text="@EmailChangeDto.NewConfirmationCode">
+                                        <ValidationError/>
+                                    </TextEdit>
+                                </FieldBody>
+                            </Field>
+                        </Validation>
+                        <Button Color="Color.Primary" Type="ButtonType.Submit">Change email</Button>
+                    </Validations>
+                </EditForm>
+            </CardBody>
+        </Card>
+    </Column>
+</Row>

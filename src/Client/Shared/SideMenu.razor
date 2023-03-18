@@ -1,0 +1,95 @@
+﻿<Bar Breakpoint="Breakpoint.Desktop" NavigationBreakpoint="Breakpoint.Tablet" ThemeContrast="ThemeContrast.Dark"
+     Mode="BarMode.VerticalInline" CollapseMode="BarCollapseMode.Small">
+    <BarToggler/>
+    <BarBrand>
+        <BarItem>
+            <BarLink To="/">
+                <BarIcon IconName="_smallLogo"/>
+                BlazorShop
+            </BarLink>
+        </BarItem>
+    </BarBrand>
+    <BarMenu>
+        <BarStart>
+            <BarItem>
+                <BarDropdown @bind-Visible="_categoriesVisible">
+                    <BarDropdownToggle>
+                        <BarIcon IconName="IconName.ListUl"/>
+                        Categories
+                    </BarDropdownToggle>
+                    <BarDropdownMenu>
+                        <BarDropdownItem To="/products">All</BarDropdownItem>
+                        @foreach (var category in Categories)
+                        {
+                            var url = "/products/category/" + category.Uri;
+                            <BarDropdownItem To="@url">@category.Name</BarDropdownItem>
+                        }
+                    </BarDropdownMenu>
+                </BarDropdown>
+            </BarItem>
+            <BarItem>
+                <BarDropdown @bind-Visible="_accountVisible">
+                    <BarDropdownToggle>
+                        <BarIcon IconName="IconName.User"/>
+                        Account
+                    </BarDropdownToggle>
+                    <BarDropdownMenu>
+                        <AuthorizeView>
+                            <NotAuthorized>
+                                <BarDropdownItem To="/accounts/login/find">Login</BarDropdownItem>
+                                <BarDropdownItem To="/accounts/register">Register</BarDropdownItem>
+                            </NotAuthorized>
+                            <Authorized>
+                                <BarDropdownItem To="/profile">View profile</BarDropdownItem>
+                                <BarDropdownItem To="/profile/email/change">Change email</BarDropdownItem>
+                                <BarDropdownItem To="/profile/password/change">Change password</BarDropdownItem>
+                                <BarDropdownItem To="/accounts/register">Log out</BarDropdownItem>
+                                <BarDropdownItem Style="cursor: pointer" Clicked="@(async () => await ProfileService.CreateDeleteProfileLink())">
+                                    Delete profile
+                                </BarDropdownItem>
+                            </Authorized>
+                        </AuthorizeView>
+                    </BarDropdownMenu>
+                </BarDropdown>
+            </BarItem>
+            <AuthorizeView>
+                @if (context.User.HasClaim(claim =>
+                    claim.Value.Contains(Permissions.AdminPermission.ToString())))
+                {
+                    <BarItem>
+                        <BarDropdown @bind-Visible="_managementVisible">
+                            <BarDropdownToggle>
+                                <BarIcon IconName="IconName.Edit"/>
+                                Management
+                            </BarDropdownToggle>
+                            <BarDropdownMenu>
+                                <BarDropdownItem To="/management/products">Products</BarDropdownItem>
+                                <BarDropdownItem To="/management/users">Users</BarDropdownItem>
+                            </BarDropdownMenu>
+                        </BarDropdown>
+                    </BarItem>
+                }
+            </AuthorizeView>
+        </BarStart>
+        <BarEnd>
+            <BarItem>
+                <BarLink To="https://github.com/papaphua/BlazorShop">
+                    <BarIcon IconName="_githubLogo"/>
+                    View on github
+                </BarLink>
+            </BarItem>
+        </BarEnd>
+    </BarMenu>
+</Bar>
+
+@code {
+
+    private bool _accountVisible = false;
+    private bool _managementVisible = false;
+    private bool _categoriesVisible = true;
+
+    private RenderFragment _smallLogo = @<img src="images/logo-small.png" alt="logo" style="width:36px; height: 27px"/>;
+
+    private RenderFragment _githubLogo = @<img src="images/github-mark-white.png" alt="repository" style="width: 35px; height: 35px;">;
+
+}
