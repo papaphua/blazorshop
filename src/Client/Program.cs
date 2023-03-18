@@ -20,7 +20,6 @@ using Toolbelt.Blazor.Extensions.DependencyInjection;
 using Blazorise;
 using Blazorise.Material;
 using Blazorise.Icons.Material;
-using BlazorShop.Client.Services.ResponseService;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -54,7 +53,6 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICartService, CartService>();
-builder.Services.AddScoped<IResponseService, ResponseService>();
 
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 
