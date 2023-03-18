@@ -14,6 +14,15 @@
 > 1) [**Stripe**](https://stripe.com) payments;
 > 2) [**SendGrid**](https://sendgrid.com) emails;
 
+## Client design
+
+> [**Blazorise**](https://blazorise.com/) with [**Material**](https://djibe.github.io/material/) css framework;
+
+## Links
+
+> [**BlazorShop**](https://blazorshopserver.azurewebsites.net/) - web site;
+> [**Swagger**](https://blazorshopserver.azurewebsites.net/swagger/index.html) - API;
+
 ## To start the project locally
 
 ### Requirements
@@ -26,11 +35,11 @@
 
 ### Installation
 
-1) Clone repository:
+1) Clone repository
 ```shell
 git clone https://github.com/papaphua/BlazorShop.git
 ```
-2) Apply migration within the server project root folder:
+2) Apply migration within the server project root folder
 ```shell
 dotnet ef database update
 ```
@@ -38,7 +47,7 @@ dotnet ef database update
 ```shell
 stripe listen --forward-to localhost:7005/api/payments/webhook
 ```
-4) Create .env file in server project root folder with following content:
+4) Create .env file in server project root folder with following content
 ```text
 JwtSecretKey=YourValue        // any value to generate and verify tokens
 StripePrivateKey=YourValue    // from dashboard.stripe.com/test/apikeys
