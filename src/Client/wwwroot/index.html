@@ -2,47 +2,64 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <title>BlazorShop</title>
-    <base href="/" />
-    <link href="css/app.css" rel="stylesheet" />
-    
+    <base href="/"/>
+    <link href="css/app.css" rel="stylesheet"/>
+
     <!-- Material CSS -->
     <link href="css/material.min.css" rel="stylesheet">
 
     <!-- Add Material font (Roboto) and Material icon as needed -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i|Roboto+Mono:300,400,700|Roboto+Slab:300,400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i|Roboto+Mono:300,400,700|Roboto+Slab:300,400,700"
+          rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="_content/Blazorise.Snackbar/blazorise.snackbar.css" rel="stylesheet" />
+    <link href="_content/Blazorise.Snackbar/blazorise.snackbar.css" rel="stylesheet"/>
 
-    <link href="_content/Blazorise/blazorise.css" rel="stylesheet" />
-    <link href="_content/Blazorise.Material/blazorise.material.css" rel="stylesheet" />
-    <link href="_content/Blazorise.Icons.Material/blazorise.icons.material.css" rel="stylesheet" />
-    
-    <link href="BlazorShop.Client.styles.css" rel="stylesheet" />
+    <link href="_content/Blazorise/blazorise.css" rel="stylesheet"/>
+    <link href="_content/Blazorise.Material/blazorise.material.css" rel="stylesheet"/>
+    <link href="_content/Blazorise.Icons.Material/blazorise.icons.material.css" rel="stylesheet"/>
+
+    <link href="BlazorShop.Client.styles.css" rel="stylesheet"/>
 </head>
 
 <body>
-    <div id="app">Loading...</div>
-
-    <div id="blazor-error-ui">
-        An unhandled error has occurred.
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
+<div id="app" class="vh-100 d-flex flex-row justify-content-center align-items-center">
+    <div style="scale: 150%">
+        <div class="progress-circular">
+            <div class="progress-circular-wrapper">
+                <div class="progress-circular-inner">
+                    <div class="progress-circular-left">
+                        <div class="progress-circular-spinner"></div>
+                    </div>
+                    <div class="progress-circular-gap"></div>
+                    <div class="progress-circular-right">
+                        <div class="progress-circular-spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
-    <!-- Optional JavaScript -->
-    <!-- These are the standard js dependencies this provider tipically dependes upon, but Blazorise deems these as optional as Blazorise Components should work correctly without these  -->
-    <!-- jQuery first, then Popper.js, then Material JS -->
-    <script src="https://code.jquery.com/jquery-3.5.0.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
 
-    <!-- Mandatory JavaScript -->
-    <script src="js/material.min.js"></script>
-    <script src="_content/Blazorise.Material/blazorise.material.js"></script>
-    
-    <script src="_framework/blazor.webassembly.js"></script>
+<!-- Optional JavaScript -->
+<!-- These are the standard js dependencies this provider tipically dependes upon, but Blazorise deems these as optional as Blazorise Components should work correctly without these  -->
+<!-- jQuery first, then Popper.js, then Material JS -->
+<script src="https://code.jquery.com/jquery-3.5.0.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
+<!-- Mandatory JavaScript -->
+<script src="js/material.min.js"></script>
+<script src="_content/Blazorise.Material/blazorise.material.js"></script>
+
+<script src="_framework/blazor.webassembly.js"></script>
 </body>
 
 </html>
