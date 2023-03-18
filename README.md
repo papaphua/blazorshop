@@ -20,8 +20,8 @@
 
 ## Links
 
-> [**BlazorShop**](https://blazorshopserver.azurewebsites.net/) - web site;
-> [**Swagger**](https://blazorshopserver.azurewebsites.net/swagger/index.html) - API;
+> * [**BlazorShop**](https://blazorshopserver.azurewebsites.net/) - web site;
+> * [**Swagger**](https://blazorshopserver.azurewebsites.net/swagger/index.html) - API;
 
 ## To start the project locally
 
