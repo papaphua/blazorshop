@@ -1,32 +1,31 @@
 ﻿using System.Security.Cryptography;
 using BlazorShop.Server.Common.Options;
-using Microsoft.Extensions.Options;
 
-namespace BlazorShop.Server.Auth.PasswordProvider;
+namespace BlazorShop.Server.Common.Providers;
 
-public sealed class PasswordProvider : IPasswordProvider
+public sealed class PasswordProvider
 {
-    private readonly PasswordOptions _options;
+    private readonly PasswordOptions _passwordOptions;
 
-    public PasswordProvider(IOptions<PasswordOptions> options)
+    public PasswordProvider(PasswordOptions passwordOptions)
     {
-        _options = options.Value;
+        _passwordOptions = passwordOptions;
     }
-
+    
     public string GetPasswordHash(string password)
     {
         using var algorithm = new Rfc2898DeriveBytes(
             password,
-            _options.SaltSize,
-            _options.Iterations,
+            _passwordOptions.SaltSize,
+            _passwordOptions.Iterations,
             HashAlgorithmName.SHA512);
 
-        var key = Convert.ToBase64String(algorithm.GetBytes(_options.KeySize));
+        var key = Convert.ToBase64String(algorithm.GetBytes(_passwordOptions.KeySize));
         var salt = Convert.ToBase64String(algorithm.Salt);
 
         return $"{salt}.{key}";
     }
-
+    
     public bool VerifyPassword(string password, string hash)
     {
         var parts = hash.Split(".", 2);
@@ -37,10 +36,10 @@ public sealed class PasswordProvider : IPasswordProvider
         using var algorithm = new Rfc2898DeriveBytes(
             password,
             salt,
-            _options.Iterations,
+            _passwordOptions.Iterations,
             HashAlgorithmName.SHA512);
 
-        var keyToCheck = algorithm.GetBytes(_options.KeySize);
+        var keyToCheck = algorithm.GetBytes(_passwordOptions.KeySize);
 
         return keyToCheck.SequenceEqual(key);
     }

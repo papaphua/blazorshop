@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
-using BlazorShop.Server.Auth.AuthTokenProvider;
 using BlazorShop.Server.Auth.PermissionHandler;
+using BlazorShop.Server.Common.Providers;
 using BlazorShop.Server.Services.ProfileService;
 using BlazorShop.Shared.Dtos;
 using BlazorShop.Shared.Models;
@@ -13,12 +13,12 @@ namespace BlazorShop.Server.Controllers;
 [ApiController]
 public sealed class ProfileController : ControllerBase
 {
-    private readonly IAuthTokenProvider _authAuthTokenProvider;
+    private readonly TokenProvider _tokenProvider;
     private readonly IProfileService _profileService;
 
-    public ProfileController(IAuthTokenProvider authTokenProvider, IProfileService profileService)
+    public ProfileController(TokenProvider authTokenProvider, IProfileService profileService)
     {
-        _authAuthTokenProvider = authTokenProvider;
+        _tokenProvider = authTokenProvider;
         _profileService = profileService;
     }
     
@@ -26,7 +26,7 @@ public sealed class ProfileController : ControllerBase
     [HttpGet]
     public async Task<ProfileDto> GetUserProfile()
     {
-        var userId = _authAuthTokenProvider.GetUserIdFromContext(HttpContext);
+        var userId = _tokenProvider.GetUserIdFromContext(HttpContext);
         
         return await _profileService.GetUserProfileAsync(userId);
     }
@@ -35,7 +35,7 @@ public sealed class ProfileController : ControllerBase
     [HttpPut]
     public async Task<TokenDto> UpdateUserProfile(ProfileDto newProfileDto)
     {
-        var userId = _authAuthTokenProvider.GetUserIdFromContext(HttpContext);
+        var userId = _tokenProvider.GetUserIdFromContext(HttpContext);
 
         return await _profileService.UpdateUserProfileAsync(userId, newProfileDto);
     }
@@ -53,7 +53,7 @@ public sealed class ProfileController : ControllerBase
     [HttpPatch("password/change")]
     public async Task ChangePassword(PasswordChangeDto passwordChangeDto)
     {
-        var userId = _authAuthTokenProvider.GetUserIdFromContext(HttpContext);
+        var userId = _tokenProvider.GetUserIdFromContext(HttpContext);
         
         await _profileService.ChangePasswordAsync(userId, passwordChangeDto);
     }
@@ -62,7 +62,7 @@ public sealed class ProfileController : ControllerBase
     [HttpGet("delete/request")]
     public async Task CreateDeleteProfileLink()
     {
-        var userId = _authAuthTokenProvider.GetUserIdFromContext(HttpContext);
+        var userId = _tokenProvider.GetUserIdFromContext(HttpContext);
 
         await _profileService.GetDeleteProfileLinkAsync(userId);
     }

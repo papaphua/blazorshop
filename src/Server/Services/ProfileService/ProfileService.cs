@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using BlazorShop.Server.Auth.AuthTokenProvider;
-using BlazorShop.Server.Auth.ConfirmationLinkProvider;
-using BlazorShop.Server.Auth.PasswordProvider;
 using BlazorShop.Server.Common.Options;
+using BlazorShop.Server.Common.Providers;
 using BlazorShop.Server.Data;
 using BlazorShop.Server.Data.Repositories.SecurityRepository;
 using BlazorShop.Server.Data.Repositories.SessionRepository;
@@ -21,28 +19,28 @@ public sealed class ProfileService : IProfileService
     private readonly IMapper _mapper;
     private readonly IUserRepository _userRepository;
     private readonly IPaymentService _paymentService;
-    private readonly IAuthTokenProvider _authTokenProvider;
+    private readonly TokenProvider _tokenProvider;
     private readonly ISessionRepository _sessionRepository;
     private readonly ISecurityRepository _securityRepository;
-    private readonly IPasswordProvider _passwordProvider;
+    private readonly PasswordProvider _passwordProvider;
     private readonly IMailService _mailService;
     private readonly UrlOptions _urlOptions;
-    private readonly IConfirmationLinkProvider _confirmationLinkProvider;
+    private readonly LinkProvider _linkProvider;
 
     public ProfileService(IMapper mapper, IUserRepository userRepository, IPaymentService paymentService,
-        IAuthTokenProvider authTokenProvider, ISessionRepository sessionRepository, ISecurityRepository securityRepository,
-        IPasswordProvider passwordProvider, IMailService mailService,
-        IConfirmationLinkProvider confirmationLinkProvider, IOptions<UrlOptions> urlOptions)
+        TokenProvider tokenProvider, ISessionRepository sessionRepository, ISecurityRepository securityRepository,
+        PasswordProvider passwordProvider, IMailService mailService,
+        LinkProvider linkProvider, IOptions<UrlOptions> urlOptions)
     {
         _mapper = mapper;
         _userRepository = userRepository;
         _paymentService = paymentService;
-        _authTokenProvider = authTokenProvider;
+        _tokenProvider = tokenProvider;
         _sessionRepository = sessionRepository;
         _securityRepository = securityRepository;
         _passwordProvider = passwordProvider;
         _mailService = mailService;
-        _confirmationLinkProvider = confirmationLinkProvider;
+        _linkProvider = linkProvider;
         _urlOptions = urlOptions.Value;
     }
 
@@ -71,8 +69,8 @@ public sealed class ProfileService : IProfileService
 
         await _paymentService.UpdatePaymentProfileAsync(updatedUser.Id);
 
-        var accessToken = await _authTokenProvider.GenerateAccessTokenAsync(updatedUser);
-        var refreshToken = _authTokenProvider.GenerateRefreshToken();
+        var accessToken = await _tokenProvider.GenerateAccessTokenAsync(updatedUser);
+        var refreshToken = _tokenProvider.GenerateRefreshToken(updatedUser);
 
         await _sessionRepository.UpdateSessionAsync(user.Id, accessToken, refreshToken);
 
@@ -100,8 +98,8 @@ public sealed class ProfileService : IProfileService
 
         await _paymentService.UpdatePaymentProfileAsync(user.Id);
 
-        var accessToken = await _authTokenProvider.GenerateAccessTokenAsync(user);
-        var refreshToken = _authTokenProvider.GenerateRefreshToken();
+        var accessToken = await _tokenProvider.GenerateAccessTokenAsync(user);
+        var refreshToken = _tokenProvider.GenerateRefreshToken(user);
 
         await _sessionRepository.UpdateSessionAsync(user.Id, accessToken, refreshToken);
 
@@ -136,7 +134,7 @@ public sealed class ProfileService : IProfileService
 
         var parameters = new ConfirmationParameters(token, user.Email);
 
-        var link = _confirmationLinkProvider.GenerateConfirmationLink(_urlOptions.DeleteProfileUrl, parameters);
+        var link = _linkProvider.GenerateConfirmationLink(_urlOptions.DeleteProfileUrl, parameters);
         
         await _mailService.SendEmailAsync(user.Email, Emails.DeleteProfile(link));
         

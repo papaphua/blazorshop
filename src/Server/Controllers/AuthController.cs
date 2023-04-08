@@ -1,5 +1,5 @@
-﻿using BlazorShop.Server.Auth.AuthTokenProvider;
-using BlazorShop.Server.Auth.PermissionHandler;
+﻿using BlazorShop.Server.Auth.PermissionHandler;
+using BlazorShop.Server.Common.Providers;
 using BlazorShop.Server.Services.AuthService;
 using BlazorShop.Shared.Dtos;
 using BlazorShop.Shared.Models;
@@ -13,12 +13,12 @@ namespace BlazorShop.Server.Controllers;
 public sealed class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
-    private readonly IAuthTokenProvider _authTokenProvider;
+    private readonly TokenProvider _tokenProvider;
     
-    public AuthController(IAuthService authService, IAuthTokenProvider authTokenProvider)
+    public AuthController(IAuthService authService, TokenProvider tokenProvider)
     {
         _authService = authService;
-        _authTokenProvider = authTokenProvider;
+        _tokenProvider = tokenProvider;
     }
     
     [AllowAnonymous]
@@ -60,7 +60,7 @@ public sealed class AuthController : ControllerBase
     [HttpGet("confirmation-code")]
     public async Task GetConfirmationCode()
     {
-        var userId = _authTokenProvider.GetUserIdFromContext(HttpContext);
+        var userId = _tokenProvider.GetUserIdFromContext(HttpContext);
         
         await _authService.GetConfirmationCodeAsync(userId);
     }
@@ -69,7 +69,7 @@ public sealed class AuthController : ControllerBase
     [HttpPost("new-email/confirmation-code")]
     public async Task GetNewEmailConfirmationCode(EmailDto emailDto)
     { 
-        var userId = _authTokenProvider.GetUserIdFromContext(HttpContext);
+        var userId = _tokenProvider.GetUserIdFromContext(HttpContext);
         
         await _authService.GetNewEmailConfirmationCodesAsync(userId, emailDto.Email);
     }
@@ -78,7 +78,7 @@ public sealed class AuthController : ControllerBase
     [HttpGet("email/confirmation/request")]
     public async Task GetEmailConfirmationLink()
     {
-        var userId = _authTokenProvider.GetUserIdFromContext(HttpContext);
+        var userId = _tokenProvider.GetUserIdFromContext(HttpContext);
         
         await _authService.GetEmailConfirmationLinkAsync(userId);
     }

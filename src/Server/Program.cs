@@ -9,10 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-builder.Services.SetupOptions();
+ServiceExtensions.AddOptions(builder.Services);
 builder.Services.AddBusinessServices();
-
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.AddProviders();
 
 builder.Services.AddCors(options =>
 {
@@ -27,9 +26,10 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
     options.UseSqlServer(connectionString);
 });
+
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer();

@@ -1,5 +1,5 @@
-﻿using BlazorShop.Server.Auth.AuthTokenProvider;
-using BlazorShop.Server.Auth.PermissionHandler;
+﻿using BlazorShop.Server.Auth.PermissionHandler;
+using BlazorShop.Server.Common.Providers;
 using BlazorShop.Server.Services.CommentService;
 using BlazorShop.Shared.Dtos;
 using BlazorShop.Shared.Pagination.Parameters;
@@ -14,12 +14,12 @@ namespace BlazorShop.Server.Controllers;
 public sealed class CommentController : ControllerBase
 {
     private readonly ICommentService _commentService;
-    private readonly IAuthTokenProvider _authTokenProvider;
+    private readonly TokenProvider _tokenProvider;
 
-    public CommentController(ICommentService commentService, IAuthTokenProvider authTokenProvider)
+    public CommentController(ICommentService commentService, TokenProvider tokenProvider)
     {
         _commentService = commentService;
-        _authTokenProvider = authTokenProvider;
+        _tokenProvider = tokenProvider;
     }
 
     [AllowAnonymous]
@@ -37,7 +37,7 @@ public sealed class CommentController : ControllerBase
     [HttpPost]
     public async Task AddComment(NewCommentDto newCommentDto)
     {
-        var userId = _authTokenProvider.GetUserIdFromContext(HttpContext);
+        var userId = _tokenProvider.GetUserIdFromContext(HttpContext);
 
         await _commentService.AddCommentAsync(userId, newCommentDto);
     }
@@ -46,7 +46,7 @@ public sealed class CommentController : ControllerBase
     [HttpPut]
     public async Task UpdateComment(CommentDto commentDto)
     {
-        var userId = _authTokenProvider.GetUserIdFromContext(HttpContext);
+        var userId = _tokenProvider.GetUserIdFromContext(HttpContext);
 
         await _commentService.UpdateCommentAsync(userId, commentDto);
     }
@@ -55,7 +55,7 @@ public sealed class CommentController : ControllerBase
     [HttpDelete("{commentId:guid}")]
     public async Task DeleteComment(Guid commentId)
     {
-        var userId = _authTokenProvider.GetUserIdFromContext(HttpContext);
+        var userId = _tokenProvider.GetUserIdFromContext(HttpContext);
 
         await _commentService.DeleteCommentAsync(userId, commentId);
     }

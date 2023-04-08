@@ -1,11 +1,16 @@
 ﻿using BlazorShop.Shared.Models;
 
-namespace BlazorShop.Server.Auth.ConfirmationLinkProvider;
+namespace BlazorShop.Server.Common.Providers;
 
-public sealed class ConfirmationLinkProvider : IConfirmationLinkProvider
+public sealed class LinkProvider
 {
     public string GenerateConfirmationLink(string url, ConfirmationParameters parameters)
     {
         return $"https://{url}?token={parameters.Token}&email={parameters.Email}";
+    }
+    
+    public string GenerateLoginLink(string url, string login)
+    {
+        return $"https://{url}?login={login}";
     }
 }

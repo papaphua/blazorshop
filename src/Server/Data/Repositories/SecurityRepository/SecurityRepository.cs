@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-using System.Security.Cryptography;
-using BlazorShop.Server.Auth.AuthTokenProvider;
+﻿using System.Security.Cryptography;
 using BlazorShop.Server.Common.Options;
 using BlazorShop.Server.Data.Entities;
 using BlazorShop.Server.Data.Repositories.BaseRepository;
@@ -13,12 +11,10 @@ namespace BlazorShop.Server.Data.Repositories.SecurityRepository;
 public sealed class SecurityRepository : BaseRepository<Security>, ISecurityRepository
 {
     private readonly SecurityOptions _options;
-    private readonly IAuthTokenProvider _authTokenProvider;
 
-    public SecurityRepository(AppDbContext context, IOptions<SecurityOptions> options, IAuthTokenProvider authTokenProvider)
+    public SecurityRepository(AppDbContext context, IOptions<SecurityOptions> options)
         : base(context)
     {
-        _authTokenProvider = authTokenProvider;
         _options = options.Value;
     }
 
@@ -36,7 +32,7 @@ public sealed class SecurityRepository : BaseRepository<Security>, ISecurityRepo
         
         if(security is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
-        security.ConfirmationToken = _authTokenProvider.CreateToken(new List<Claim>());
+        // security.ConfirmationToken = _tokenProvider.CreateToken(new List<Claim>());
         security.ConfirmationTokenExpiry = DateTime.UtcNow.AddMinutes(_options.ConfirmationTokenExpiryInMinutes);
 
         await Context.SaveChangesAsync();
