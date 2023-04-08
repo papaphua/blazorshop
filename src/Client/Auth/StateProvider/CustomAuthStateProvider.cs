@@ -2,7 +2,6 @@
 using System.Security.Claims;
 using Blazored.LocalStorage;
 using BlazorShop.Client.Auth.JwtProvider;
-using BlazorShop.Shared.Dtos;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace BlazorShop.Client.Auth.StateProvider;

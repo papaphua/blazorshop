@@ -1,8 +1,8 @@
 ﻿using System.Net;
+using BlazorShop.Server.Common.Options;
 using BlazorShop.Server.Data.Entities;
 using BlazorShop.Server.Data.Repositories.UserRepository;
 using BlazorShop.Server.Exceptions;
-using BlazorShop.Server.Options;
 using BlazorShop.Shared.Auth;
 using BlazorShop.Shared.Models;
 using Microsoft.Extensions.Options;
@@ -18,16 +18,16 @@ public sealed class PaymentService : IPaymentService
     private const string Payment = "payment";
     private const string StripeSignature = "Stripe-Signature";
 
-    private readonly SecretOptions _secrets;
+    private readonly PaymentOptions _paymentOptions;
     private readonly IUserRepository _userRepository;
     private readonly UrlOptions _urlOptions;
 
-    public PaymentService(IOptions<SecretOptions> secrets, IUserRepository userRepository, IOptions<UrlOptions> urlOptions)
+    public PaymentService(IUserRepository userRepository, IOptions<UrlOptions> urlOptions, IOptions<PaymentOptions> paymentOptions)
     {
         _userRepository = userRepository;
+        _paymentOptions = paymentOptions.Value;
         _urlOptions = urlOptions.Value;
-        _secrets = secrets.Value;
-        StripeConfiguration.ApiKey = _secrets.StripePrivateKey;
+        StripeConfiguration.ApiKey = _paymentOptions.StripePrivateKey;
     }
 
     public Stripe.Checkout.Session CreateCheckoutSession(HttpContext context, List<CartItem> cart)
@@ -80,7 +80,7 @@ public sealed class PaymentService : IPaymentService
         var stripeEvent = EventUtility.ConstructEvent(
             json,
             context.Request.Headers[StripeSignature],
-            _secrets.StripeWebHookSecret);
+            _paymentOptions.StripeWebhookSecret);
 
         try
         {

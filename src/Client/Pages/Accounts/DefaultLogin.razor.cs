@@ -1,14 +1,10 @@
-﻿using System.Net.Http.Headers;
-using Blazorise;
-using BlazorShop.Client.Auth;
+﻿using Blazorise;
 using BlazorShop.Client.Services.AuthService;
 using BlazorShop.Client.Services.HttpInterceptorService;
 using BlazorShop.Shared.Dtos;
-using BlazorShop.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Primitives;
 
 namespace BlazorShop.Client.Pages.Accounts;
 

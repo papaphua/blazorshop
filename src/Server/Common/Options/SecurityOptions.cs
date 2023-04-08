@@ -1,6 +1,6 @@
-﻿namespace BlazorShop.Server.Options;
+﻿namespace BlazorShop.Server.Common.Options;
 
-public class SecurityOptions
+public sealed class SecurityOptions
 {
     public int ConfirmationCodeExpiryInMinutes { get; set; }
     public int ConfirmationTokenExpiryInMinutes { get; set; }

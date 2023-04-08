@@ -1,14 +1,14 @@
 ﻿using System.Security.Cryptography;
-using BlazorShop.Server.Options;
+using BlazorShop.Server.Common.Options;
 using Microsoft.Extensions.Options;
 
 namespace BlazorShop.Server.Auth.PasswordProvider;
 
 public sealed class PasswordProvider : IPasswordProvider
 {
-    private readonly HashingOptions _options;
+    private readonly PasswordOptions _options;
 
-    public PasswordProvider(IOptions<HashingOptions> options)
+    public PasswordProvider(IOptions<PasswordOptions> options)
     {
         _options = options.Value;
     }

@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
 
-namespace BlazorShop.Server.Options.OptionSetups;
+namespace BlazorShop.Server.Common.Options.Setups;
 
-public class SecurityOptionsSetup : IConfigureOptions<SecurityOptions>
+public sealed class SecurityOptionsSetup : IConfigureOptions<SecurityOptions>
 {
     private const string SecuritySection = "Security";
     

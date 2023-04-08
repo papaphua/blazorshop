@@ -1,6 +1,6 @@
-﻿namespace BlazorShop.Server.Options;
+﻿namespace BlazorShop.Server.Common.Options;
 
-public class UrlOptions
+public sealed class UrlOptions
 {
     public string EmailConfirmationUrl { get; set; } = null!;
     

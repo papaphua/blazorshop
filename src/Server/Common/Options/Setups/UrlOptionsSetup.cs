@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
 
-namespace BlazorShop.Server.Options.OptionSetups;
+namespace BlazorShop.Server.Common.Options.Setups;
 
-public class UrlOptionsSetup : IConfigureOptions<UrlOptions>
+public sealed class UrlOptionsSetup : IConfigureOptions<UrlOptions>
 {
     private const string UrlSection = "Url";
     

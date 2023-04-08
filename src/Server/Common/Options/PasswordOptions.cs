@@ -1,6 +1,6 @@
-﻿namespace BlazorShop.Server.Options;
+﻿namespace BlazorShop.Server.Common.Options;
 
-public sealed class HashingOptions
+public sealed class PasswordOptions
 {
     public int Iterations { get; set; }
     

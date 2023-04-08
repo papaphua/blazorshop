@@ -1,28 +1,6 @@
-using BlazorShop.Server.Auth.AuthTokenProvider;
-using BlazorShop.Server.Auth.ConfirmationLinkProvider;
-using BlazorShop.Server.Auth.PasswordProvider;
-using BlazorShop.Server.Auth.PermissionHandler;
 using BlazorShop.Server.Data;
-using BlazorShop.Server.Data.Repositories.CategoryRepository;
-using BlazorShop.Server.Data.Repositories.CommentRepository;
-using BlazorShop.Server.Data.Repositories.PermissionRepository;
-using BlazorShop.Server.Data.Repositories.ProductRepository;
-using BlazorShop.Server.Data.Repositories.SecurityRepository;
-using BlazorShop.Server.Data.Repositories.SessionRepository;
-using BlazorShop.Server.Data.Repositories.UserRepository;
-using BlazorShop.Server.Middlewares;
-using BlazorShop.Server.Options.OptionSetups;
-using BlazorShop.Server.Services.AuthService;
-using BlazorShop.Server.Services.CategoryService;
-using BlazorShop.Server.Services.CommentService;
-using BlazorShop.Server.Services.MailService;
-using BlazorShop.Server.Services.PaymentService;
-using BlazorShop.Server.Services.ProductService;
-using BlazorShop.Server.Services.ProfileService;
-using BlazorShop.Server.Services.RoleService;
-using BlazorShop.Server.Services.UserService;
+using BlazorShop.Server.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -31,35 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
-builder.Services.AddScoped<ISessionRepository, SessionRepository>();
-builder.Services.AddScoped<ISecurityRepository, SecurityRepository>();
-builder.Services.AddScoped<ICommentRepository, CommentRepository>();
-
-builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IMailService, MailService>();
-builder.Services.AddScoped<IPaymentService, PaymentService>();
-builder.Services.AddScoped<IRoleService, RoleService>();
-builder.Services.AddScoped<IProfileService, ProfileService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ICommentService, CommentService>();
-
-builder.Services.ConfigureOptions<HashingOptionsSetup>();
-builder.Services.ConfigureOptions<JwtOptionsSetup>();
-builder.Services.ConfigureOptions<BearerOptionsSetup>();
-builder.Services.ConfigureOptions<MailingOptionsSetup>();
-builder.Services.ConfigureOptions<SecretOptionsSetup>();
-builder.Services.ConfigureOptions<SecurityOptionsSetup>();
-builder.Services.ConfigureOptions<UrlOptionsSetup>();
-
-builder.Services.AddScoped<IPasswordProvider, PasswordProvider>();
-builder.Services.AddScoped<IConfirmationLinkProvider, ConfirmationLinkProvider>();
-builder.Services.AddScoped<IAuthTokenProvider, AuthTokenProvider>();
+builder.Services.SetupOptions();
+builder.Services.AddBusinessServices();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
@@ -85,10 +36,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthHandler>();
-builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionAuthPolicyProvider>();
+builder.Services.AddPermissionAuthorization();
 
-builder.Services.AddTransient<GlobalExceptionHandler>();
+builder.Services.AddGlobalExceptionHandler();
 
 var app = builder.Build();
 
@@ -115,7 +65,7 @@ app.UseSwaggerUI(options => { options.SwaggerEndpoint("/swagger/v1/swagger.json"
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<GlobalExceptionHandler>();
+app.UseGlobalExceptionHandler();
 
 app.MapRazorPages();
 app.MapControllers();

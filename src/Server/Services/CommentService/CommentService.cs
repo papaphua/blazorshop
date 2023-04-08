@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using BlazorShop.Server.Data.Entities;
-using BlazorShop.Server.Data.Entities.JointEntities;
 using BlazorShop.Server.Data.Repositories.CommentRepository;
 using BlazorShop.Server.Exceptions;
 using BlazorShop.Server.Primitives;

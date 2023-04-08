@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Blazorise;
+﻿using Blazorise;
 using BlazorShop.Client.Services.AuthService;
 using BlazorShop.Client.Services.HttpInterceptorService;
 using BlazorShop.Shared.Dtos;

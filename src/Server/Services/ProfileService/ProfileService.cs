@@ -2,12 +2,12 @@
 using BlazorShop.Server.Auth.AuthTokenProvider;
 using BlazorShop.Server.Auth.ConfirmationLinkProvider;
 using BlazorShop.Server.Auth.PasswordProvider;
+using BlazorShop.Server.Common.Options;
 using BlazorShop.Server.Data;
 using BlazorShop.Server.Data.Repositories.SecurityRepository;
 using BlazorShop.Server.Data.Repositories.SessionRepository;
 using BlazorShop.Server.Data.Repositories.UserRepository;
 using BlazorShop.Server.Exceptions;
-using BlazorShop.Server.Options;
 using BlazorShop.Server.Services.MailService;
 using BlazorShop.Server.Services.PaymentService;
 using BlazorShop.Shared.Dtos;

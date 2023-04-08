@@ -1,4 +1,4 @@
-﻿using BlazorShop.Server.Options;
+﻿using BlazorShop.Server.Common.Options;
 using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
@@ -7,13 +7,13 @@ namespace BlazorShop.Server.Services.MailService;
 
 public sealed class MailService : IMailService
 {
-    private readonly MailingOptions _options;
+    private readonly MailOptions _options;
     private readonly SendGridClient _client;
 
-    public MailService(IOptions<MailingOptions> options, IOptions<SecretOptions> secrets)
+    public MailService(IOptions<MailOptions> options)
     {
         _options = options.Value;
-        _client = new SendGridClient(secrets.Value.SendGridApiKey);
+        _client = new SendGridClient(_options.SendGridApiKey);
     }
 
     public async Task SendEmailAsync(string receiver, string text)

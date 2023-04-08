@@ -1,10 +1,10 @@
 ﻿using System.Security.Claims;
 using System.Security.Cryptography;
 using BlazorShop.Server.Auth.AuthTokenProvider;
+using BlazorShop.Server.Common.Options;
 using BlazorShop.Server.Data.Entities;
 using BlazorShop.Server.Data.Repositories.BaseRepository;
 using BlazorShop.Server.Exceptions;
-using BlazorShop.Server.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 

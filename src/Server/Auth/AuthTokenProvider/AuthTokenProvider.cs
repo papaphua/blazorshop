@@ -2,11 +2,11 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using BlazorShop.Server.Common.Options;
 using BlazorShop.Server.Data.Entities;
 using BlazorShop.Server.Data.Repositories.PermissionRepository;
 using BlazorShop.Server.Data.Repositories.UserRepository;
 using BlazorShop.Server.Exceptions;
-using BlazorShop.Server.Options;
 using BlazorShop.Shared.Auth;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -16,15 +16,13 @@ namespace BlazorShop.Server.Auth.AuthTokenProvider;
 public class AuthTokenProvider : IAuthTokenProvider
 {
         private readonly JwtOptions _options;
-    private readonly SecretOptions _secrets;
     private readonly IPermissionRepository _permissionRepository;
     private readonly IUserRepository _userRepository;
 
-    public AuthTokenProvider(IOptions<JwtOptions> options, IOptions<SecretOptions> secrets, IUserRepository userRepository,
+    public AuthTokenProvider(IOptions<JwtOptions> options, IUserRepository userRepository,
         IPermissionRepository permissionRepository)
     {
         _options = options.Value;
-        _secrets = secrets.Value;
         _userRepository = userRepository;
         _permissionRepository = permissionRepository;
     }
@@ -63,7 +61,7 @@ public class AuthTokenProvider : IAuthTokenProvider
             ValidateIssuer = true,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_secrets.JwtSecretKey)),
+                Encoding.UTF8.GetBytes(_options.JwtSecretKey)),
             ValidateLifetime = false,
             ValidIssuer = _options.Issuer,
             ValidAudience = _options.Audience
@@ -104,7 +102,7 @@ public class AuthTokenProvider : IAuthTokenProvider
 
     public string CreateToken(IEnumerable<Claim> claims)
     {
-        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secrets.JwtSecretKey));
+        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.JwtSecretKey));
 
         var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 

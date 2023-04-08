@@ -2,7 +2,6 @@
 using BlazorShop.Client.Auth.PermissionHandler;
 using BlazorShop.Client.Services.AuthService;
 using BlazorShop.Client.Services.HttpInterceptorService;
-using BlazorShop.Client.Services.ProfileService;
 using BlazorShop.Shared.Dtos;
 using Microsoft.AspNetCore.Components;
 
