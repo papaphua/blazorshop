@@ -1,4 +1,5 @@
-﻿using BlazorShop.Server.Data.Entities;
+﻿using BlazorShop.Server.Common;
+using BlazorShop.Server.Data.Entities;
 using BlazorShop.Server.Data.Entities.JointEntities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -17,6 +18,13 @@ public sealed class RoleConfiguration : IEntityTypeConfiguration<Role>
             .WithMany()
             .UsingEntity<RolePermission>();
 
-        builder.HasData(Role.GetValues());
+        var roles = Enum.GetValues<Roles>()
+            .Select(role => new Role
+            {
+                Id = (int)role,
+                Name = role.ToString()
+            });
+        
+        builder.HasData(roles);
     }
 }

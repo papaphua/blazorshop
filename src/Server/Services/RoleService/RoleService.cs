@@ -1,4 +1,5 @@
-﻿using BlazorShop.Server.Data;
+﻿using BlazorShop.Server.Common;
+using BlazorShop.Server.Data;
 using BlazorShop.Server.Data.Entities;
 using BlazorShop.Server.Data.Entities.JointEntities;
 
@@ -13,9 +14,9 @@ public sealed class RoleService : IRoleService
         _context = context;
     }
 
-    public async Task AddUserToRoleAsync(User user, Role role)
+    public async Task AddUserToRoleAsync(User user, Roles role)
     {
-        var userRole = new UserRole(user.Id, role.Id);
+        var userRole = new UserRole(user.Id, (int)role);
 
         await _context.Set<UserRole>().AddAsync(userRole);
         

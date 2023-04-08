@@ -1,6 +1,6 @@
 ﻿using BlazorShop.Server.Middlewares;
 
-namespace BlazorShop.Server.Extensions;
+namespace BlazorShop.Server.Common.Extensions;
 
 public static class ApplicationExtensions
 {

@@ -3,7 +3,6 @@ using AutoMapper;
 using BlazorShop.Server.Common;
 using BlazorShop.Server.Common.Exceptions;
 using BlazorShop.Server.Common.Options;
-using BlazorShop.Server.Common.Providers;
 using BlazorShop.Server.Common.Providers.LinkProvider;
 using BlazorShop.Server.Common.Providers.PasswordProvider;
 using BlazorShop.Server.Common.Providers.TokenProvider;
@@ -88,9 +87,9 @@ public sealed class AuthService : IAuthService
         await _userRepository.CreateAndSaveAsync(user);
 
         if (await _userRepository.IsEmptyAsync())
-            await _roleService.AddUserToRoleAsync(user, Role.Admin);
+            await _roleService.AddUserToRoleAsync(user, Roles.Admin);
         else
-            await _roleService.AddUserToRoleAsync(user, Role.Customer);
+            await _roleService.AddUserToRoleAsync(user, Roles.Customer);
 
         await _paymentService.AddPaymentProfileAsync(user);
 

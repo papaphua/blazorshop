@@ -1,11 +1,8 @@
 ﻿using BlazorShop.Server.Auth.PermissionHandler;
 using BlazorShop.Server.Common.Options.Setups;
-using BlazorShop.Server.Common.Providers;
 using BlazorShop.Server.Common.Providers.LinkProvider;
 using BlazorShop.Server.Common.Providers.PasswordProvider;
 using BlazorShop.Server.Common.Providers.TokenProvider;
-using BlazorShop.Server.Services.PaymentService;
-using BlazorShop.Server.Services.UserService;
 using BlazorShop.Server.Data.Repositories.CategoryRepository;
 using BlazorShop.Server.Data.Repositories.CommentRepository;
 using BlazorShop.Server.Data.Repositories.PermissionRepository;
@@ -18,12 +15,14 @@ using BlazorShop.Server.Services.AuthService;
 using BlazorShop.Server.Services.CategoryService;
 using BlazorShop.Server.Services.CommentService;
 using BlazorShop.Server.Services.MailService;
+using BlazorShop.Server.Services.PaymentService;
 using BlazorShop.Server.Services.ProductService;
 using BlazorShop.Server.Services.ProfileService;
 using BlazorShop.Server.Services.RoleService;
+using BlazorShop.Server.Services.UserService;
 using Microsoft.AspNetCore.Authorization;
 
-namespace BlazorShop.Server.Extensions;
+namespace BlazorShop.Server.Common.Extensions;
 
 public static class ServiceExtensions
 {

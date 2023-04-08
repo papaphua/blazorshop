@@ -15,8 +15,8 @@ public sealed class RolePermissionConfiguration : IEntityTypeConfiguration<RoleP
         builder.HasKey(linked => new { linked.RoleId, linked.PermissionId });
 
         builder.HasData(
-            new RolePermission(Role.Customer.Id, (int)Permissions.CustomerPermission),
-            new RolePermission(Role.Admin.Id, (int)Permissions.CustomerPermission),
-            new RolePermission(Role.Admin.Id, (int)Permissions.AdminPermission));
+            new RolePermission((int)Roles.Customer, (int)Permissions.CustomerPermission),
+            new RolePermission((int)Roles.Admin, (int)Permissions.CustomerPermission),
+            new RolePermission((int)Roles.Admin, (int)Permissions.AdminPermission));
     }
 }
