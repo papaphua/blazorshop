@@ -1,15 +1,16 @@
 ﻿using System.Security.Cryptography;
 using BlazorShop.Server.Common.Options;
+using Microsoft.Extensions.Options;
 
-namespace BlazorShop.Server.Common.Providers;
+namespace BlazorShop.Server.Common.Providers.PasswordProvider;
 
-public sealed class PasswordProvider
+public sealed class PasswordProvider : IPasswordProvider
 {
     private readonly PasswordOptions _passwordOptions;
 
-    public PasswordProvider(PasswordOptions passwordOptions)
+    public PasswordProvider(IOptions<PasswordOptions> passwordOptions)
     {
-        _passwordOptions = passwordOptions;
+        _passwordOptions = passwordOptions.Value;
     }
     
     public string GetPasswordHash(string password)

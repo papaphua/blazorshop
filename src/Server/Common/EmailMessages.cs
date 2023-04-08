@@ -1,6 +1,6 @@
-﻿namespace BlazorShop.Server.Data;
+﻿namespace BlazorShop.Server.Common;
 
-public static class Emails
+public static class EmailMessages
 {
     public static string EmailConfirmation(string link)
     {

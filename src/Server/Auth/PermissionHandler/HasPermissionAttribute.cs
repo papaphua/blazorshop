@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BlazorShop.Server.Common;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BlazorShop.Server.Auth.PermissionHandler;
 

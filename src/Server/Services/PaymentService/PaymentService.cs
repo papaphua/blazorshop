@@ -1,8 +1,9 @@
 ﻿using System.Net;
+using BlazorShop.Server.Common;
+using BlazorShop.Server.Common.Exceptions;
 using BlazorShop.Server.Common.Options;
 using BlazorShop.Server.Data.Entities;
 using BlazorShop.Server.Data.Repositories.UserRepository;
-using BlazorShop.Server.Exceptions;
 using BlazorShop.Shared.Auth;
 using BlazorShop.Shared.Models;
 using Microsoft.Extensions.Options;

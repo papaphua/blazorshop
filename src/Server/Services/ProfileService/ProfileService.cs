@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using BlazorShop.Server.Common;
+using BlazorShop.Server.Common.Exceptions;
 using BlazorShop.Server.Common.Options;
 using BlazorShop.Server.Common.Providers;
-using BlazorShop.Server.Data;
+using BlazorShop.Server.Common.Providers.LinkProvider;
+using BlazorShop.Server.Common.Providers.PasswordProvider;
+using BlazorShop.Server.Common.Providers.TokenProvider;
 using BlazorShop.Server.Data.Repositories.SecurityRepository;
 using BlazorShop.Server.Data.Repositories.SessionRepository;
 using BlazorShop.Server.Data.Repositories.UserRepository;
-using BlazorShop.Server.Exceptions;
 using BlazorShop.Server.Services.MailService;
 using BlazorShop.Server.Services.PaymentService;
 using BlazorShop.Shared.Dtos;
@@ -19,18 +22,18 @@ public sealed class ProfileService : IProfileService
     private readonly IMapper _mapper;
     private readonly IUserRepository _userRepository;
     private readonly IPaymentService _paymentService;
-    private readonly TokenProvider _tokenProvider;
+    private readonly ITokenProvider _tokenProvider;
     private readonly ISessionRepository _sessionRepository;
     private readonly ISecurityRepository _securityRepository;
-    private readonly PasswordProvider _passwordProvider;
+    private readonly IPasswordProvider _passwordProvider;
     private readonly IMailService _mailService;
     private readonly UrlOptions _urlOptions;
-    private readonly LinkProvider _linkProvider;
+    private readonly ILinkProvider _linkProvider;
 
     public ProfileService(IMapper mapper, IUserRepository userRepository, IPaymentService paymentService,
-        TokenProvider tokenProvider, ISessionRepository sessionRepository, ISecurityRepository securityRepository,
-        PasswordProvider passwordProvider, IMailService mailService,
-        LinkProvider linkProvider, IOptions<UrlOptions> urlOptions)
+        ITokenProvider tokenProvider, ISessionRepository sessionRepository, ISecurityRepository securityRepository,
+        IPasswordProvider passwordProvider, IMailService mailService,
+        ILinkProvider linkProvider, IOptions<UrlOptions> urlOptions)
     {
         _mapper = mapper;
         _userRepository = userRepository;
@@ -136,7 +139,7 @@ public sealed class ProfileService : IProfileService
 
         var link = _linkProvider.GenerateConfirmationLink(_urlOptions.DeleteProfileUrl, parameters);
         
-        await _mailService.SendEmailAsync(user.Email, Emails.DeleteProfile(link));
+        await _mailService.SendEmailAsync(user.Email, EmailMessages.DeleteProfile(link));
         
     }
 

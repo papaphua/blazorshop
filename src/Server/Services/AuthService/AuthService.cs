@@ -1,13 +1,16 @@
 ﻿using System.Security.Claims;
 using AutoMapper;
+using BlazorShop.Server.Common;
+using BlazorShop.Server.Common.Exceptions;
 using BlazorShop.Server.Common.Options;
 using BlazorShop.Server.Common.Providers;
-using BlazorShop.Server.Data;
+using BlazorShop.Server.Common.Providers.LinkProvider;
+using BlazorShop.Server.Common.Providers.PasswordProvider;
+using BlazorShop.Server.Common.Providers.TokenProvider;
 using BlazorShop.Server.Data.Entities;
 using BlazorShop.Server.Data.Repositories.SecurityRepository;
 using BlazorShop.Server.Data.Repositories.SessionRepository;
 using BlazorShop.Server.Data.Repositories.UserRepository;
-using BlazorShop.Server.Exceptions;
 using BlazorShop.Server.Services.MailService;
 using BlazorShop.Server.Services.PaymentService;
 using BlazorShop.Server.Services.RoleService;
@@ -20,30 +23,30 @@ namespace BlazorShop.Server.Services.AuthService;
 
 public sealed class AuthService : IAuthService
 {
-    private readonly PasswordProvider _passwordProvider;
+    private readonly IPasswordProvider _passwordProvider;
     private readonly IUserRepository _userRepository;
     private readonly IRoleService _roleService;
-    private readonly TokenProvider _tokenProvider;
+    private readonly ITokenProvider _tokenProvider;
     private readonly IMapper _mapper;
     private readonly IPaymentService _paymentService;
     private readonly ISessionRepository _sessionRepository;
     private readonly ISecurityRepository _securityRepository;
     private readonly IMailService _mailService;
     private readonly UrlOptions _urlOptions;
-    private readonly LinkProvider _linkProvider;
+    private readonly ILinkProvider _linkProvider;
 
     public AuthService(
         IUserRepository userRepository,
         IRoleService roleService,
-        PasswordProvider passwordProvider,
+        IPasswordProvider passwordProvider,
         IMapper mapper,
-        TokenProvider tokenProvider,
+        ITokenProvider tokenProvider,
         IPaymentService paymentService,
         ISessionRepository sessionRepository,
         ISecurityRepository securityRepository,
         IMailService mailService,
         IOptions<UrlOptions> urlOptions,
-        LinkProvider linkProvider)
+        ILinkProvider linkProvider)
     {
         _userRepository = userRepository;
         _roleService = roleService;
@@ -224,7 +227,7 @@ public sealed class AuthService : IAuthService
 
         var code = await _securityRepository.GenerateConfirmationCode(user.Id);
 
-        await _mailService.SendEmailAsync(user.Email, Emails.ConfirmationCode(code));
+        await _mailService.SendEmailAsync(user.Email, EmailMessages.ConfirmationCode(code));
     }
 
     public async Task GetNewEmailConfirmationCodesAsync(Guid userId, string email)
@@ -235,7 +238,7 @@ public sealed class AuthService : IAuthService
 
         var code = await _securityRepository.GenerateNewEmailConfirmationCode(userId);
 
-        await _mailService.SendEmailAsync(email, Emails.ConfirmationCode(code));
+        await _mailService.SendEmailAsync(email, EmailMessages.ConfirmationCode(code));
     }
 
     public async Task GetEmailConfirmationLinkAsync(Guid userId)
@@ -252,7 +255,7 @@ public sealed class AuthService : IAuthService
 
         var link = _linkProvider.GenerateConfirmationLink(_urlOptions.EmailConfirmationUrl, parameters);
 
-        await _mailService.SendEmailAsync(user.Email, Emails.EmailConfirmation(link));
+        await _mailService.SendEmailAsync(user.Email, EmailMessages.EmailConfirmation(link));
     }
 
     public async Task GetPasswordResetLinkAsync(EmailDto emailDto)
@@ -267,7 +270,7 @@ public sealed class AuthService : IAuthService
 
         var link = _linkProvider.GenerateConfirmationLink(_urlOptions.PasswordResetUrl, parameters);
 
-        await _mailService.SendEmailAsync(user.Email, Emails.PasswordReset(link));
+        await _mailService.SendEmailAsync(user.Email, EmailMessages.PasswordReset(link));
     }
 
     public async Task<ResponseDto> ConfirmEmailAsync(ConfirmationParameters parameters)

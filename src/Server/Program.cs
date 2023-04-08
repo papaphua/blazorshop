@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-ServiceExtensions.AddOptions(builder.Services);
+builder.Services.SetupOptions();
 builder.Services.AddBusinessServices();
 builder.Services.AddProviders();
 

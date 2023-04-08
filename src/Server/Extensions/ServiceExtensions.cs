@@ -1,6 +1,9 @@
 ﻿using BlazorShop.Server.Auth.PermissionHandler;
 using BlazorShop.Server.Common.Options.Setups;
 using BlazorShop.Server.Common.Providers;
+using BlazorShop.Server.Common.Providers.LinkProvider;
+using BlazorShop.Server.Common.Providers.PasswordProvider;
+using BlazorShop.Server.Common.Providers.TokenProvider;
 using BlazorShop.Server.Services.PaymentService;
 using BlazorShop.Server.Services.UserService;
 using BlazorShop.Server.Data.Repositories.CategoryRepository;
@@ -50,14 +53,14 @@ public static class ServiceExtensions
         if (services == null)
             throw new ArgumentNullException(nameof(services));
 
-        services.AddScoped<TokenProvider>();
-        services.AddScoped<PasswordProvider>();
-        services.AddScoped<LinkProvider>();
+        services.AddScoped<ITokenProvider, TokenProvider>();
+        services.AddScoped<IPasswordProvider, PasswordProvider>();
+        services.AddScoped<ILinkProvider, LinkProvider>();
         
         return services;
     }
     
-    public static IServiceCollection AddOptions(this IServiceCollection services)
+    public static IServiceCollection SetupOptions(this IServiceCollection services)
     {
         if (services == null)
             throw new ArgumentNullException(nameof(services));

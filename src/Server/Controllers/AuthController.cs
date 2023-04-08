@@ -1,5 +1,7 @@
 ﻿using BlazorShop.Server.Auth.PermissionHandler;
+using BlazorShop.Server.Common;
 using BlazorShop.Server.Common.Providers;
+using BlazorShop.Server.Common.Providers.TokenProvider;
 using BlazorShop.Server.Services.AuthService;
 using BlazorShop.Shared.Dtos;
 using BlazorShop.Shared.Models;
@@ -13,9 +15,9 @@ namespace BlazorShop.Server.Controllers;
 public sealed class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
-    private readonly TokenProvider _tokenProvider;
+    private readonly ITokenProvider _tokenProvider;
     
-    public AuthController(IAuthService authService, TokenProvider tokenProvider)
+    public AuthController(IAuthService authService, ITokenProvider tokenProvider)
     {
         _authService = authService;
         _tokenProvider = tokenProvider;

@@ -1,4 +1,4 @@
-﻿namespace BlazorShop.Server.Exceptions;
+﻿namespace BlazorShop.Server.Common;
 
 public static class ExceptionMessages
 {

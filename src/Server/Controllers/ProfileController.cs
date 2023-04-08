@@ -1,6 +1,8 @@
 ﻿using System.Security.Claims;
 using BlazorShop.Server.Auth.PermissionHandler;
+using BlazorShop.Server.Common;
 using BlazorShop.Server.Common.Providers;
+using BlazorShop.Server.Common.Providers.TokenProvider;
 using BlazorShop.Server.Services.ProfileService;
 using BlazorShop.Shared.Dtos;
 using BlazorShop.Shared.Models;
@@ -13,10 +15,10 @@ namespace BlazorShop.Server.Controllers;
 [ApiController]
 public sealed class ProfileController : ControllerBase
 {
-    private readonly TokenProvider _tokenProvider;
+    private readonly ITokenProvider _tokenProvider;
     private readonly IProfileService _profileService;
 
-    public ProfileController(TokenProvider authTokenProvider, IProfileService profileService)
+    public ProfileController(ITokenProvider authTokenProvider, IProfileService profileService)
     {
         _tokenProvider = authTokenProvider;
         _profileService = profileService;

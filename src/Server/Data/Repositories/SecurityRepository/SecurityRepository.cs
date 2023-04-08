@@ -1,8 +1,9 @@
 ﻿using System.Security.Cryptography;
+using BlazorShop.Server.Common;
+using BlazorShop.Server.Common.Exceptions;
 using BlazorShop.Server.Common.Options;
 using BlazorShop.Server.Data.Entities;
 using BlazorShop.Server.Data.Repositories.BaseRepository;
-using BlazorShop.Server.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 

@@ -1,23 +1,24 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using BlazorShop.Server.Common.Exceptions;
 using BlazorShop.Server.Common.Options;
 using BlazorShop.Server.Data.Entities;
 using BlazorShop.Server.Data.Repositories.PermissionRepository;
-using BlazorShop.Server.Exceptions;
 using BlazorShop.Shared.Auth;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace BlazorShop.Server.Common.Providers;
+namespace BlazorShop.Server.Common.Providers.TokenProvider;
 
-public sealed class TokenProvider
+public sealed class TokenProvider : ITokenProvider
 {
     private readonly JwtOptions _jwtOptions;
     private readonly IPermissionRepository _permissionRepository;
 
-    public TokenProvider(JwtOptions jwtOptions, IPermissionRepository permissionRepository)
+    public TokenProvider(IOptions<JwtOptions> jwtOptions, IPermissionRepository permissionRepository)
     {
-        _jwtOptions = jwtOptions;
+        _jwtOptions = jwtOptions.Value;
         _permissionRepository = permissionRepository;
     }
 

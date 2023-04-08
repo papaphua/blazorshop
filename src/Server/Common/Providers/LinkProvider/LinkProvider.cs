@@ -1,8 +1,8 @@
 ﻿using BlazorShop.Shared.Models;
 
-namespace BlazorShop.Server.Common.Providers;
+namespace BlazorShop.Server.Common.Providers.LinkProvider;
 
-public sealed class LinkProvider
+public sealed class LinkProvider : ILinkProvider
 {
     public string GenerateConfirmationLink(string url, ConfirmationParameters parameters)
     {

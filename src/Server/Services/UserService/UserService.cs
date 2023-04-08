@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
+using BlazorShop.Server.Common;
+using BlazorShop.Server.Common.Exceptions;
 using BlazorShop.Server.Data.Repositories.UserRepository;
-using BlazorShop.Server.Exceptions;
 using BlazorShop.Server.Primitives;
 using BlazorShop.Server.Services.PaymentService;
 using BlazorShop.Shared.Dtos;

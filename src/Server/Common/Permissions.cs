@@ -1,4 +1,4 @@
-﻿namespace BlazorShop.Server.Auth.PermissionHandler;
+﻿namespace BlazorShop.Server.Common;
 
 public enum Permissions
 {

@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
+using BlazorShop.Server.Common;
+using BlazorShop.Server.Common.Exceptions;
 using BlazorShop.Server.Data.Entities;
 using BlazorShop.Server.Data.Repositories.CommentRepository;
-using BlazorShop.Server.Exceptions;
 using BlazorShop.Server.Primitives;
 using BlazorShop.Shared.Dtos;
 using BlazorShop.Shared.Pagination.Parameters;

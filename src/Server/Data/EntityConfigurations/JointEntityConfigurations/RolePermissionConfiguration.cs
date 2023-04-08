@@ -1,4 +1,4 @@
-﻿using BlazorShop.Server.Auth.PermissionHandler;
+﻿using BlazorShop.Server.Common;
 using BlazorShop.Server.Data.Entities;
 using BlazorShop.Server.Data.Entities.JointEntities;
 using Microsoft.EntityFrameworkCore;

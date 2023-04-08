@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using BlazorShop.Server.Exceptions;
+using BlazorShop.Server.Common.Exceptions;
 using BlazorShop.Shared.Dtos;
 
 namespace BlazorShop.Server.Middlewares;

@@ -1,5 +1,7 @@
 ﻿using BlazorShop.Server.Auth.PermissionHandler;
+using BlazorShop.Server.Common;
 using BlazorShop.Server.Common.Providers;
+using BlazorShop.Server.Common.Providers.TokenProvider;
 using BlazorShop.Server.Services.CommentService;
 using BlazorShop.Shared.Dtos;
 using BlazorShop.Shared.Pagination.Parameters;
@@ -14,9 +16,9 @@ namespace BlazorShop.Server.Controllers;
 public sealed class CommentController : ControllerBase
 {
     private readonly ICommentService _commentService;
-    private readonly TokenProvider _tokenProvider;
+    private readonly ITokenProvider _tokenProvider;
 
-    public CommentController(ICommentService commentService, TokenProvider tokenProvider)
+    public CommentController(ICommentService commentService, ITokenProvider tokenProvider)
     {
         _commentService = commentService;
         _tokenProvider = tokenProvider;
