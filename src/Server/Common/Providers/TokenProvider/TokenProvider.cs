@@ -4,7 +4,7 @@ using System.Text;
 using BlazorShop.Server.Common.Exceptions;
 using BlazorShop.Server.Common.Options;
 using BlazorShop.Server.Data.Entities;
-using BlazorShop.Server.Data.Repositories.PermissionRepository;
+using BlazorShop.Server.Services.PermissionService;
 using BlazorShop.Shared.Auth;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -14,12 +14,15 @@ namespace BlazorShop.Server.Common.Providers.TokenProvider;
 public sealed class TokenProvider : ITokenProvider
 {
     private readonly JwtOptions _jwtOptions;
-    private readonly IPermissionRepository _permissionRepository;
+    private readonly SecurityOptions _securityOptions;
+    private readonly IPermissionService _permissionService;
 
-    public TokenProvider(IOptions<JwtOptions> jwtOptions, IPermissionRepository permissionRepository)
+    public TokenProvider(IOptions<JwtOptions> jwtOptions, IPermissionService permissionService,
+        IOptions<SecurityOptions> securityOptions)
     {
         _jwtOptions = jwtOptions.Value;
-        _permissionRepository = permissionRepository;
+        _permissionService = permissionService;
+        _securityOptions = securityOptions.Value;
     }
 
     public async Task<string> GenerateAccessTokenAsync(User user)
@@ -27,17 +30,17 @@ public sealed class TokenProvider : ITokenProvider
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(CustomClaims.PaymentProfileId, user.PaymentProfileId),
+            new(CustomClaims.PaymentProfileId, user.CustomerId),
             new(ClaimTypes.Name, user.Username),
             new(ClaimTypes.Email, user.Email)
         };
 
-        var permissions = await _permissionRepository.GetUserPermissionsAsync(user.Id);
+        var permissions = await _permissionService.GetUserPermissionsAsync(user.Id);
 
         claims.AddRange(
             permissions.Select(permission => new Claim(CustomClaims.Permissions, permission)));
 
-        return CreateToken(claims);
+        return CreateToken(claims, _jwtOptions.AccessTokenExpiryInMinutes);
     }
 
     public string GenerateRefreshToken(User user)
@@ -46,14 +49,24 @@ public sealed class TokenProvider : ITokenProvider
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString())
         };
-        
-        return CreateToken(claims);
+
+        return CreateToken(claims, _jwtOptions.RefreshTokenExpiryInMinutes);
     }
-    
+
+    public string GenerateConfirmationToken(User user)
+    {
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.Email, user.Id.ToString())
+        };
+
+        return CreateToken(claims, _securityOptions.ConfirmationTokenExpiryInMinutes);
+    }
+
     public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
     {
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.JwtSecretKey));
-        
+
         var validationParameters = new TokenValidationParameters
         {
             ValidateAudience = true,
@@ -68,7 +81,7 @@ public sealed class TokenProvider : ITokenProvider
         var principals = new JwtSecurityTokenHandler()
             .ValidateToken(token, validationParameters, out var securityToken);
 
-        if (securityToken is not JwtSecurityToken jwtSecurityToken || 
+        if (securityToken is not JwtSecurityToken jwtSecurityToken ||
             !jwtSecurityToken.Header.Alg.Equals(
                 SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
             throw new SecurityTokenException("Invalid token");
@@ -81,11 +94,11 @@ public sealed class TokenProvider : ITokenProvider
         var id = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (id is null) throw new BusinessException(ExceptionMessages.Unauthorized);
-        
+
         return Guid.Parse(id);
     }
-    
-    private string CreateToken(IEnumerable<Claim> claims)
+
+    private string CreateToken(IEnumerable<Claim> claims, int expiryInMin)
     {
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.JwtSecretKey));
         var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
@@ -95,7 +108,7 @@ public sealed class TokenProvider : ITokenProvider
             audience: _jwtOptions.Audience,
             claims: claims,
             notBefore: DateTime.UtcNow,
-            expires: DateTime.UtcNow.AddMinutes(_jwtOptions.AccessTokenExpiryInMinutes),
+            expires: DateTime.UtcNow.AddMinutes(expiryInMin),
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

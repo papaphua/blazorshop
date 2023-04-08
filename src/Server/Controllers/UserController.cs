@@ -1,5 +1,6 @@
 ﻿using BlazorShop.Server.Auth.PermissionHandler;
 using BlazorShop.Server.Common;
+using BlazorShop.Server.Facades.UserFacade;
 using BlazorShop.Server.Services.UserService;
 using BlazorShop.Shared.Dtos;
 using BlazorShop.Shared.Pagination.Parameters;
@@ -12,18 +13,18 @@ namespace BlazorShop.Server.Controllers;
 [ApiController]
 public sealed class UserController : ControllerBase
 {
-    private readonly IUserService _userService;
+    private readonly IUserFacade _userFacade;
 
-    public UserController(IUserService userService)
+    public UserController(IUserFacade userFacade)
     {
-        _userService = userService;
+        _userFacade = userFacade;
     }
 
     [HasPermission(Permissions.AdminPermission)]
     [HttpGet]
     public async Task<List<UserDto>> GetUsersByParameters([FromQuery] BaseParameters parameters)
     {
-        var pagedList = await _userService.GetUsersByParametersAsync(parameters);
+        var pagedList = await _userFacade.GetUsersByParametersAsync(parameters);
 
         Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(pagedList.MetaData));
 
@@ -34,20 +35,20 @@ public sealed class UserController : ControllerBase
     [HttpGet("id/{id:guid}")]
     public async Task<UserDto?> GetUserById(Guid id)
     {
-        return await _userService.GetUserByIdAsync(id);
+        return await _userFacade.GetUserByIdAsync(id);
     }
     
     [HasPermission(Permissions.AdminPermission)]
     [HttpGet("username/{username}")]
     public async Task<UserDto?> GetUserByUsername(string username)
     {
-        return await _userService.GetUserByUsernameAsync(username);
+        return await _userFacade.GetUserByUsernameAsync(username);
     }
     
     [HasPermission(Permissions.AdminPermission)]
     [HttpDelete("{id:guid}")]
     public async Task DeleteUser(Guid id)
     {
-        await _userService.DeleteUserAsync(id);
+        await _userFacade.DeleteUserAsync(id);
     }
 }

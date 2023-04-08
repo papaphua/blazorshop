@@ -32,32 +32,32 @@ namespace BlazorShop.Server.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Uri")
+                    b.Property<string>("Slug")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category", (string)null);
+                    b.ToTable("Categories");
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("73b13271-1da7-4e27-9f4d-0bbfeac8351d"),
+                            Id = new Guid("73fc413d-9817-4428-9f34-4c5f80f4f3dd"),
                             Name = "Books",
-                            Uri = "books"
+                            Slug = "books"
                         },
                         new
                         {
-                            Id = new Guid("5de1e9b7-117f-4ac1-b240-12fddad26018"),
+                            Id = new Guid("174eb448-e412-4114-bfe2-0ff3b1a12291"),
                             Name = "Movies",
-                            Uri = "movies"
+                            Slug = "movies"
                         },
                         new
                         {
-                            Id = new Guid("3ab26ce8-562e-4221-b8fa-1f69d3d56243"),
+                            Id = new Guid("defb6999-12cc-49df-bdae-1761fb589507"),
                             Name = "Video Games",
-                            Uri = "video-games"
+                            Slug = "video-games"
                         });
                 });
 
@@ -65,6 +65,9 @@ namespace BlazorShop.Server.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Text")
@@ -76,71 +79,43 @@ namespace BlazorShop.Server.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ProductId");
+
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comment", (string)null);
+                    b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("BlazorShop.Server.Data.Entities.JointEntities.ProductComment", b =>
+            modelBuilder.Entity("BlazorShop.Server.Data.Entities.Joints.RolePermission", b =>
                 {
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CommentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ProductId", "CommentId");
-
-                    b.HasIndex("CommentId");
-
-                    b.ToTable("ProductComment", (string)null);
-                });
-
-            modelBuilder.Entity("BlazorShop.Server.Data.Entities.JointEntities.RolePermission", b =>
-                {
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
                     b.Property<int>("PermissionId")
                         .HasColumnType("int");
 
-                    b.HasKey("RoleId", "PermissionId");
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("PermissionId");
+                    b.HasKey("PermissionId", "RoleId");
 
-                    b.ToTable("RolePermission", (string)null);
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("RolePermissions");
 
                     b.HasData(
                         new
                         {
-                            RoleId = 1,
-                            PermissionId = 1
+                            PermissionId = 1,
+                            RoleId = 1
                         },
                         new
                         {
-                            RoleId = 2,
-                            PermissionId = 1
+                            PermissionId = 1,
+                            RoleId = 2
                         },
                         new
                         {
-                            RoleId = 2,
-                            PermissionId = 2
+                            PermissionId = 2,
+                            RoleId = 2
                         });
-                });
-
-            modelBuilder.Entity("BlazorShop.Server.Data.Entities.JointEntities.UserRole", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("UserRole", (string)null);
                 });
 
             modelBuilder.Entity("BlazorShop.Server.Data.Entities.Permission", b =>
@@ -157,7 +132,7 @@ namespace BlazorShop.Server.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Permission", (string)null);
+                    b.ToTable("Permissions");
 
                     b.HasData(
                         new
@@ -196,7 +171,7 @@ namespace BlazorShop.Server.Data.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Uri")
+                    b.Property<string>("Slug")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -204,118 +179,308 @@ namespace BlazorShop.Server.Data.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Product", (string)null);
+                    b.ToTable("Products");
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("16a473f8-394c-4d55-aa0b-ba55e7646d00"),
-                            CategoryId = new Guid("73b13271-1da7-4e27-9f4d-0bbfeac8351d"),
-                            Description = "The Hitchhiker's Guide to the Galaxy is a comedy science fiction franchise created by Douglas Adams.",
-                            ImageUrl = "https://upload.wikimedia.org/wikipedia/en/b/bd/H2G2_UK_front_cover.jpg",
-                            Name = "The Hitchhiker's Guide to the Galaxy",
-                            Price = 9.99m,
-                            Uri = "the-hitchhiker's-guide-to-the-galaxy"
+                            Id = new Guid("cfed4c40-a909-433f-ace3-adde857c1a86"),
+                            CategoryId = new Guid("73fc413d-9817-4428-9f34-4c5f80f4f3dd"),
+                            Description = "A novel about a woman's journey through the Dust Bowl era of the 1930s",
+                            ImageUrl = "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1594925043i/53138081.jpg",
+                            Name = "The Four Winds",
+                            Price = 25.99m,
+                            Slug = "the-four-winds"
                         },
                         new
                         {
-                            Id = new Guid("850b4c27-ee8a-41c7-b184-3a6c64e0f136"),
-                            CategoryId = new Guid("73b13271-1da7-4e27-9f4d-0bbfeac8351d"),
-                            Description = "Ready Player One is a 2011 science fiction novel, and the debut novel of American author Ernest Cline.",
-                            ImageUrl = "https://upload.wikimedia.org/wikipedia/en/a/a4/Ready_Player_One_cover.jpg",
-                            Name = "Ready Player One",
-                            Price = 7.99m,
-                            Uri = "ready-player-one"
+                            Id = new Guid("c0b9f4c3-e04f-446e-af08-bcd24aeae30f"),
+                            CategoryId = new Guid("73fc413d-9817-4428-9f34-4c5f80f4f3dd"),
+                            Description = "A novel about a woman who finds herself in a library between life and death, with the opportunity to try out different versions of her life",
+                            ImageUrl = "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1602190253i/52578297.jpg",
+                            Name = "The Midnight Library",
+                            Price = 21.99m,
+                            Slug = "the-midnight-library"
                         },
                         new
                         {
-                            Id = new Guid("6da03b19-2347-427b-ada5-0e3a03ced845"),
-                            CategoryId = new Guid("73b13271-1da7-4e27-9f4d-0bbfeac8351d"),
-                            Description = "Nineteen Eighty-Four (also stylised as 1984) is a dystopian social science fiction novel and cautionary tale written by the English writer George Orwell.",
-                            ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/1984first.jpg/330px-1984first.jpg",
-                            Name = "Nineteen Eighty-Four",
-                            Price = 6.99m,
-                            Uri = "nineteen-eighty-four"
+                            Id = new Guid("ae240b03-c0fa-4f3a-9ba0-47fa5bffa3d2"),
+                            CategoryId = new Guid("73fc413d-9817-4428-9f34-4c5f80f4f3dd"),
+                            Description = "A novel about a robot who observes the world and learns about human behavior",
+                            ImageUrl = "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1603206535i/54120408.jpg",
+                            Name = "Klara and the Sun",
+                            Price = 27.99m,
+                            Slug = "klara-and-the-sun"
                         },
                         new
                         {
-                            Id = new Guid("a7633d90-0997-4f3f-8487-420e20543615"),
-                            CategoryId = new Guid("5de1e9b7-117f-4ac1-b240-12fddad26018"),
-                            Description = "The Matrix is a 1999 science fiction action film written and directed by the Wachowskis, and produced by Joel Silver. Starring Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving, and Joe Pantoliano, and as the first installment in the Matrix franchise, it depicts a dystopian future in which humanity is unknowingly trapped inside a simulated reality, the Matrix, which intelligent machines have created to distract humans while using their bodies as an energy source. When computer programmer Thomas Anderson, under the hacker alias \"Neo\", uncovers the truth, he \"is drawn into a rebellion against the machines\" along with other people who have been freed from the Matrix.",
-                            ImageUrl = "https://upload.wikimedia.org/wikipedia/en/c/c1/The_Matrix_Poster.jpg",
-                            Name = "The Matrix",
-                            Price = 8.99m,
-                            Uri = "the-matrix"
+                            Id = new Guid("c9e9d889-a43f-4ae0-997c-ef653896306b"),
+                            CategoryId = new Guid("73fc413d-9817-4428-9f34-4c5f80f4f3dd"),
+                            Description = "A novel about a man on a solo mission to save the world from extinction",
+                            ImageUrl = "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1597695864i/54493401.jpg",
+                            Name = "Project Hail Mary",
+                            Price = 24.99m,
+                            Slug = "project-hail-mary"
                         },
                         new
                         {
-                            Id = new Guid("4f2277f9-f7f2-46de-955f-a8896c295295"),
-                            CategoryId = new Guid("5de1e9b7-117f-4ac1-b240-12fddad26018"),
-                            Description = "Back to the Future is a 1985 American science fiction film directed by Robert Zemeckis. Written by Zemeckis and Bob Gale, it stars Michael J. Fox, Christopher Lloyd, Lea Thompson, Crispin Glover, and Thomas F. Wilson. Set in 1985, the story follows Marty McFly (Fox), a teenager accidentally sent back to 1955 in a time-traveling DeLorean automobile built by his eccentric scientist friend Doctor Emmett \"Doc\" Brown (Lloyd). Trapped in the past, Marty inadvertently prevents his future parents' meeting—threatening his very existence—and is forced to reconcile the pair and somehow get back to the future.",
-                            ImageUrl = "https://upload.wikimedia.org/wikipedia/en/d/d2/Back_to_the_Future.jpg",
-                            Name = "Back to the Future",
-                            Price = 10.39m,
-                            Uri = "back-to-the-future"
-                        },
-                        new
-                        {
-                            Id = new Guid("1151391d-74f4-4983-ab9c-bc566f2b02de"),
-                            CategoryId = new Guid("5de1e9b7-117f-4ac1-b240-12fddad26018"),
-                            Description = "Toy Story is a 1995 American computer-animated comedy film produced by Pixar Animation Studios and released by Walt Disney Pictures. The first installment in the Toy Story franchise, it was the first entirely computer-animated feature film, as well as the first feature film from Pixar. The film was directed by John Lasseter (in his feature directorial debut), and written by Joss Whedon, Andrew Stanton, Joel Cohen, and Alec Sokolow from a story by Lasseter, Stanton, Pete Docter, and Joe Ranft. The film features music by Randy Newman, was produced by Bonnie Arnold and Ralph Guggenheim, and was executive-produced by Steve Jobs and Edwin Catmull. The film features the voices of Tom Hanks, Tim Allen, Don Rickles, Wallace Shawn, John Ratzenberger, Jim Varney, Annie Potts, R. Lee Ermey, John Morris, Laurie Metcalf, and Erik von Detten. Taking place in a world where anthropomorphic toys come to life when humans are not present, the plot focuses on the relationship between an old-fashioned pull-string cowboy doll named Woody and an astronaut action figure, Buzz Lightyear, as they evolve from rivals competing for the affections of their owner, Andy Davis, to friends who work together to be reunited with Andy after being separated from him.",
-                            ImageUrl = "https://upload.wikimedia.org/wikipedia/en/1/13/Toy_Story.jpg",
-                            Name = "Toy Story",
-                            Price = 9.39m,
-                            Uri = "toy-story"
-                        },
-                        new
-                        {
-                            Id = new Guid("14616005-01bc-42c0-b3ec-6071f083b594"),
-                            CategoryId = new Guid("3ab26ce8-562e-4221-b8fa-1f69d3d56243"),
-                            Description = "Half-Life 2 is a 2004 first-person shooter game developed and published by Valve. Like the original Half-Life, it combines shooting, puzzles, and storytelling, and adds features such as vehicles and physics-based gameplay.",
-                            ImageUrl = "https://upload.wikimedia.org/wikipedia/en/2/25/Half-Life_2_cover.jpg",
-                            Name = "Half-Life 2",
-                            Price = 3.29m,
-                            Uri = "half-life-2"
-                        },
-                        new
-                        {
-                            Id = new Guid("c23f3505-e30d-4faa-8fbf-6665edad59e2"),
-                            CategoryId = new Guid("3ab26ce8-562e-4221-b8fa-1f69d3d56243"),
-                            Description = "Diablo II is an action role-playing hack-and-slash computer video game developed by Blizzard North and published by Blizzard Entertainment in 2000 for Microsoft Windows, Classic Mac OS, and macOS.",
-                            ImageUrl = "https://upload.wikimedia.org/wikipedia/en/d/d5/Diablo_II_Coverart.png",
-                            Name = "Diablo II",
-                            Price = 4.29m,
-                            Uri = "diablo-ii"
-                        },
-                        new
-                        {
-                            Id = new Guid("1c22f08b-fee4-4207-95a7-de03c18567b7"),
-                            CategoryId = new Guid("3ab26ce8-562e-4221-b8fa-1f69d3d56243"),
-                            Description = "Day of the Tentacle, also known as Maniac Mansion II: Day of the Tentacle, is a 1993 graphic adventure game developed and published by LucasArts. It is the sequel to the 1987 game Maniac Mansion.",
-                            ImageUrl = "https://upload.wikimedia.org/wikipedia/en/7/79/Day_of_the_Tentacle_artwork.jpg",
-                            Name = "Day of the Tentacle",
-                            Price = 5.55m,
-                            Uri = "day-of-the-tentacle"
-                        },
-                        new
-                        {
-                            Id = new Guid("d562391c-b58f-46e3-af3d-927dee7aa161"),
-                            CategoryId = new Guid("3ab26ce8-562e-4221-b8fa-1f69d3d56243"),
-                            Description = "The Xbox is a home video game console and the first installment in the Xbox series of video game consoles manufactured by Microsoft.",
-                            ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/4/43/Xbox-console.jpg",
-                            Name = "Xbox",
-                            Price = 29.99m,
-                            Uri = "xbox"
-                        },
-                        new
-                        {
-                            Id = new Guid("1a27fb28-10c9-4b86-9d25-0b374a1cd9bf"),
-                            CategoryId = new Guid("3ab26ce8-562e-4221-b8fa-1f69d3d56243"),
-                            Description = "The Super Nintendo Entertainment System (SNES), also known as the Super NES or Super Nintendo, is a 16-bit home video game console developed by Nintendo that was released in 1990 in Japan and South Korea.",
-                            ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/e/ee/Nintendo-Super-Famicom-Set-FL.jpg",
-                            Name = "Super Nintendo Entertainment System",
+                            Id = new Guid("47203461-7f10-44b6-96b1-830da85aa5f6"),
+                            CategoryId = new Guid("73fc413d-9817-4428-9f34-4c5f80f4f3dd"),
+                            Description = "A thriller about a detective investigating a murder at an isolated hotel in the Swiss Alps",
+                            ImageUrl = "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1612344489i/56935099.jpg",
+                            Name = "The Sanatorium",
                             Price = 19.99m,
-                            Uri = "super-nintendo-entertainment-system"
+                            Slug = "the-sanatorium"
+                        },
+                        new
+                        {
+                            Id = new Guid("08fc14a9-df0c-4bb6-85d8-09a55fda8284"),
+                            CategoryId = new Guid("73fc413d-9817-4428-9f34-4c5f80f4f3dd"),
+                            Description = "A novel about a mother's intense desire for perfection and the consequences of her actions",
+                            ImageUrl = "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1609854219i/52476830.jpg",
+                            Name = "The Push",
+                            Price = 20.99m,
+                            Slug = "the-push"
+                        },
+                        new
+                        {
+                            Id = new Guid("12a6481e-22d5-4bbf-aa48-3bf14a8abc3a"),
+                            CategoryId = new Guid("73fc413d-9817-4428-9f34-4c5f80f4f3dd"),
+                            Description = "A non-fiction book about the woman who helped develop CRISPR gene-editing technology",
+                            ImageUrl = "https://m.media-amazon.com/images/I/41an9tLSfBL._SX327_BO1,204,203,200_.jpg",
+                            Name = "The Code Breaker",
+                            Price = 28.99m,
+                            Slug = "the-code-breaker"
+                        },
+                        new
+                        {
+                            Id = new Guid("608aa221-6a68-4197-8e32-ef53a2bc6bbb"),
+                            CategoryId = new Guid("73fc413d-9817-4428-9f34-4c5f80f4f3dd"),
+                            Description = "A memoir about a woman's relationship with her Korean mother and the grieving process after her mother's death",
+                            ImageUrl = "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1601937850i/54814676.jpg",
+                            Name = "Crying in H Mart",
+                            Price = 22.99m,
+                            Slug = "crying-in-h-mart"
+                        },
+                        new
+                        {
+                            Id = new Guid("4b75fc46-38ac-4c6b-879b-2c43a44a6853"),
+                            CategoryId = new Guid("73fc413d-9817-4428-9f34-4c5f80f4f3dd"),
+                            Description = "A novel about the intersection of the digital and real worlds",
+                            ImageUrl = "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1601474686i/53733106.jpg",
+                            Name = "No One Is Talking About This",
+                            Price = 23.99m,
+                            Slug = "no-one-is-talking-about-this"
+                        },
+                        new
+                        {
+                            Id = new Guid("89de1450-e9b2-4caf-ad05-ac8a6f1c120c"),
+                            CategoryId = new Guid("73fc413d-9817-4428-9f34-4c5f80f4f3dd"),
+                            Description = "A non-fiction book about the Sackler family and their role in the opioid crisis",
+                            ImageUrl = "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1611952534i/43868109.jpg",
+                            Name = "Empire of Pain",
+                            Price = 26.99m,
+                            Slug = "empire-of-pain"
+                        },
+                        new
+                        {
+                            Id = new Guid("83436c27-2f26-486b-8996-587f524a0ebf"),
+                            CategoryId = new Guid("174eb448-e412-4114-bfe2-0ff3b1a12291"),
+                            Description = "A drama film about a woman who embarks on a journey through the American West after the economic collapse of a company town",
+                            ImageUrl = "https://upload.wikimedia.org/wikipedia/en/a/a5/Nomadland_poster.jpeg",
+                            Name = "Nomadland",
+                            Price = 14.99m,
+                            Slug = "nomadland"
+                        },
+                        new
+                        {
+                            Id = new Guid("0f088068-6ad6-4d59-bd7c-53b9bf02242b"),
+                            CategoryId = new Guid("174eb448-e412-4114-bfe2-0ff3b1a12291"),
+                            Description = "A drama film about a Korean American family who moves to Arkansas in search of the American Dream",
+                            ImageUrl = "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRO2Ubq5Jw9K26Yf2FIs5Hn4qAmBw9iN5f33KXfOS9-7SrDji-a",
+                            Name = "Minari",
+                            Price = 14.99m,
+                            Slug = "minari"
+                        },
+                        new
+                        {
+                            Id = new Guid("c1f325cf-b109-458b-8072-16ffee255759"),
+                            CategoryId = new Guid("174eb448-e412-4114-bfe2-0ff3b1a12291"),
+                            Description = "A historical legal drama film about the trial of seven defendants charged with conspiracy and inciting riots at the 1968 Democratic National Convention in Chicago",
+                            ImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpYXw7g_VNc6BgTpeO_teA9iFcaz56RNKE4yke-CfHLulmC4mC",
+                            Name = "The Trial of the Chicago 7",
+                            Price = 14.99m,
+                            Slug = "the-trial-of-the-chicago-7"
+                        },
+                        new
+                        {
+                            Id = new Guid("3e30c1b8-61b5-48d9-82a5-a67bbe187c7a"),
+                            CategoryId = new Guid("174eb448-e412-4114-bfe2-0ff3b1a12291"),
+                            Description = "A drama film about a recording session with Ma Rainey and her band in 1920s Chicago",
+                            ImageUrl = "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQbwaPsGL1aZVMgWOFxy3vTTEKm-Mdsqr4g5ZH_EOVLTXqVKOEU",
+                            Name = "Ma Rainey's Black Bottom",
+                            Price = 14.99m,
+                            Slug = "ma-raineys-black-bottom"
+                        },
+                        new
+                        {
+                            Id = new Guid("bf1bd910-e2cf-463b-b03b-a11fed145943"),
+                            CategoryId = new Guid("174eb448-e412-4114-bfe2-0ff3b1a12291"),
+                            Description = "A thriller film about a woman seeking revenge against those who wronged her best friend",
+                            ImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRt0E2TEuop7cpx_XAPCUh0iWdoPBqk4ykJKCpfNGFwlwIf-yTx",
+                            Name = "Promising Young Woman",
+                            Price = 14.99m,
+                            Slug = "promising-young-woman"
+                        },
+                        new
+                        {
+                            Id = new Guid("7cd04ec5-a9ef-4cc1-bcda-74145b5828cb"),
+                            CategoryId = new Guid("174eb448-e412-4114-bfe2-0ff3b1a12291"),
+                            Description = "A drama film about a heavy metal drummer who begins to lose his hearing",
+                            ImageUrl = "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRBan44FQYlb0XJ-54n54uUojA9QxH7s6lhppT9mSsLOGRcSnai",
+                            Name = "Sound of Metal",
+                            Price = 14.99m,
+                            Slug = "sound-of-metal"
+                        },
+                        new
+                        {
+                            Id = new Guid("b72a33a1-1ea3-4c8a-9fd3-468ba5f69015"),
+                            CategoryId = new Guid("174eb448-e412-4114-bfe2-0ff3b1a12291"),
+                            Description = "A drama film about a man with dementia and his daughter's struggles to care for him",
+                            ImageUrl = "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRY6PkexuVznH6FEgo0by3HRofrGLE9cK6MoC2SiyZHponQb3oY",
+                            Name = "The Father",
+                            Price = 14.99m,
+                            Slug = "the-father"
+                        },
+                        new
+                        {
+                            Id = new Guid("7314eeda-f664-46b3-9620-ee6d6340d40d"),
+                            CategoryId = new Guid("174eb448-e412-4114-bfe2-0ff3b1a12291"),
+                            Description = "An animated film about a middle school music teacher who dreams of being a jazz musician",
+                            ImageUrl = "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSWzrHSIZFXCrHAgxd2omcvTVB5jqPkmCVemT0XYPj-CWgRoMs_",
+                            Name = "Soul",
+                            Price = 14.99m,
+                            Slug = "soul"
+                        },
+                        new
+                        {
+                            Id = new Guid("b44f2367-578e-4e21-bfe0-ed310bc18722"),
+                            CategoryId = new Guid("174eb448-e412-4114-bfe2-0ff3b1a12291"),
+                            Description = "A war drama film about a group of Vietnam War veterans who return to the country in search of treasure and their fallen squad leader's remains",
+                            ImageUrl = "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQ6Y8U3gK1QlfBmjVh_mx9-Ll_YzI3d6K2DQIMQQkUxLuew5K7N",
+                            Name = "Da 5 Bloods",
+                            Price = 14.99m,
+                            Slug = "da-5-bloods"
+                        },
+                        new
+                        {
+                            Id = new Guid("c12bac57-0714-4599-837c-dc3a9d02ce66"),
+                            CategoryId = new Guid("174eb448-e412-4114-bfe2-0ff3b1a12291"),
+                            Description = "A science fiction action film about a secret agent who must prevent World War III through time inversion",
+                            ImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4o4eBZdZWCR0iNFjiu1p4BKAIwIOkm_tZr3A-WUu4IAAcrq57",
+                            Name = "Tenet",
+                            Price = 14.99m,
+                            Slug = "tenet"
+                        },
+                        new
+                        {
+                            Id = new Guid("2157c735-30ff-4b97-8472-024d07e44306"),
+                            CategoryId = new Guid("defb6999-12cc-49df-bdae-1761fb589507"),
+                            Description = "An open-world action-adventure game set in a post-apocalyptic Hyrule",
+                            ImageUrl = "https://upload.wikimedia.org/wikipedia/en/c/c6/The_Legend_of_Zelda_Breath_of_the_Wild.jpg",
+                            Name = "The Legend of Zelda: Breath of the Wild",
+                            Price = 59.99m,
+                            Slug = "the-legend-of-zelda-breath-of-the-wild"
+                        },
+                        new
+                        {
+                            Id = new Guid("547ed959-f428-4f0e-b744-e86fd4ac5cac"),
+                            CategoryId = new Guid("defb6999-12cc-49df-bdae-1761fb589507"),
+                            Description = "An action game set in a post-apocalyptic world where the player must deliver supplies and build connections between isolated cities",
+                            ImageUrl = "https://cdn1.epicgames.com/offer/0a9e3c5ab6684506bd624a849ca0cf39/EGS_DeathStrandingDirectorsCut_KOJIMAPRODUCTIONS_S4_1200x1600-5f99e16507795f9b497716b470cfd876",
+                            Name = "Death Stranding",
+                            Price = 49.99m,
+                            Slug = "death-stranding"
+                        },
+                        new
+                        {
+                            Id = new Guid("3d7bfbb1-51ef-4715-b901-04479f2b7764"),
+                            CategoryId = new Guid("defb6999-12cc-49df-bdae-1761fb589507"),
+                            Description = "A survival horror game set in a post-apocalyptic United States where the player must navigate through dangerous environments and fight off infected creatures and hostile human factions",
+                            ImageUrl = "https://image.api.playstation.com/vulcan/img/rnd/202010/2618/w48z6bzefZPrRcJHc7L8SO66.png",
+                            Name = "The Last of Us Part II",
+                            Price = 59.99m,
+                            Slug = "the-last-of-us-part-ii"
+                        },
+                        new
+                        {
+                            Id = new Guid("7592b529-1d68-4eba-81b3-3935b0b656cf"),
+                            CategoryId = new Guid("defb6999-12cc-49df-bdae-1761fb589507"),
+                            Description = "An action-adventure game set in 13th century Japan where the player takes on the role of a samurai warrior fighting against invading Mongol forces",
+                            ImageUrl = "https://upload.wikimedia.org/wikipedia/en/b/b6/Ghost_of_Tsushima.jpg",
+                            Name = "Ghost of Tsushima",
+                            Price = 49.99m,
+                            Slug = "ghost-of-tsushima"
+                        },
+                        new
+                        {
+                            Id = new Guid("0af6ec9d-9426-472a-9d8b-a5c44ce072a3"),
+                            CategoryId = new Guid("defb6999-12cc-49df-bdae-1761fb589507"),
+                            Description = "A roguelike action game where the player takes on the role of Prince Zagreus attempting to escape from the underworld",
+                            ImageUrl = "https://m.media-amazon.com/images/W/IMAGERENDERING_521856-T1/images/I/71FjVhf-SlL._AC_UF894,1000_QL80_.jpghttps://m.media-amazon.com/images/W/IMAGERENDERING_521856-T1/images/I/71FjVhf-SlL._AC_UF894,1000_QL80_.jpg",
+                            Name = "Hades",
+                            Price = 24.99m,
+                            Slug = "hades"
+                        },
+                        new
+                        {
+                            Id = new Guid("74a6134c-dea6-4c3c-8312-a11bbc9f36d1"),
+                            CategoryId = new Guid("defb6999-12cc-49df-bdae-1761fb589507"),
+                            Description = "A life simulation game where the player moves to a deserted island and builds a community with anthropomorphic animals",
+                            ImageUrl = "https://animal-crossing.com/new-horizons/assets/img/share-tw.jpg",
+                            Name = "Animal Crossing: New Horizons",
+                            Price = 59.99m,
+                            Slug = "animal-crossing-new-horizons"
+                        },
+                        new
+                        {
+                            Id = new Guid("e4ae1d55-3bc5-4d69-90b2-cbf08b214b0d"),
+                            CategoryId = new Guid("defb6999-12cc-49df-bdae-1761fb589507"),
+                            Description = "A first-person shooter game where the player takes on the role of the Doom Slayer and battles demons from hell",
+                            ImageUrl = "https://upload.wikimedia.org/wikipedia/en/9/9d/Cover_Art_of_Doom_Eternal.png",
+                            Name = "Doom Eternal",
+                            Price = 59.99m,
+                            Slug = "doom-eternal"
+                        },
+                        new
+                        {
+                            Id = new Guid("ebcad60a-f4a8-4eab-aad0-d803b1322756"),
+                            CategoryId = new Guid("defb6999-12cc-49df-bdae-1761fb589507"),
+                            Description = "A battle royale party game where the player competes with up to 60 players in various obstacle courses",
+                            ImageUrl = "https://upload.wikimedia.org/wikipedia/en/thumb/5/5e/Fall_Guys_cover.jpg/220px-Fall_Guys_cover.jpg",
+                            Name = "Fall Guys: Ultimate Knockout",
+                            Price = 19.99m,
+                            Slug = "fall-guys-ultimate-knockout"
+                        },
+                        new
+                        {
+                            Id = new Guid("628c9f16-e7ca-47be-b790-b90c7d5b0d71"),
+                            CategoryId = new Guid("defb6999-12cc-49df-bdae-1761fb589507"),
+                            Description = "An action-adventure game where the player takes on the role of Miles Morales as he becomes the new Spider-Man and fights crime in New York City",
+                            ImageUrl = "https://image.api.playstation.com/vulcan/ap/rnd/202008/1020/T45iRN1bhiWcJUzST6UFGBvO.png",
+                            Name = "Marvel's Spider-Man: Miles Morales",
+                            Price = 49.99m,
+                            Slug = "spider-man-miles-morales"
+                        },
+                        new
+                        {
+                            Id = new Guid("1ec8e313-0612-4809-8753-16ab79ba5afa"),
+                            CategoryId = new Guid("defb6999-12cc-49df-bdae-1761fb589507"),
+                            Description = "An open-world role-playing game set in a dystopian future where the player takes on the role of a mercenary navigating through the criminal underworld of Night City",
+                            ImageUrl = "https://upload.wikimedia.org/wikipedia/en/thumb/9/9f/Cyberpunk_2077_box_art.jpg/220px-Cyberpunk_2077_box_art.jpg",
+                            Name = "Cyberpunk 2077",
+                            Price = 59.99m,
+                            Slug = "cyberpunk-2077"
                         });
                 });
 
@@ -333,7 +498,7 @@ namespace BlazorShop.Server.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Role", (string)null);
+                    b.ToTable("Roles");
 
                     b.HasData(
                         new
@@ -376,7 +541,7 @@ namespace BlazorShop.Server.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Security", (string)null);
+                    b.ToTable("Securities");
                 });
 
             modelBuilder.Entity("BlazorShop.Server.Data.Entities.Session", b =>
@@ -403,7 +568,7 @@ namespace BlazorShop.Server.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Session", (string)null);
+                    b.ToTable("Sessions");
                 });
 
             modelBuilder.Entity("BlazorShop.Server.Data.Entities.User", b =>
@@ -414,6 +579,9 @@ namespace BlazorShop.Server.Data.Migrations
 
                     b.Property<DateTime?>("BirthDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("CustomerId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -428,7 +596,7 @@ namespace BlazorShop.Server.Data.Migrations
                     b.Property<bool>("IsEmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsTwoAuth")
+                    b.Property<bool>("IsTfaEnabled")
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
@@ -438,11 +606,11 @@ namespace BlazorShop.Server.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PaymentProfileId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("RegisterDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -450,11 +618,17 @@ namespace BlazorShop.Server.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User", (string)null);
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("BlazorShop.Server.Data.Entities.Comment", b =>
                 {
+                    b.HasOne("BlazorShop.Server.Data.Entities.Product", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("ProductId");
+
                     b.HasOne("BlazorShop.Server.Data.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -464,22 +638,7 @@ namespace BlazorShop.Server.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BlazorShop.Server.Data.Entities.JointEntities.ProductComment", b =>
-                {
-                    b.HasOne("BlazorShop.Server.Data.Entities.Comment", null)
-                        .WithMany()
-                        .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BlazorShop.Server.Data.Entities.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("BlazorShop.Server.Data.Entities.JointEntities.RolePermission", b =>
+            modelBuilder.Entity("BlazorShop.Server.Data.Entities.Joints.RolePermission", b =>
                 {
                     b.HasOne("BlazorShop.Server.Data.Entities.Permission", null)
                         .WithMany()
@@ -490,21 +649,6 @@ namespace BlazorShop.Server.Data.Migrations
                     b.HasOne("BlazorShop.Server.Data.Entities.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("BlazorShop.Server.Data.Entities.JointEntities.UserRole", b =>
-                {
-                    b.HasOne("BlazorShop.Server.Data.Entities.Role", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BlazorShop.Server.Data.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -540,6 +684,22 @@ namespace BlazorShop.Server.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BlazorShop.Server.Data.Entities.User", b =>
+                {
+                    b.HasOne("BlazorShop.Server.Data.Entities.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("BlazorShop.Server.Data.Entities.Product", b =>
+                {
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

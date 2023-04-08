@@ -46,7 +46,7 @@ public sealed partial class Cart : IDisposable
 
     private void ViewAction(CartItem item)
     {
-        Navigation.NavigateTo($"/products/{item.Product.Uri}");
+        Navigation.NavigateTo($"/products/{item.Product.Slug}");
     }
 
     public void Dispose()

@@ -2,6 +2,7 @@
 using BlazorShop.Server.Common;
 using BlazorShop.Server.Common.Providers;
 using BlazorShop.Server.Common.Providers.TokenProvider;
+using BlazorShop.Server.Facades.CommentFacade;
 using BlazorShop.Server.Services.CommentService;
 using BlazorShop.Shared.Dtos;
 using BlazorShop.Shared.Pagination.Parameters;
@@ -15,12 +16,12 @@ namespace BlazorShop.Server.Controllers;
 [ApiController]
 public sealed class CommentController : ControllerBase
 {
-    private readonly ICommentService _commentService;
+    private readonly ICommentFacade _commentFacade;
     private readonly ITokenProvider _tokenProvider;
 
-    public CommentController(ICommentService commentService, ITokenProvider tokenProvider)
+    public CommentController(ICommentFacade commentFacade, ITokenProvider tokenProvider)
     {
-        _commentService = commentService;
+        _commentFacade = commentFacade;
         _tokenProvider = tokenProvider;
     }
 
@@ -28,7 +29,7 @@ public sealed class CommentController : ControllerBase
     [HttpGet]
     public async Task<List<CommentDto>> GetCommentsForProductByParameters([FromQuery] CommentParameters parameters)
     {
-        var pagedList = await _commentService.GetCommentsForProductByParametersAsync(parameters);
+        var pagedList = await _commentFacade.GetCommentsForProductByParametersAsync(parameters);
 
         Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(pagedList.MetaData));
 
@@ -41,7 +42,7 @@ public sealed class CommentController : ControllerBase
     {
         var userId = _tokenProvider.GetUserIdFromContext(HttpContext);
 
-        await _commentService.AddCommentAsync(userId, newCommentDto);
+        await _commentFacade.AddCommentAsync(userId, newCommentDto);
     }
 
     [HasPermission(Permissions.CustomerPermission)]
@@ -50,7 +51,7 @@ public sealed class CommentController : ControllerBase
     {
         var userId = _tokenProvider.GetUserIdFromContext(HttpContext);
 
-        await _commentService.UpdateCommentAsync(userId, commentDto);
+        await _commentFacade.UpdateCommentAsync(userId, commentDto);
     }
 
     [HasPermission(Permissions.CustomerPermission)]
@@ -59,6 +60,6 @@ public sealed class CommentController : ControllerBase
     {
         var userId = _tokenProvider.GetUserIdFromContext(HttpContext);
 
-        await _commentService.DeleteCommentAsync(userId, commentId);
+        await _commentFacade.DeleteCommentAsync(userId, commentId);
     }
 }

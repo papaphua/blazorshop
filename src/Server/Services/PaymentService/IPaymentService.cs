@@ -8,7 +8,7 @@ public interface IPaymentService
 {
     Stripe.Checkout.Session CreateCheckoutSession(HttpContext context, List<CartItem> cart);
     Task<HttpStatusCode> CreateWebHookAsync(HttpContext context);
-    Task AddPaymentProfileAsync(User user);
+    Task<string> AddPaymentProfileAsync(User user);
     Task UpdatePaymentProfileAsync(Guid userId);
     Task DeletePaymentProfileAsync(Guid userId);
 }

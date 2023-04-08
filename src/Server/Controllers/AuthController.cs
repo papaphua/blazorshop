@@ -1,8 +1,7 @@
 ﻿using BlazorShop.Server.Auth.PermissionHandler;
 using BlazorShop.Server.Common;
-using BlazorShop.Server.Common.Providers;
 using BlazorShop.Server.Common.Providers.TokenProvider;
-using BlazorShop.Server.Services.AuthService;
+using BlazorShop.Server.Facades.AuthFacade;
 using BlazorShop.Shared.Dtos;
 using BlazorShop.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -14,12 +13,12 @@ namespace BlazorShop.Server.Controllers;
 [ApiController]
 public sealed class AuthController : ControllerBase
 {
-    private readonly IAuthService _authService;
+    private readonly IAuthFacade _authFacade;
     private readonly ITokenProvider _tokenProvider;
     
-    public AuthController(IAuthService authService, ITokenProvider tokenProvider)
+    public AuthController(IAuthFacade authFacade, ITokenProvider tokenProvider)
     {
-        _authService = authService;
+        _authFacade = authFacade;
         _tokenProvider = tokenProvider;
     }
     
@@ -27,35 +26,35 @@ public sealed class AuthController : ControllerBase
     [HttpPost("registration")]
     public async Task Register(RegisterDto registerDto)
     {
-        await _authService.RegisterAsync(registerDto);
+        await _authFacade.RegisterAsync(registerDto);
     }
 
     [AllowAnonymous]
     [HttpPost("login")]
     public async Task<string> FindLoginInfo(LoginDto loginDto)
     {
-        return await _authService.FindLoginInfoAsync(loginDto);
+        return await _authFacade.FindLoginInfoAsync(loginDto);
     }
     
     [AllowAnonymous]
     [HttpPost("login/default")]
     public async Task<AuthDto> DefaultLogin(DefaultLoginDto defaultLoginDto)
     {
-        return await _authService.DefaultLoginAsync(defaultLoginDto);
+        return await _authFacade.DefaultLoginAsync(defaultLoginDto);
     }
     
     [AllowAnonymous]
     [HttpPost("login/2fa")]
     public async Task<AuthDto> TwoAuthLogin(TwoAuthLoginDto twoAuthLoginDto)
     {
-        return await _authService.TwoAuthLoginAsync(twoAuthLoginDto);
+        return await _authFacade.TwoAuthLoginAsync(twoAuthLoginDto);
     }
     
     [AllowAnonymous]
     [HttpPost("refresh")]
     public async Task<AuthDto> Refresh(TokenDto tokenDto)
     {
-        return await _authService.RefreshAsync(tokenDto);
+        return await _authFacade.RefreshAsync(tokenDto);
     }
     
     [HasPermission(Permissions.CustomerPermission)]
@@ -64,7 +63,7 @@ public sealed class AuthController : ControllerBase
     {
         var userId = _tokenProvider.GetUserIdFromContext(HttpContext);
         
-        await _authService.GetConfirmationCodeAsync(userId);
+        await _authFacade.GetConfirmationCodeAsync(userId);
     }
     
     [HasPermission(Permissions.CustomerPermission)]
@@ -73,7 +72,7 @@ public sealed class AuthController : ControllerBase
     { 
         var userId = _tokenProvider.GetUserIdFromContext(HttpContext);
         
-        await _authService.GetNewEmailConfirmationCodesAsync(userId, emailDto.Email);
+        await _authFacade.GetNewEmailConfirmationCodesAsync(userId, emailDto.Email);
     }
     
     [HasPermission(Permissions.CustomerPermission)]
@@ -82,27 +81,27 @@ public sealed class AuthController : ControllerBase
     {
         var userId = _tokenProvider.GetUserIdFromContext(HttpContext);
         
-        await _authService.GetEmailConfirmationLinkAsync(userId);
+        await _authFacade.GetEmailConfirmationLinkAsync(userId);
     }
     
     [AllowAnonymous]
     [HttpPost("password/reset/request")]
     public async Task GetPasswordResetLink(EmailDto emailDto)
     {
-        await _authService.GetPasswordResetLinkAsync(emailDto);
+        await _authFacade.GetPasswordResetLinkAsync(emailDto);
     }
     
     [AllowAnonymous]
     [HttpPost("email/confirmation")]
     public async Task<ResponseDto> ConfirmEmail(ConfirmationParameters parameters)
     {
-        return await _authService.ConfirmEmailAsync(parameters);
+        return await _authFacade.ConfirmEmailAsync(parameters);
     }
     
     [AllowAnonymous]
     [HttpPost("password/reset")]
     public async Task ResetPassword(PasswordResetDto passwordResetDto)
     {
-        await _authService.ResetPasswordAsync(passwordResetDto);
+        await _authFacade.ResetPasswordAsync(passwordResetDto);
     }
 }

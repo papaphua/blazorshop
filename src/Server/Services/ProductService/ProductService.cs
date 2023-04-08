@@ -1,68 +1,39 @@
-﻿using AutoMapper;
-using BlazorShop.Server.Common;
-using BlazorShop.Server.Common.Exceptions;
+﻿using BlazorShop.Server.Common.Extensions;
+using BlazorShop.Server.Data;
 using BlazorShop.Server.Data.Entities;
-using BlazorShop.Server.Data.Repositories.ProductRepository;
-using BlazorShop.Server.Primitives;
-using BlazorShop.Shared.Dtos;
 using BlazorShop.Shared.Pagination.Parameters;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlazorShop.Server.Services.ProductService;
 
 public sealed class ProductService : IProductService
 {
-    private readonly IMapper _mapper;
-    private readonly IProductRepository _productRepository;
+    private readonly AppDbContext _db;
 
-    public ProductService(IMapper mapper, IProductRepository productRepository)
+    public ProductService(AppDbContext db)
     {
-        _mapper = mapper;
-        _productRepository = productRepository;
+        _db = db;
     }
 
-    public async Task<PagedList<ProductDto>> GetProductsByParametersAsync(ProductParameters parameters)
+    public async Task<List<Product>> GetProductsByParametersAsync(ProductParameters parameters)
     {
-        var products = await _productRepository.GetByParametersAsync(parameters);
-        
-        var dtos = products
-            .Select(product => _mapper.Map<ProductDto>(product))
-            .ToList();
-        
-        return PagedList<ProductDto>
-            .ToPagedList(dtos, parameters.PageNumber, parameters.PageSize);
+        return await _db.Products
+            .Include(product => product.Category)
+            .WithCategory(parameters.Category)
+            .SearchFor(parameters.Search)
+            .OrderBy(product => product.Name)
+            .ToListAsync();
     }
 
-    public async Task<ProductDto?> GetProductByUriAsync(string uri)
+    public async Task<Product?> GetProductByIdAsync(Guid id)
     {
-        var product = await _productRepository.GetByUriAsync(uri);
-        
-        return _mapper.Map<ProductDto>(product);
+        return await _db.Products
+            .FirstOrDefaultAsync(product => product.Id.Equals(id));
     }
 
-    public async Task CreateProductAsync(ProductDto dto)
+    public async Task<Product?> GetProductBySlugAsync(string slug)
     {
-        var product = _mapper.Map<Product>(dto);
-
-        await _productRepository.CreateAndSaveAsync(product);
-    }
-
-    public async Task UpdateProductAsync(ProductDto dto)
-    {
-        var product = await _productRepository.GetByUriAsync(dto.Uri);
-
-        if (product is null) throw new NotFoundException(ExceptionMessages.ProductNotFound);
-
-        _mapper.Map(dto, product);
-
-        await _productRepository.SaveAsync();
-    }
-
-    public async Task DeleteProductAsync(string uri)
-    {
-        var product = await _productRepository.GetByUriAsync(uri);
-
-        if (product is null) throw new NotFoundException(ExceptionMessages.ProductNotFound);
-
-        await _productRepository.DeleteAndSaveAsync(product);
+        return await _db.Products
+            .FirstOrDefaultAsync(product => product.Slug.Equals(slug));
     }
 }

@@ -1,4 +1,5 @@
-﻿using BlazorShop.Server.Services.CategoryService;
+﻿using BlazorShop.Server.Facades.CategoryFacade;
+using BlazorShop.Server.Services.CategoryService;
 using BlazorShop.Shared.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,17 +10,17 @@ namespace BlazorShop.Server.Controllers;
 [ApiController]
 public sealed class CategoryController : ControllerBase
 {
-    private readonly ICategoryService _categoryService;
+    private readonly ICategoryFacade _categoryFacade;
 
-    public CategoryController(ICategoryService categoryService)
+    public CategoryController(ICategoryFacade categoryFacade)
     {
-        _categoryService = categoryService;
+        _categoryFacade = categoryFacade;
     }
 
     [AllowAnonymous]
     [HttpGet]
-    public Task<List<CategoryDto>> GetCategories()
+    public async Task<List<CategoryDto>> GetCategories()
     {
-        return _categoryService.GetAllCategoriesAsync();
+        return await _categoryFacade.GetAllCategoriesAsync();
     }
 }

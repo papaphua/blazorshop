@@ -8,5 +8,5 @@ public sealed class CategoryDto
     
     [Required] public string Name { get; set; } = null!;
 
-    [Required] public string Uri { get; set; } = null!;
+    [Required] public string Slug { get; set; } = null!;
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlazorShop.Server.Data.Entities;
 
@@ -21,12 +22,13 @@ public sealed class User
     [Required] public string PasswordHash { get; set; } = null!;
     
     [Required] public DateTime RegisterDate { get; set; }
+    
+    [Required] public int RoleId { get; set; }
+    [Required] public Role Role { get; set; } = null!;
 
-    [Required] public ICollection<Role> Roles { get; set; } = null!;
+    [Required] public bool IsTfaEnabled { get; set; }
     
-    [Required] public bool IsTwoAuth { get; set; }
-    
-    public string? PaymentProfileId { get; set; }
+    public string? CustomerId { get; set; }
 
     public string? FirstName { get; set; }
 

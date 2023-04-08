@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using BlazorShop.Server.Primitives;
 
 namespace BlazorShop.Server.Data.Entities;
 

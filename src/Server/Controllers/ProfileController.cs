@@ -1,9 +1,8 @@
 ﻿using System.Security.Claims;
 using BlazorShop.Server.Auth.PermissionHandler;
 using BlazorShop.Server.Common;
-using BlazorShop.Server.Common.Providers;
 using BlazorShop.Server.Common.Providers.TokenProvider;
-using BlazorShop.Server.Services.ProfileService;
+using BlazorShop.Server.Facades.ProfileFacade;
 using BlazorShop.Shared.Dtos;
 using BlazorShop.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -16,12 +15,12 @@ namespace BlazorShop.Server.Controllers;
 public sealed class ProfileController : ControllerBase
 {
     private readonly ITokenProvider _tokenProvider;
-    private readonly IProfileService _profileService;
+    private readonly IProfileFacade _profileFacade;
 
-    public ProfileController(ITokenProvider authTokenProvider, IProfileService profileService)
+    public ProfileController(ITokenProvider authTokenProvider, IProfileFacade profileFacade)
     {
         _tokenProvider = authTokenProvider;
-        _profileService = profileService;
+        _profileFacade = profileFacade;
     }
     
     [HasPermission(Permissions.CustomerPermission)]
@@ -30,7 +29,7 @@ public sealed class ProfileController : ControllerBase
     {
         var userId = _tokenProvider.GetUserIdFromContext(HttpContext);
         
-        return await _profileService.GetUserProfileAsync(userId);
+        return await _profileFacade.GetUserProfileAsync(userId);
     }
     
     [HasPermission(Permissions.CustomerPermission)]
@@ -39,7 +38,7 @@ public sealed class ProfileController : ControllerBase
     {
         var userId = _tokenProvider.GetUserIdFromContext(HttpContext);
 
-        return await _profileService.UpdateUserProfileAsync(userId, newProfileDto);
+        return await _profileFacade.UpdateUserProfileAsync(userId, newProfileDto);
     }
     
     [HasPermission(Permissions.CustomerPermission)]
@@ -48,7 +47,7 @@ public sealed class ProfileController : ControllerBase
     {
         var userId = Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         
-        return await _profileService.ChangeEmailAsync(userId, emailChangeDto);
+        return await _profileFacade.ChangeEmailAsync(userId, emailChangeDto);
     }
     
     [HasPermission(Permissions.CustomerPermission)]
@@ -57,7 +56,7 @@ public sealed class ProfileController : ControllerBase
     {
         var userId = _tokenProvider.GetUserIdFromContext(HttpContext);
         
-        await _profileService.ChangePasswordAsync(userId, passwordChangeDto);
+        await _profileFacade.ChangePasswordAsync(userId, passwordChangeDto);
     }
     
     [HasPermission(Permissions.CustomerPermission)]
@@ -66,13 +65,13 @@ public sealed class ProfileController : ControllerBase
     {
         var userId = _tokenProvider.GetUserIdFromContext(HttpContext);
 
-        await _profileService.GetDeleteProfileLinkAsync(userId);
+        await _profileFacade.GetDeleteProfileLinkAsync(userId);
     }
     
     [AllowAnonymous]
     [HttpPost("delete/confirmation")]
     public async Task DeleteProfile(ConfirmationParameters parameters)
     {
-        await _profileService.DeleteProfileAsync(parameters);
+        await _profileFacade.DeleteProfileAsync(parameters);
     }
 }

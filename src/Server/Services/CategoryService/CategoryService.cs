@@ -1,26 +1,20 @@
-﻿using AutoMapper;
-using BlazorShop.Server.Data.Repositories.CategoryRepository;
-using BlazorShop.Shared.Dtos;
+﻿using BlazorShop.Server.Data;
+using BlazorShop.Server.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlazorShop.Server.Services.CategoryService;
 
 public sealed class CategoryService : ICategoryService
 {
-    private readonly IMapper _mapper;
-    private readonly ICategoryRepository _categoryRepository;
+    private readonly AppDbContext _db;
 
-    public CategoryService(IMapper mapper, ICategoryRepository categoryRepository)
+    public CategoryService(AppDbContext db)
     {
-        _mapper = mapper;
-        _categoryRepository = categoryRepository;
+        _db = db;
     }
 
-    public async Task<List<CategoryDto>> GetAllCategoriesAsync()
+    public async Task<List<Category>> GetAllCategoriesAsync()
     {
-        var categories = await _categoryRepository.GetAllAsync();
-        
-        return categories
-            .Select(category => _mapper.Map<CategoryDto>(category))
-            .ToList();
+        return await _db.Categories.ToListAsync();
     }
 }

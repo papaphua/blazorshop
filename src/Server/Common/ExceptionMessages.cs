@@ -2,6 +2,7 @@
 
 public static class ExceptionMessages
 {
+    public const string UserNotFound = "User not found.";
     public const string Unauthorized = "You are not authorized.";
     public const string NotRegistered = "User is not registered.";
     public const string PasswordsNotMatch = "Passwords do not match.";

@@ -47,7 +47,7 @@ public sealed partial class Products : IDisposable
     private async Task DeleteAction(ProductDto product)
     {
         Items.Remove(product);
-        await ProductService.DeleteProduct(product.Uri);
+        await ProductService.DeleteProduct(product.Slug);
     }
 
     private async Task GetProducts()

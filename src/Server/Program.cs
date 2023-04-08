@@ -11,7 +11,6 @@ builder.Services.AddRazorPages();
 
 builder.Services.SetupOptions();
 builder.Services.AddBusinessServices();
-builder.Services.AddProviders();
 
 builder.Services.AddCors(options =>
 {
