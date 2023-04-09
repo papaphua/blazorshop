@@ -22,17 +22,17 @@ namespace BlazorShop.Server.Facades.AuthFacade;
 
 public sealed class AuthFacade : IAuthFacade
 {
-    private readonly IPasswordProvider _passwordProvider;
-    private readonly IUserService _userService;
-    private readonly ITokenProvider _tokenProvider;
-    private readonly IMapper _mapper;
-    private readonly IPaymentService _paymentService;
-    private readonly ISessionService _sessionService;
-    private readonly ISecurityService _securityService;
-    private readonly IMailService _mailService;
-    private readonly UrlOptions _urlOptions;
-    private readonly ILinkProvider _linkProvider;
     private readonly AppDbContext _db;
+    private readonly ILinkProvider _linkProvider;
+    private readonly IMailService _mailService;
+    private readonly IMapper _mapper;
+    private readonly IPasswordProvider _passwordProvider;
+    private readonly IPaymentService _paymentService;
+    private readonly ISecurityService _securityService;
+    private readonly ISessionService _sessionService;
+    private readonly ITokenProvider _tokenProvider;
+    private readonly UrlOptions _urlOptions;
+    private readonly IUserService _userService;
 
     public AuthFacade(
         IUserService userService,
@@ -91,10 +91,10 @@ public sealed class AuthFacade : IAuthFacade
         var customerId = await _paymentService.AddPaymentProfileAsync(user);
 
         user.CustomerId = customerId;
-        
+
         await _db.Users.AddAsync(user);
         await _db.SaveChangesAsync();
-        
+
         await _securityService.CreateSecurityForUserAsync(user.Id);
 
         await GetEmailConfirmationLinkAsync(user.Id);
@@ -126,14 +126,12 @@ public sealed class AuthFacade : IAuthFacade
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
         if (user.IsTfaEnabled)
-        {
             return new AuthDto
             {
                 IsSucceeded = false,
                 Url = _linkProvider.GenerateLoginLink(_urlOptions.TwoAuthLoginUrl, defaultLoginDto.Login),
                 Tokens = null
             };
-        }
 
         if (!_passwordProvider.VerifyPassword(defaultLoginDto.Password, user.PasswordHash))
             throw new NotFoundException(ExceptionMessages.WrongPassword);
@@ -162,14 +160,12 @@ public sealed class AuthFacade : IAuthFacade
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
         if (!user.IsTfaEnabled)
-        {
             return new AuthDto
             {
                 IsSucceeded = false,
                 Url = _linkProvider.GenerateLoginLink(_urlOptions.DefaultLoginUrl, twoAuthLoginDto.Login),
                 Tokens = null
             };
-        }
 
         if (!_passwordProvider.VerifyPassword(twoAuthLoginDto.Password, user.PasswordHash))
             throw new NotFoundException(ExceptionMessages.WrongPassword);
@@ -289,7 +285,7 @@ public sealed class AuthFacade : IAuthFacade
             await _securityService.RemoveConfirmationTokenAsync(user.Id);
             await _db.SaveChangesAsync();
         }
-        
+
         return new ResponseDto("Email confirmed");
     }
 

@@ -20,9 +20,9 @@ public class GlobalExceptionHandler : IMiddleware
                 NotFoundException => (int)HttpStatusCode.NotFound,
                 _ => (int)HttpStatusCode.BadRequest
             };
-            
+
             context.Response.ContentType = "application/json";
-            
+
             await context.Response.WriteAsJsonAsync(new ExceptionDto(exception.Message));
         }
     }

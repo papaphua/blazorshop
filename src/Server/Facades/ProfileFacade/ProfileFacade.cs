@@ -19,17 +19,17 @@ namespace BlazorShop.Server.Facades.ProfileFacade;
 
 public sealed class ProfileFacade : IProfileFacade
 {
-    private readonly IMapper _mapper;
-    private readonly IUserService _userService;
-    private readonly IPaymentService _paymentService;
-    private readonly ITokenProvider _tokenProvider;
-    private readonly ISessionService _sessionService;
-    private readonly ISecurityService _securityService;
-    private readonly IPasswordProvider _passwordProvider;
-    private readonly IMailService _mailService;
-    private readonly UrlOptions _urlOptions;
-    private readonly ILinkProvider _linkProvider;
     private readonly AppDbContext _db;
+    private readonly ILinkProvider _linkProvider;
+    private readonly IMailService _mailService;
+    private readonly IMapper _mapper;
+    private readonly IPasswordProvider _passwordProvider;
+    private readonly IPaymentService _paymentService;
+    private readonly ISecurityService _securityService;
+    private readonly ISessionService _sessionService;
+    private readonly ITokenProvider _tokenProvider;
+    private readonly UrlOptions _urlOptions;
+    private readonly IUserService _userService;
 
     public ProfileFacade(IMapper mapper, IUserService userService, IPaymentService paymentService,
         ITokenProvider tokenProvider, ISessionService sessionService, ISecurityService securityService,
@@ -140,9 +140,8 @@ public sealed class ProfileFacade : IProfileFacade
         var parameters = new ConfirmationParameters(token, user.Email);
 
         var link = _linkProvider.GenerateConfirmationLink(_urlOptions.DeleteProfileUrl, parameters);
-        
+
         await _mailService.SendEmailAsync(user.Email, EmailMessages.DeleteProfile(link));
-        
     }
 
     public async Task DeleteProfileAsync(ConfirmationParameters parameters)
@@ -150,7 +149,7 @@ public sealed class ProfileFacade : IProfileFacade
         var user = await _userService.GetUserByEmailAsync(parameters.Email);
 
         if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
-        
+
         await _securityService.IsConfirmationCodeValidAsync(user.Id, parameters.Token);
 
         await _paymentService.DeletePaymentProfileAsync(user.Id);

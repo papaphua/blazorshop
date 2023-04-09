@@ -1,6 +1,4 @@
-﻿using BlazorShop.Server.Services.CategoryService;
-using BlazorShop.Server.Services.ProductService;
-using BlazorShop.Server.Auth.PermissionHandler;
+﻿using BlazorShop.Server.Auth.PermissionHandler;
 using BlazorShop.Server.Common.Options.Setups;
 using BlazorShop.Server.Common.Providers.LinkProvider;
 using BlazorShop.Server.Common.Providers.PasswordProvider;
@@ -12,13 +10,16 @@ using BlazorShop.Server.Facades.ProductFacade;
 using BlazorShop.Server.Facades.ProfileFacade;
 using BlazorShop.Server.Facades.UserFacade;
 using BlazorShop.Server.Middlewares;
+using BlazorShop.Server.Services.CategoryService;
 using BlazorShop.Server.Services.CommentService;
 using BlazorShop.Server.Services.MailService;
 using BlazorShop.Server.Services.PaymentService;
 using BlazorShop.Server.Services.PermissionService;
+using BlazorShop.Server.Services.ProductService;
 using BlazorShop.Server.Services.SecurityService;
 using BlazorShop.Server.Services.SessionService;
 using BlazorShop.Server.Services.UserService;
+using DotNetEnv;
 using Microsoft.AspNetCore.Authorization;
 
 namespace BlazorShop.Server.Common.Extensions;
@@ -29,7 +30,7 @@ public static class ServiceExtensions
     {
         if (services == null)
             throw new ArgumentNullException(nameof(services));
-        
+
         services.AddScoped<ITokenProvider, TokenProvider>();
         services.AddScoped<IPasswordProvider, PasswordProvider>();
         services.AddScoped<ILinkProvider, LinkProvider>();
@@ -53,13 +54,13 @@ public static class ServiceExtensions
 
         return services;
     }
-    
+
     public static IServiceCollection SetupOptions(this IServiceCollection services)
     {
         if (services == null)
             throw new ArgumentNullException(nameof(services));
 
-        DotNetEnv.Env.Load();
+        Env.Load();
 
         services.ConfigureOptions<JwtOptionsSetup>();
         services.ConfigureOptions<BearerOptionsSetup>();
@@ -69,7 +70,7 @@ public static class ServiceExtensions
         services.ConfigureOptions<PasswordOptionsSetup>();
         services.ConfigureOptions<UrlOptionsSetup>();
         services.ConfigureOptions<PaymentOptionsSetup>();
-        
+
         return services;
     }
 

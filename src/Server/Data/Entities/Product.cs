@@ -24,11 +24,9 @@ public sealed class Product
     [Column(TypeName = "decimal(18,2)")]
     public decimal Price { get; set; }
 
-    [Required]
-    public ICollection<Comment> Comments { get; set; } = null!;
-    
-    [Required]
-    public Guid CategoryId { get; set; }
+    [Required] public ICollection<Comment> Comments { get; set; } = null!;
+
+    [Required] public Guid CategoryId { get; set; }
 
     [Required] public Category Category { get; set; } = null!;
 }

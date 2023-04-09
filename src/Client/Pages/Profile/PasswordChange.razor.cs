@@ -11,12 +11,17 @@ namespace BlazorShop.Client.Pages.Profile;
 [HasPermission(Permissions.CustomerPermission)]
 public sealed partial class PasswordChange : IDisposable
 {
+    private Validations _validations = new();
     [Inject] private IProfileService ProfileService { get; set; } = null!;
     [Inject] private HttpInterceptorService HttpInterceptorService { get; set; } = null!;
     [Inject] private IAuthService AuthService { get; set; } = null!;
-    
+
     private PasswordChangeDto PasswordChangeDto { get; } = new();
-    private Validations _validations = new();
+
+    public void Dispose()
+    {
+        HttpInterceptorService.DisposeEvent();
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -26,14 +31,6 @@ public sealed partial class PasswordChange : IDisposable
 
     private async Task ChangePasswordAction()
     {
-        if (await _validations.ValidateAll())
-        {
-            await ProfileService.ChangePassword(PasswordChangeDto);
-        }
-    }
-
-    public void Dispose()
-    {
-        HttpInterceptorService.DisposeEvent();
+        if (await _validations.ValidateAll()) await ProfileService.ChangePassword(PasswordChangeDto);
     }
 }

@@ -11,13 +11,18 @@ namespace BlazorShop.Client.Pages.Management;
 [HasPermission(Permissions.AdminPermission)]
 public sealed partial class NewProduct : IDisposable
 {
+    private Validations _validations = new();
     [Inject] private IProductService ProductService { get; set; } = null!;
     [Inject] private ICategoryService CategoryService { get; set; } = null!;
     [Inject] private HttpInterceptorService HttpInterceptorService { get; set; } = null!;
 
-    private ProductDto Product { get; set; } = new();
+    private ProductDto Product { get; } = new();
     private List<CategoryDto> Categories { get; set; } = new();
-    private Validations _validations = new();
+
+    public void Dispose()
+    {
+        HttpInterceptorService.DisposeEvent();
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -27,14 +32,6 @@ public sealed partial class NewProduct : IDisposable
 
     private async Task AddAction()
     {
-        if (await _validations.ValidateAll())
-        {
-            await ProductService.CreateProduct(Product);
-        }
-    }
-
-    public void Dispose()
-    {
-        HttpInterceptorService.DisposeEvent();
+        if (await _validations.ValidateAll()) await ProductService.CreateProduct(Product);
     }
 }

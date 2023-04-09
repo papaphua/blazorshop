@@ -5,7 +5,7 @@ namespace BlazorShop.Server.Common.Options.Setups;
 public sealed class PasswordOptionsSetup : IConfigureOptions<PasswordOptions>
 {
     private const string PasswordSection = "Password";
-    
+
     private readonly IConfiguration _configuration;
 
     public PasswordOptionsSetup(IConfiguration configuration)

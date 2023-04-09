@@ -12,9 +12,9 @@ namespace BlazorShop.Server.Facades.ProductFacade;
 
 public sealed class ProductFacade : IProductFacade
 {
+    private readonly AppDbContext _db;
     private readonly IMapper _mapper;
     private readonly IProductService _productService;
-    private readonly AppDbContext _db;
 
     public ProductFacade(IMapper mapper, IProductService productService, AppDbContext db)
     {
@@ -26,11 +26,11 @@ public sealed class ProductFacade : IProductFacade
     public async Task<PagedList<ProductDto>> GetProductsByParametersAsync(ProductParameters parameters)
     {
         var products = await _productService.GetProductsByParametersAsync(parameters);
-        
+
         var dtos = products
             .Select(product => _mapper.Map<ProductDto>(product))
             .ToList();
-        
+
         return PagedList<ProductDto>
             .ToPagedList(dtos, parameters.PageNumber, parameters.PageSize);
     }
@@ -38,14 +38,14 @@ public sealed class ProductFacade : IProductFacade
     public async Task<ProductDto?> GetProductBySlugAsync(string uri)
     {
         var product = await _productService.GetProductBySlugAsync(uri);
-        
+
         return _mapper.Map<ProductDto>(product);
     }
 
     public async Task CreateProductAsync(ProductDto dto)
     {
         var product = _mapper.Map<Product>(dto);
-        
+
         await _db.Products.AddAsync(product);
         await _db.SaveChangesAsync();
     }

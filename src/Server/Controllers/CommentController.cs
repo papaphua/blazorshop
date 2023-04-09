@@ -1,9 +1,7 @@
 ﻿using BlazorShop.Server.Auth.PermissionHandler;
 using BlazorShop.Server.Common;
-using BlazorShop.Server.Common.Providers;
 using BlazorShop.Server.Common.Providers.TokenProvider;
 using BlazorShop.Server.Facades.CommentFacade;
-using BlazorShop.Server.Services.CommentService;
 using BlazorShop.Shared.Dtos;
 using BlazorShop.Shared.Pagination.Parameters;
 using Microsoft.AspNetCore.Authorization;
@@ -35,7 +33,7 @@ public sealed class CommentController : ControllerBase
 
         return pagedList;
     }
-    
+
     [HasPermission(Permissions.CustomerPermission)]
     [HttpPost]
     public async Task AddComment(NewCommentDto newCommentDto)

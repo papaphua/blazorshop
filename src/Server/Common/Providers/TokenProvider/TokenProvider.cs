@@ -14,8 +14,8 @@ namespace BlazorShop.Server.Common.Providers.TokenProvider;
 public sealed class TokenProvider : ITokenProvider
 {
     private readonly JwtOptions _jwtOptions;
-    private readonly SecurityOptions _securityOptions;
     private readonly IPermissionService _permissionService;
+    private readonly SecurityOptions _securityOptions;
 
     public TokenProvider(IOptions<JwtOptions> jwtOptions, IPermissionService permissionService,
         IOptions<SecurityOptions> securityOptions)
@@ -104,12 +104,12 @@ public sealed class TokenProvider : ITokenProvider
         var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: _jwtOptions.Issuer,
-            audience: _jwtOptions.Audience,
-            claims: claims,
-            notBefore: DateTime.UtcNow,
-            expires: DateTime.UtcNow.AddMinutes(expiryInMin),
-            signingCredentials: credentials);
+            _jwtOptions.Issuer,
+            _jwtOptions.Audience,
+            claims,
+            DateTime.UtcNow,
+            DateTime.UtcNow.AddMinutes(expiryInMin),
+            credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }

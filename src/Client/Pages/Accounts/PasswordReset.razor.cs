@@ -10,27 +10,24 @@ namespace BlazorShop.Client.Pages.Accounts;
 [AllowAnonymous]
 public sealed partial class PasswordReset : IDisposable
 {
+    private Validations _validations = new();
     [Inject] private IAuthService AuthService { get; set; } = null!;
     [Inject] private HttpInterceptorService HttpInterceptorService { get; set; } = null!;
-    
-    private EmailDto EmailDto { get; set; } = new();
-    private Validations _validations = new();
 
-    protected override void OnInitialized()
-    {
-        HttpInterceptorService.RegisterEvent();
-    }
+    private EmailDto EmailDto { get; } = new();
 
     public void Dispose()
     {
         HttpInterceptorService.DisposeEvent();
     }
 
+    protected override void OnInitialized()
+    {
+        HttpInterceptorService.RegisterEvent();
+    }
+
     private async Task SendLinkAction()
     {
-        if (await _validations.ValidateAll())
-        {
-            await AuthService.GetPasswordResetLink(EmailDto);
-        }
+        if (await _validations.ValidateAll()) await AuthService.GetPasswordResetLink(EmailDto);
     }
 }

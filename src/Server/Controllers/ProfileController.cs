@@ -14,24 +14,24 @@ namespace BlazorShop.Server.Controllers;
 [ApiController]
 public sealed class ProfileController : ControllerBase
 {
-    private readonly ITokenProvider _tokenProvider;
     private readonly IProfileFacade _profileFacade;
+    private readonly ITokenProvider _tokenProvider;
 
     public ProfileController(ITokenProvider authTokenProvider, IProfileFacade profileFacade)
     {
         _tokenProvider = authTokenProvider;
         _profileFacade = profileFacade;
     }
-    
+
     [HasPermission(Permissions.CustomerPermission)]
     [HttpGet]
     public async Task<ProfileDto> GetUserProfile()
     {
         var userId = _tokenProvider.GetUserIdFromContext(HttpContext);
-        
+
         return await _profileFacade.GetUserProfileAsync(userId);
     }
-    
+
     [HasPermission(Permissions.CustomerPermission)]
     [HttpPut]
     public async Task<TokenDto> UpdateUserProfile(ProfileDto newProfileDto)
@@ -40,25 +40,25 @@ public sealed class ProfileController : ControllerBase
 
         return await _profileFacade.UpdateUserProfileAsync(userId, newProfileDto);
     }
-    
+
     [HasPermission(Permissions.CustomerPermission)]
     [HttpPatch("email/change")]
     public async Task<TokenDto> ChangeEmail(EmailChangeDto emailChangeDto)
     {
         var userId = Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        
+
         return await _profileFacade.ChangeEmailAsync(userId, emailChangeDto);
     }
-    
+
     [HasPermission(Permissions.CustomerPermission)]
     [HttpPatch("password/change")]
     public async Task ChangePassword(PasswordChangeDto passwordChangeDto)
     {
         var userId = _tokenProvider.GetUserIdFromContext(HttpContext);
-        
+
         await _profileFacade.ChangePasswordAsync(userId, passwordChangeDto);
     }
-    
+
     [HasPermission(Permissions.CustomerPermission)]
     [HttpGet("delete/request")]
     public async Task CreateDeleteProfileLink()
@@ -67,7 +67,7 @@ public sealed class ProfileController : ControllerBase
 
         await _profileFacade.GetDeleteProfileLinkAsync(userId);
     }
-    
+
     [AllowAnonymous]
     [HttpPost("delete/confirmation")]
     public async Task DeleteProfile(ConfirmationParameters parameters)

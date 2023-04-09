@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using DotNetEnv;
+using Microsoft.Extensions.Options;
 
 namespace BlazorShop.Server.Common.Options.Setups;
 
@@ -9,7 +10,7 @@ public sealed class PaymentOptionsSetup : IConfigureOptions<PaymentOptions>
 
     public void Configure(PaymentOptions options)
     {
-        options.StripePrivateKey = DotNetEnv.Env.GetString(StripePrivateKeyName);
-        options.StripeWebhookSecret = DotNetEnv.Env.GetString(StripeWebhookSecretName);
+        options.StripePrivateKey = Env.GetString(StripePrivateKeyName);
+        options.StripeWebhookSecret = Env.GetString(StripeWebhookSecretName);
     }
 }

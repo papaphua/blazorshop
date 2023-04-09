@@ -14,21 +14,25 @@ namespace BlazorShop.Client.Pages.Products;
 [AllowAnonymous]
 public sealed partial class Product : IDisposable
 {
+    private readonly CommentParameters _commentParameters = new();
     [Inject] private IProductService ProductService { get; set; } = null!;
-    [Inject] private ICartService CartService { get; set; } = null!;    
+    [Inject] private ICartService CartService { get; set; } = null!;
     [Inject] private ICommentService CommentService { get; set; } = null!;
     [Inject] private IProfileService ProfileService { get; set; } = null!;
     [Inject] private HttpInterceptorService HttpInterceptorService { get; set; } = null!;
 
     [Parameter] public string Uri { get; set; }
 
-    private readonly CommentParameters _commentParameters = new();
-
     private ProductDto Item { get; set; } = new();
-    private NewCommentDto NewComment { get; set; } = new();
+    private NewCommentDto NewComment { get; } = new();
     private UserDto? AuthUser { get; set; }
     private List<CommentDto> Comments { get; set; } = new();
     private MetaData MetaData { get; set; } = new();
+
+    public void Dispose()
+    {
+        HttpInterceptorService.DisposeEvent();
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -50,7 +54,7 @@ public sealed partial class Product : IDisposable
         _commentParameters.PageNumber = page;
         await GetComments();
     }
-    
+
     private async Task AddToCartAction(ProductDto product)
     {
         await CartService.AddToCart(product);
@@ -73,17 +77,12 @@ public sealed partial class Product : IDisposable
         await CommentService.DeleteComment(id);
         await GetComments();
     }
-    
+
     private async Task GetComments()
     {
         var pagingResponse = await CommentService.GetComments(_commentParameters);
-        
+
         Comments = pagingResponse.Items;
         MetaData = pagingResponse.MetaData;
-    }
-    
-    public void Dispose()
-    {
-        HttpInterceptorService.DisposeEvent();
     }
 }

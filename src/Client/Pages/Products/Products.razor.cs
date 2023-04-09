@@ -11,14 +11,18 @@ namespace BlazorShop.Client.Pages.Products;
 [AllowAnonymous]
 public sealed partial class Products : IDisposable
 {
+    private readonly ProductParameters _productParameters = new() { PageSize = 15 };
     [Inject] private IProductService ProductService { get; set; } = null!;
     [Inject] private HttpInterceptorService HttpInterceptorService { get; set; } = null!;
 
     [Parameter] public string? CategoryUrl { get; set; }
-
-    private readonly ProductParameters _productParameters = new() { PageSize = 15 };
     private List<ProductDto> Items { get; set; } = new();
     private MetaData MetaData { get; set; } = new();
+
+    public void Dispose()
+    {
+        HttpInterceptorService.DisposeEvent();
+    }
 
     protected override void OnInitialized()
     {
@@ -45,10 +49,5 @@ public sealed partial class Products : IDisposable
     {
         _productParameters.PageNumber = page;
         await GetProducts();
-    }
-
-    public void Dispose()
-    {
-        HttpInterceptorService.DisposeEvent();
     }
 }

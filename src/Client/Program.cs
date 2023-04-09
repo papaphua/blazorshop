@@ -1,4 +1,7 @@
 using Blazored.LocalStorage;
+using Blazorise;
+using Blazorise.Icons.Material;
+using Blazorise.Material;
 using BlazorShop.Client;
 using BlazorShop.Client.Auth.JwtProvider;
 using BlazorShop.Client.Auth.PermissionHandler;
@@ -17,9 +20,6 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
-using Blazorise;
-using Blazorise.Material;
-using Blazorise.Icons.Material;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -38,10 +38,7 @@ builder.Services.AddHttpClient("BlazorShop.ServerAPI",
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("BlazorShop.ServerAPI"));
 
 builder.Services
-    .AddBlazorise(options =>
-    {
-        options.Immediate = true;
-    })
+    .AddBlazorise(options => { options.Immediate = true; })
     .AddMaterialProviders()
     .AddMaterialIcons();
 

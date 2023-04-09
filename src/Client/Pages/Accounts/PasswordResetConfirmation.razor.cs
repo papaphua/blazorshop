@@ -15,18 +15,23 @@ namespace BlazorShop.Client.Pages.Accounts;
 [AllowAnonymous]
 public sealed partial class PasswordResetConfirmation : IDisposable
 {
+    private Validations _validations = new();
     [Inject] private IAuthService AuthService { get; set; } = null!;
     [Inject] private HttpInterceptorService HttpInterceptorService { get; set; } = null!;
     [Inject] private HttpClient HttpClient { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 
     private PasswordResetDto PasswordResetDto { get; } = new();
-    private Validations _validations = new();
+
+    public void Dispose()
+    {
+        HttpInterceptorService.DisposeEvent();
+    }
 
     protected override void OnInitialized()
     {
         HttpInterceptorService.RegisterEvent();
-        
+
         var query = NavigationManager.ToAbsoluteUri(NavigationManager.Uri).Query;
 
         StringValues token;
@@ -39,16 +44,9 @@ public sealed partial class PasswordResetConfirmation : IDisposable
 
         PasswordResetDto.ConfirmationParameters = new ConfirmationParameters(token!, email!);
     }
-    public void Dispose()
-    {
-        HttpInterceptorService.DisposeEvent();
-    }
 
     private async Task ResetAction()
     {
-        if (await _validations.ValidateAll())
-        {
-            await AuthService.ResetPassword(PasswordResetDto);
-        }
+        if (await _validations.ValidateAll()) await AuthService.ResetPassword(PasswordResetDto);
     }
 }

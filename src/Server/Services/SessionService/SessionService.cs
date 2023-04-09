@@ -8,8 +8,8 @@ namespace BlazorShop.Server.Services.SessionService;
 
 public sealed class SessionService : ISessionService
 {
-    private readonly JwtOptions _jwtOptions;
     private readonly AppDbContext _db;
+    private readonly JwtOptions _jwtOptions;
 
     public SessionService(IOptions<JwtOptions> jwtOptions, AppDbContext db)
     {
@@ -52,7 +52,7 @@ public sealed class SessionService : ISessionService
         session.RefreshTokenExpiryTime = DateTime.UtcNow.AddMinutes(_jwtOptions.RefreshTokenExpiryInMinutes);
 
         _db.Sessions.Update(session);
-        
+
         await _db.SaveChangesAsync();
     }
 }

@@ -12,7 +12,7 @@ public sealed class PasswordProvider : IPasswordProvider
     {
         _passwordOptions = passwordOptions.Value;
     }
-    
+
     public string GetPasswordHash(string password)
     {
         using var algorithm = new Rfc2898DeriveBytes(
@@ -26,14 +26,14 @@ public sealed class PasswordProvider : IPasswordProvider
 
         return $"{salt}.{key}";
     }
-    
+
     public bool VerifyPassword(string password, string hash)
     {
         var parts = hash.Split(".", 2);
-        
+
         var salt = Convert.FromBase64String(parts[0]);
         var key = Convert.FromBase64String(parts[1]);
-        
+
         using var algorithm = new Rfc2898DeriveBytes(
             password,
             salt,

@@ -10,7 +10,7 @@ public sealed class MappingProfile : Profile
     {
         CreateMap<User, UserDto>();
         CreateMap<UserDto, User>();
-        
+
         CreateMap<Category, CategoryDto>();
 
         CreateMap<Comment, CommentDto>()
@@ -19,7 +19,7 @@ public sealed class MappingProfile : Profile
             .ForMember(dest => dest.Username,
                 opt => opt.MapFrom(src => src.User.Username));
 
-        
+
         CreateMap<RegisterDto, User>()
             .ForSourceMember(src => src.Password,
                 opt => opt.DoNotValidate())

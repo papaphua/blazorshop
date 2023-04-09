@@ -8,6 +8,6 @@ public sealed class ExceptionDto
     {
         Message = message;
     }
-    
+
     [Required] public string Message { get; }
 }

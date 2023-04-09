@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using BlazorShop.Server.Services.PaymentService;
 using BlazorShop.Server.Common;
 using BlazorShop.Server.Common.Exceptions;
 using BlazorShop.Server.Data;
 using BlazorShop.Server.Primitives;
+using BlazorShop.Server.Services.PaymentService;
 using BlazorShop.Server.Services.UserService;
 using BlazorShop.Shared.Dtos;
 using BlazorShop.Shared.Pagination.Parameters;
@@ -12,10 +12,10 @@ namespace BlazorShop.Server.Facades.UserFacade;
 
 public sealed class UserFacade : IUserFacade
 {
-    private readonly IMapper _mapper;
-    private readonly IUserService _userService;
-    private readonly IPaymentService _paymentService;
     private readonly AppDbContext _db;
+    private readonly IMapper _mapper;
+    private readonly IPaymentService _paymentService;
+    private readonly IUserService _userService;
 
     public UserFacade(IMapper mapper, IUserService userService, IPaymentService paymentService, AppDbContext db)
     {

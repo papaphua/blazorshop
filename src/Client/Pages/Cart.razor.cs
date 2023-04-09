@@ -17,6 +17,11 @@ public sealed partial class Cart : IDisposable
 
     private List<CartItem> CartItems { get; set; } = new();
 
+    public void Dispose()
+    {
+        HttpInterceptorService.DisposeEvent();
+    }
+
     protected override async Task OnInitializedAsync()
     {
         CartItems = await CartService.GetAllItems();
@@ -33,7 +38,7 @@ public sealed partial class Cart : IDisposable
             await CartService.ClearCart(CartItems);
         }
     }
-    
+
     private async Task DeleteAction(CartItem item)
     {
         await CartService.RemoveFromCart(item, CartItems);
@@ -47,10 +52,5 @@ public sealed partial class Cart : IDisposable
     private void ViewAction(CartItem item)
     {
         Navigation.NavigateTo($"/products/{item.Product.Slug}");
-    }
-
-    public void Dispose()
-    {
-        HttpInterceptorService.DisposeEvent();
     }
 }

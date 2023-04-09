@@ -5,7 +5,7 @@ namespace BlazorShop.Server.Common.Options.Setups;
 public sealed class UrlOptionsSetup : IConfigureOptions<UrlOptions>
 {
     private const string UrlSection = "Url";
-    
+
     private readonly IConfiguration _configuration;
 
     public UrlOptionsSetup(IConfiguration configuration)

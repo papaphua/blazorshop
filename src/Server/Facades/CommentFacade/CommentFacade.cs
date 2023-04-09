@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using BlazorShop.Server.Services.ProductService;
 using BlazorShop.Server.Common;
 using BlazorShop.Server.Common.Exceptions;
 using BlazorShop.Server.Data;
 using BlazorShop.Server.Data.Entities;
 using BlazorShop.Server.Primitives;
 using BlazorShop.Server.Services.CommentService;
+using BlazorShop.Server.Services.ProductService;
 using BlazorShop.Shared.Dtos;
 using BlazorShop.Shared.Pagination.Parameters;
 
@@ -14,8 +14,8 @@ namespace BlazorShop.Server.Facades.CommentFacade;
 public sealed class CommentFacade : ICommentFacade
 {
     private readonly ICommentService _commentService;
-    private readonly IMapper _mapper;
     private readonly AppDbContext _db;
+    private readonly IMapper _mapper;
     private readonly IProductService _productService;
 
     public CommentFacade(ICommentService commentService, IMapper mapper, AppDbContext db,
@@ -45,7 +45,7 @@ public sealed class CommentFacade : ICommentFacade
         var product = await _productService.GetProductByIdAsync(newCommentDto.ProductId);
 
         if (product is null) throw new NotFoundException(ExceptionMessages.ProductNotFound);
-        
+
         product.Comments.Add(comment);
 
         await _db.SaveChangesAsync();

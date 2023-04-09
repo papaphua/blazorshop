@@ -15,9 +15,9 @@ public sealed class SecurityService : ISecurityService
     private const int CodeLength = 5;
 
     private readonly AppDbContext _db;
+    private readonly SecurityOptions _securityOptions;
     private readonly ITokenProvider _tokenProvider;
     private readonly IUserService _userService;
-    private readonly SecurityOptions _securityOptions;
 
     public SecurityService(AppDbContext db, ITokenProvider tokenProvider, IUserService userService,
         IOptions<SecurityOptions> securityOptions)
@@ -49,7 +49,8 @@ public sealed class SecurityService : ISecurityService
         if (security is null) throw new NotFoundException(ExceptionMessages.UserNotFound);
 
         security.ConfirmationToken = _tokenProvider.GenerateConfirmationToken(user);
-        security.ConfirmationTokenExpiry = DateTime.UtcNow.AddMinutes(_securityOptions.ConfirmationTokenExpiryInMinutes);
+        security.ConfirmationTokenExpiry =
+            DateTime.UtcNow.AddMinutes(_securityOptions.ConfirmationTokenExpiryInMinutes);
 
         await _db.SaveChangesAsync();
 
@@ -73,27 +74,27 @@ public sealed class SecurityService : ISecurityService
     public async Task<string> GenerateNewEmailConfirmationCodeAsync(Guid userId)
     {
         var security = await GetSecurityByUserIdAsync(userId);
-        
-        if(security is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
+
+        if (security is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
         security.NewEmailConfirmationCode = GenerateCode(CodeLength);
 
         await _db.SaveChangesAsync();
-     
+
         return security.NewEmailConfirmationCode;
     }
 
     public async Task<bool> IsConfirmationTokenValidAsync(Guid userId, string token)
     {
         var security = await GetSecurityByUserIdAsync(userId);
-        
+
         if (security is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
-        
-        if(security.ConfirmationToken is null || 
-           security.ConfirmationTokenExpiry is null ||
-           DateTime.UtcNow > security.ConfirmationTokenExpiry) 
+
+        if (security.ConfirmationToken is null ||
+            security.ConfirmationTokenExpiry is null ||
+            DateTime.UtcNow > security.ConfirmationTokenExpiry)
             throw new BusinessException(ExceptionMessages.ExpiredLink);
-        
+
 
         if (!security.ConfirmationToken.Equals(token))
             throw new BusinessException(ExceptionMessages.WrongLink);
@@ -107,9 +108,9 @@ public sealed class SecurityService : ISecurityService
 
         if (security is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
-        if(security.ConfirmationCode is null || 
-           security.ConfirmationCodeExpiry is null || 
-           DateTime.UtcNow > security.ConfirmationCodeExpiry) 
+        if (security.ConfirmationCode is null ||
+            security.ConfirmationCodeExpiry is null ||
+            DateTime.UtcNow > security.ConfirmationCodeExpiry)
             throw new BusinessException(ExceptionMessages.ExpiredCode);
 
         if (!security.ConfirmationCode.Equals(code))
@@ -124,9 +125,9 @@ public sealed class SecurityService : ISecurityService
 
         if (security is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
 
-        if(security.NewEmailConfirmationCode is null || 
-           security.ConfirmationCodeExpiry is null || 
-           DateTime.UtcNow > security.ConfirmationCodeExpiry) 
+        if (security.NewEmailConfirmationCode is null ||
+            security.ConfirmationCodeExpiry is null ||
+            DateTime.UtcNow > security.ConfirmationCodeExpiry)
             throw new BusinessException(ExceptionMessages.ExpiredCode);
 
         if (!security.NewEmailConfirmationCode.Equals(code))
@@ -164,10 +165,10 @@ public sealed class SecurityService : ISecurityService
     {
         var security = await _db.Securities
             .FirstOrDefaultAsync(security => security.UserId.Equals(userId));
-        
+
         if (security is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
-        
-        return security;    
+
+        return security;
     }
 
     private static string GenerateCode(int length)

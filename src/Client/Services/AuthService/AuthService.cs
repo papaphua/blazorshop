@@ -11,10 +11,10 @@ namespace BlazorShop.Client.Services.AuthService;
 
 public sealed class AuthService : IAuthService
 {
-    private readonly HttpClient _http;
-    private readonly NavigationManager _navigation;
-    private readonly ILocalStorageService _localStorage;
     private readonly AuthenticationStateProvider _authStateProvider;
+    private readonly HttpClient _http;
+    private readonly ILocalStorageService _localStorage;
+    private readonly NavigationManager _navigation;
 
     public AuthService(HttpClient http, NavigationManager navigation, ILocalStorageService localStorage,
         AuthenticationStateProvider authStateProvider)

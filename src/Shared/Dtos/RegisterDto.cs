@@ -19,7 +19,7 @@ public sealed class RegisterDto
     [RegularExpression(@"^((?=.*[a-z])(?=.*[A-Z])(?=.*\d)).+$", ErrorMessage = "Invalid password.")]
     [DataType(DataType.Password)]
     public string Password { get; set; } = null!;
-    
+
     [Required(ErrorMessage = "Confirm password is required.")]
     [Compare(nameof(Password))]
     [DataType(DataType.Password)]

@@ -1,7 +1,6 @@
 ﻿using BlazorShop.Server.Auth.PermissionHandler;
 using BlazorShop.Server.Common;
 using BlazorShop.Server.Facades.UserFacade;
-using BlazorShop.Server.Services.UserService;
 using BlazorShop.Shared.Dtos;
 using BlazorShop.Shared.Pagination.Parameters;
 using Microsoft.AspNetCore.Mvc;
@@ -30,21 +29,21 @@ public sealed class UserController : ControllerBase
 
         return pagedList;
     }
-    
+
     [HasPermission(Permissions.AdminPermission)]
     [HttpGet("id/{id:guid}")]
     public async Task<UserDto?> GetUserById(Guid id)
     {
         return await _userFacade.GetUserByIdAsync(id);
     }
-    
+
     [HasPermission(Permissions.AdminPermission)]
     [HttpGet("username/{username}")]
     public async Task<UserDto?> GetUserByUsername(string username)
     {
         return await _userFacade.GetUserByUsernameAsync(username);
     }
-    
+
     [HasPermission(Permissions.AdminPermission)]
     [HttpDelete("{id:guid}")]
     public async Task DeleteUser(Guid id)

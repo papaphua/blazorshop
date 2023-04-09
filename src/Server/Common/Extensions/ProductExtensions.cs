@@ -19,6 +19,6 @@ public static class ProductExtensions
         if (string.IsNullOrWhiteSpace(categorySlug)) return products;
 
         return products
-            .Where(product =>  product.Category.Slug.Contains(categorySlug));
+            .Where(product => product.Category.Slug.Contains(categorySlug));
     }
 }

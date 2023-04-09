@@ -6,8 +6,8 @@ namespace BlazorShop.Server.Facades.CategoryFacade;
 
 public sealed class CategoryFacade : ICategoryFacade
 {
-    private readonly IMapper _mapper;
     private readonly ICategoryService _categoryService;
+    private readonly IMapper _mapper;
 
     public CategoryFacade(IMapper mapper, ICategoryService categoryService)
     {
@@ -18,7 +18,7 @@ public sealed class CategoryFacade : ICategoryFacade
     public async Task<List<CategoryDto>> GetAllCategoriesAsync()
     {
         var categories = await _categoryService.GetAllCategoriesAsync();
-        
+
         return categories
             .Select(category => _mapper.Map<CategoryDto>(category))
             .ToList();

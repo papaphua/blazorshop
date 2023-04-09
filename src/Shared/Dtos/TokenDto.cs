@@ -9,7 +9,7 @@ public sealed class TokenDto
         AccessToken = accessToken;
         RefreshToken = refreshToken;
     }
-    
+
     [Required] public string AccessToken { get; set; }
     [Required] public string RefreshToken { get; set; }
 }

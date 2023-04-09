@@ -5,7 +5,8 @@ namespace BlazorShop.Server.Auth.PermissionHandler;
 
 public sealed class PermissionAuthHandler : AuthorizationHandler<PermissionRequirement>
 {
-    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
+    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
+        PermissionRequirement requirement)
     {
         var claims = context.User.Claims.ToList();
 
@@ -19,9 +20,9 @@ public sealed class PermissionAuthHandler : AuthorizationHandler<PermissionRequi
             .Where(claim => claim.Type == CustomClaims.Permissions)
             .Select(claim => claim.Value)
             .ToHashSet();
-        
-        if(permissions.Contains(requirement.Permission)) context.Succeed(requirement);
-        
+
+        if (permissions.Contains(requirement.Permission)) context.Succeed(requirement);
+
         return Task.CompletedTask;
     }
 }

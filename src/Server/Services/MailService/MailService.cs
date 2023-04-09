@@ -7,8 +7,8 @@ namespace BlazorShop.Server.Services.MailService;
 
 public sealed class MailService : IMailService
 {
-    private readonly MailOptions _options;
     private readonly SendGridClient _client;
+    private readonly MailOptions _options;
 
     public MailService(IOptions<MailOptions> options)
     {

@@ -5,7 +5,7 @@ namespace BlazorShop.Server.Common.Options.Setups;
 public sealed class SecurityOptionsSetup : IConfigureOptions<SecurityOptions>
 {
     private const string SecuritySection = "Security";
-    
+
     private readonly IConfiguration _configuration;
 
     public SecurityOptionsSetup(IConfiguration configuration)
