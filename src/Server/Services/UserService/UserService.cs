@@ -1,60 +1,43 @@
-﻿using AutoMapper;
-using BlazorShop.Server.Data.Repositories.UserRepository;
-using BlazorShop.Server.Exceptions;
-using BlazorShop.Server.Primitives;
-using BlazorShop.Server.Services.PaymentService;
-using BlazorShop.Shared.Dtos;
+﻿using BlazorShop.Server.Common.Extensions;
+using BlazorShop.Server.Data;
+using BlazorShop.Server.Data.Entities;
 using BlazorShop.Shared.Pagination.Parameters;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlazorShop.Server.Services.UserService;
 
-public sealed class UserService : IUserService 
+public sealed class UserService : IUserService
 {
-    private readonly IMapper _mapper;
-    private readonly IUserRepository _userRepository;
-    private readonly IPaymentService _paymentService;
+    private readonly AppDbContext _db;
 
-    public UserService(IMapper mapper, IUserRepository userRepository, IPaymentService paymentService)
+    public UserService(AppDbContext db)
     {
-        _mapper = mapper;
-        _userRepository = userRepository;
-        _paymentService = paymentService;
+        _db = db;
     }
 
-    public async Task<PagedList<UserDto>> GetUsersByParametersAsync(BaseParameters parameters)
+    public async Task<List<User>> GetUsersByParametersAsync(BaseParameters parameters)
     {
-        var users = await _userRepository.GetByParametersAsync(parameters);
-
-        var dtos = users
-            .Select(user => _mapper.Map<UserDto>(user))
-            .ToList();
-        
-        return PagedList<UserDto>
-            .ToPagedList(dtos, parameters.PageNumber, parameters.PageSize);
+        return await _db.Users
+            .SearchFor(parameters.Search)
+            .OrderBy(user => user.Username)
+            .ToListAsync();
     }
 
-    public async Task<UserDto?> GetUserByIdAsync(Guid id)
+    public async Task<User?> GetUserByIdAsync(Guid id)
     {
-        var user = await _userRepository.GetByIdAsync(id);
-
-        return _mapper.Map<UserDto>(user);
+        return await _db.Users
+            .FirstOrDefaultAsync(user => user.Id.Equals(id));
     }
 
-    public async Task<UserDto?> GetUserByUsernameAsync(string username)
+    public async Task<User?> GetUserByUsernameAsync(string username)
     {
-        var user = await _userRepository.GetByUsernameAsync(username);
-
-        return _mapper.Map<UserDto>(user);
+        return await _db.Users
+            .FirstOrDefaultAsync(user => user.Username.Equals(username));
     }
 
-    public async Task DeleteUserAsync(Guid id)
+    public async Task<User?> GetUserByEmailAsync(string email)
     {
-        var user = await _userRepository.GetByIdAsync(id);
-
-        if (user is null) throw new NotFoundException(ExceptionMessages.NotRegistered);
-
-        await _paymentService.DeletePaymentProfileAsync(user.Id);
-        
-        await _userRepository.DeleteAndSaveAsync(user);
+        return await _db.Users
+            .FirstOrDefaultAsync(user => user.Email.Equals(email));
     }
 }

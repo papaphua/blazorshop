@@ -3,9 +3,9 @@ using Microsoft.Extensions.Options;
 
 namespace BlazorShop.Server.Auth.PermissionHandler;
 
-public sealed class PermissionAuthPolicyProvider : DefaultAuthorizationPolicyProvider  
+public sealed class PermissionAuthPolicyProvider : DefaultAuthorizationPolicyProvider
 {
-    public PermissionAuthPolicyProvider(IOptions<AuthorizationOptions> options) 
+    public PermissionAuthPolicyProvider(IOptions<AuthorizationOptions> options)
         : base(options)
     {
     }

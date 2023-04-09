@@ -15,8 +15,8 @@ public sealed class ProfileDto
     [RegularExpression(@"^[a-zA-Z]+$")] public string? LastName { get; set; }
 
     [RegularExpression(@"^[a-zA-Z]+$")] public string? Gender { get; set; }
-    
-    [Required] public bool IsTwoAuth { get; set; } 
+
+    [Required] public bool IsTwoAuth { get; set; }
 
     public DateTime? BirthDate { get; set; }
 }

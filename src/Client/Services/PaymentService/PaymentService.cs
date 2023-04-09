@@ -5,8 +5,8 @@ namespace BlazorShop.Client.Services.PaymentService;
 
 public sealed class PaymentService : IPaymentService
 {
-    private readonly HttpClient _http;
     private readonly ICartService _cartService;
+    private readonly HttpClient _http;
 
     public PaymentService(HttpClient http, ICartService cartService)
     {

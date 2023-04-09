@@ -18,8 +18,13 @@ public sealed partial class EmailConfirmation : IDisposable
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private HttpClient HttpClient { get; set; } = null!;
 
-    private string Result {get; set; } = string.Empty;
-    
+    private string Result { get; set; } = string.Empty;
+
+    public void Dispose()
+    {
+        HttpInterceptorService.DisposeEvent();
+    }
+
     protected override async Task OnInitializedAsync()
     {
         var query = NavigationManager.ToAbsoluteUri(NavigationManager.Uri).Query;
@@ -37,10 +42,5 @@ public sealed partial class EmailConfirmation : IDisposable
         var response = await AuthService.ConfirmEmail(accessParameters);
 
         Result = response.Message;
-    }
-
-    public void Dispose()
-    {
-        HttpInterceptorService.DisposeEvent();
     }
 }

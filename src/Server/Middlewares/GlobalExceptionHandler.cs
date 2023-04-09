@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using BlazorShop.Server.Exceptions;
+using BlazorShop.Server.Common.Exceptions;
 using BlazorShop.Shared.Dtos;
 
 namespace BlazorShop.Server.Middlewares;
@@ -20,9 +20,9 @@ public class GlobalExceptionHandler : IMiddleware
                 NotFoundException => (int)HttpStatusCode.NotFound,
                 _ => (int)HttpStatusCode.BadRequest
             };
-            
+
             context.Response.ContentType = "application/json";
-            
+
             await context.Response.WriteAsJsonAsync(new ExceptionDto(exception.Message));
         }
     }

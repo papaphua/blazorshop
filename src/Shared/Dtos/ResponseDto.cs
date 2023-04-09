@@ -8,6 +8,6 @@ public class ResponseDto
     {
         Message = message;
     }
-    
+
     [Required] public string Message { get; }
 }

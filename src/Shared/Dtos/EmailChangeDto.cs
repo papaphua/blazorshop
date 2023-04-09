@@ -10,7 +10,7 @@ public sealed class EmailChangeDto
 
     [Required(ErrorMessage = "Confirmation code is required.")]
     public string CurrentConfirmationCode { get; set; } = null!;
-    
+
     [Required(ErrorMessage = "Confirmation code is required.")]
     public string NewConfirmationCode { get; set; } = null!;
 }

@@ -20,7 +20,7 @@ public sealed class UserService : IUserService
         _http = http;
         _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
     }
-    
+
     public async Task<PagingResponse<UserDto>> GetUsers(BaseParameters parameters)
     {
         var query = new Dictionary<string, string>

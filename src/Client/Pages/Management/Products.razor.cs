@@ -13,15 +13,19 @@ namespace BlazorShop.Client.Pages.Management;
 [HasPermission(Permissions.AdminPermission)]
 public sealed partial class Products : IDisposable
 {
+    private readonly ProductParameters _productParameters = new() { PageSize = 6 };
+    private Validations _validations = new();
     [Inject] private IProductService ProductService { get; set; } = null!;
     [Inject] private ICategoryService CategoryService { get; set; } = null!;
     [Inject] private HttpInterceptorService HttpInterceptorService { get; set; } = null!;
-
-    private readonly ProductParameters _productParameters = new() { PageSize = 6 };
     private List<ProductDto> Items { get; set; } = new();
     private MetaData MetaData { get; set; } = new();
     private List<CategoryDto> Categories { get; set; } = new();
-    private Validations _validations = new();
+
+    public void Dispose()
+    {
+        HttpInterceptorService.DisposeEvent();
+    }
 
     protected override void OnInitialized()
     {
@@ -38,16 +42,13 @@ public sealed partial class Products : IDisposable
 
     private async Task UpdateAction(ProductDto product)
     {
-        if (await _validations.ValidateAll())
-        {
-            await ProductService.UpdateProduct(product);
-        }
+        if (await _validations.ValidateAll()) await ProductService.UpdateProduct(product);
     }
 
     private async Task DeleteAction(ProductDto product)
     {
         Items.Remove(product);
-        await ProductService.DeleteProduct(product.Uri);
+        await ProductService.DeleteProduct(product.Slug);
     }
 
     private async Task GetProducts()
@@ -62,10 +63,5 @@ public sealed partial class Products : IDisposable
     {
         _productParameters.PageNumber = page;
         await GetProducts();
-    }
-
-    public void Dispose()
-    {
-        HttpInterceptorService.DisposeEvent();
     }
 }

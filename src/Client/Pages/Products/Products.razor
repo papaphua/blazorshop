@@ -10,7 +10,7 @@
     <Row RowColumns="RowColumns.Are5.OnDesktop.Are1.OnMobile" Display="Display.Flex.Row" Flex="Flex.Shrink.Is1">
         <Repeater Items="Items">
 
-            @{ var link = "/products/" + context.Uri; }
+            @{ var link = "/products/" + context.Slug; }
             <Column Margin="Margin.Is3.FromBottom">
                 <Card>
                     <CardImage Style="height: 325px;" Source="@context.ImageUrl" Alt="@context.Name"/>

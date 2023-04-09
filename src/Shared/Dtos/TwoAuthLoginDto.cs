@@ -15,7 +15,7 @@ public sealed class TwoAuthLoginDto
     [RegularExpression(@"^((?=.*[a-z])(?=.*[A-Z])(?=.*\d)).+$", ErrorMessage = "Invalid password.")]
     [DataType(DataType.Password)]
     public string Password { get; set; } = null!;
-    
+
     [Required(ErrorMessage = "Code is required.")]
     [DisplayName("Confirmation code from email")]
     public string ConfirmationCode { get; set; } = null!;

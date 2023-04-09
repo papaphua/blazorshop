@@ -20,7 +20,7 @@ public sealed class ProductService : IProductService
         _http = http;
         _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
     }
-    
+
     public async Task<PagingResponse<ProductDto>> GetProducts(ProductParameters parameters)
     {
         var query = new Dictionary<string, string>

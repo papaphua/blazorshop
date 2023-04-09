@@ -30,11 +30,11 @@ public sealed class CartService : ICartService
     {
         var cart = await GetAllItems();
 
-        var productUris = cart.Select(item => item.Product.Uri);
+        var productUris = cart.Select(item => item.Product.Slug);
 
-        if (productUris.Contains(product.Uri))
+        if (productUris.Contains(product.Slug))
         {
-            var itemToUpdate = cart.Single(item => item.Product.Uri == product.Uri);
+            var itemToUpdate = cart.Single(item => item.Product.Slug == product.Slug);
 
             itemToUpdate.Quantity++;
         }

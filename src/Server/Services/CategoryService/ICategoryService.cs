@@ -1,8 +1,8 @@
-﻿using BlazorShop.Shared.Dtos;
+﻿using BlazorShop.Server.Data.Entities;
 
 namespace BlazorShop.Server.Services.CategoryService;
 
 public interface ICategoryService
 {
-    Task<List<CategoryDto>> GetAllCategoriesAsync();
+    Task<List<Category>> GetAllCategoriesAsync();
 }

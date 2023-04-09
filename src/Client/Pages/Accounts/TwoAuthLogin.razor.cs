@@ -11,17 +11,22 @@ namespace BlazorShop.Client.Pages.Accounts;
 [AllowAnonymous]
 public sealed partial class TwoAuthLogin : IDisposable
 {
+    private Validations _validations = new();
     [Inject] private IAuthService AuthService { get; set; } = null!;
     [Inject] private HttpInterceptorService HttpInterceptorService { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
-    
+
     private TwoAuthLoginDto TwoAuthLoginDto { get; } = new();
-    private Validations _validations = new();
+
+    public void Dispose()
+    {
+        HttpInterceptorService.DisposeEvent();
+    }
 
     protected override void OnInitialized()
     {
         HttpInterceptorService.RegisterEvent();
-        
+
         var query = NavigationManager.ToAbsoluteUri(NavigationManager.Uri).Query;
 
         QueryHelpers.ParseQuery(query).TryGetValue("login", out var login);
@@ -29,16 +34,8 @@ public sealed partial class TwoAuthLogin : IDisposable
         TwoAuthLoginDto.Login = login;
     }
 
-    public void Dispose()
-    {
-        HttpInterceptorService.DisposeEvent();
-    }
-
     private async Task LoginAction()
     {
-        if (await _validations.ValidateAll())
-        {
-            await AuthService.TwoAuthLogin(TwoAuthLoginDto);
-        }
+        if (await _validations.ValidateAll()) await AuthService.TwoAuthLogin(TwoAuthLoginDto);
     }
 }

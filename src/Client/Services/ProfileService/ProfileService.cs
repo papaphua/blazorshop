@@ -12,9 +12,9 @@ namespace BlazorShop.Client.Services.ProfileService;
 
 public sealed class ProfileService : IProfileService
 {
+    private readonly AuthenticationStateProvider _authStateProvider;
     private readonly HttpClient _http;
     private readonly ILocalStorageService _localStorage;
-    private readonly AuthenticationStateProvider _authStateProvider;
     private readonly IUserService _userService;
 
     public ProfileService(HttpClient http, ILocalStorageService localStorage,
@@ -60,7 +60,7 @@ public sealed class ProfileService : IProfileService
     {
         var response = await _http.PatchAsJsonAsync("api/profile/email/change", emailChangeDto);
 
-        if(!response.IsSuccessStatusCode) return;
+        if (!response.IsSuccessStatusCode) return;
 
         var tokenDto = await response.Content.ReadFromJsonAsync<TokenDto>();
 

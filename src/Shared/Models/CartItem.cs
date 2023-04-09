@@ -9,7 +9,7 @@ public class CartItem
     {
         Product = product;
     }
-    
+
     [Required] public ProductDto Product { get; }
 
     [Required] public int Quantity { get; set; } = 1;

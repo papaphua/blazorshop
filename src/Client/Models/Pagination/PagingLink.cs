@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace BlazorShop.Client.Models.Pagination;
+﻿namespace BlazorShop.Client.Models.Pagination;
 
 public sealed class PagingLink
 {

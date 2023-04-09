@@ -1,4 +1,5 @@
 ﻿using BlazorShop.Server.Auth.PermissionHandler;
+using BlazorShop.Server.Common;
 using BlazorShop.Server.Services.PaymentService;
 using BlazorShop.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -16,7 +17,7 @@ public sealed class PaymentController : ControllerBase
     {
         _paymentService = paymentService;
     }
-    
+
     [HasPermission(Permissions.CustomerPermission)]
     [HttpPost("checkout")]
     public ActionResult CheckoutSession(List<CartItem> cartItems)
@@ -25,7 +26,7 @@ public sealed class PaymentController : ControllerBase
 
         return Ok(session.Url);
     }
-    
+
     [AllowAnonymous]
     [HttpPost("webhook")]
     public async Task<IActionResult> WebHook()

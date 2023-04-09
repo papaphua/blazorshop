@@ -4,16 +4,14 @@ namespace BlazorShop.Server.Data.Entities;
 
 public sealed class Comment
 {
-    public Comment(string text, Guid userId)
+    public Comment()
     {
         Id = Guid.NewGuid();
-        Text = text;
-        UserId = userId;
     }
-    
+
     [Required] public Guid Id { get; set; }
-    
-    [Required] public string Text { get; set; }
+
+    [Required] public string Text { get; set; } = null!;
 
     [Required] public Guid UserId { get; set; }
 

@@ -21,7 +21,7 @@
                         <BarDropdownItem To="/products">All</BarDropdownItem>
                         @foreach (var category in Categories)
                         {
-                            var url = "/products/category/" + category.Uri;
+                            var url = "/products/category/" + category.Slug;
                             <BarDropdownItem To="@url">@category.Name</BarDropdownItem>
                         }
                     </BarDropdownMenu>

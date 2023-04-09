@@ -9,7 +9,7 @@ public sealed class PasswordChangeDto
     [RegularExpression(@"^((?=.*[a-z])(?=.*[A-Z])(?=.*\d)).+$", ErrorMessage = "Invalid password.")]
     [DataType(DataType.Password)]
     public string NewPassword { get; set; } = null!;
-    
+
     [Required(ErrorMessage = "Confirm password is required.")]
     [Compare(nameof(NewPassword))]
     [DataType(DataType.Password)]
