@@ -41,12 +41,13 @@ public sealed class CommentFacade : ICommentFacade
 
     public async Task AddCommentAsync(Guid userId, NewCommentDto newCommentDto)
     {
-        var comment = new Comment { Text = newCommentDto.Text, UserId = userId };
         var product = await _productService.GetProductByIdAsync(newCommentDto.ProductId);
 
         if (product is null) throw new NotFoundException(ExceptionMessages.ProductNotFound);
-
-        product.Comments.Add(comment);
+        
+        var comment = new Comment { Text = newCommentDto.Text, UserId = userId, Product = product};
+        
+        await _db.Comments.AddAsync(comment);
 
         await _db.SaveChangesAsync();
     }

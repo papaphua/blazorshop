@@ -49,10 +49,10 @@ stripe listen --forward-to localhost:7005/api/payments/webhook
 ```
 4) Create .env file in server project root folder with following content
 ```text
-JwtSecretKey=YourValue        // any value to generate and verify tokens
-StripePrivateKey=YourValue    // from dashboard.stripe.com/test/apikeys
-StripeWebHookSecret=YourValue // stripe webhook secret received after executing stripe listen command
-SendGridApiKey=YourValue // from app.sendgrid.com/settings/api_keys
+JWT_SECRET_KEY=YourValue        // any value to generate and verify tokens
+STRIPE_PRIVATE_KEY=YourValue    // from dashboard.stripe.com/test/apikeys
+STRIPE_WEBHOOK_SECRET=YourValue // stripe webhook secret received after executing stripe listen command
+SENDGRID_API_KEY=YourValue // from app.sendgrid.com/settings/api_keys
 ```
 5) Run BlazorShop.Server: https
 

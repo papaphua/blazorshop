@@ -16,4 +16,6 @@ public sealed class Comment
     [Required] public Guid UserId { get; set; }
 
     [Required] public User User { get; set; } = null!;
+    
+    [Required] public Product Product { get; set; } = null!;
 }

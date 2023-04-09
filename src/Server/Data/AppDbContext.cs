@@ -29,7 +29,7 @@ public sealed class AppDbContext : DbContext
             .WithMany();
         modelBuilder.Entity<Product>()
             .HasMany(product => product.Comments)
-            .WithOne();
+            .WithOne(comment => comment.Product);
         modelBuilder.Entity<Role>()
             .HasMany(role => role.Permissions)
             .WithMany()
