@@ -26,11 +26,8 @@ namespace BlazorShop.Server.Common.Extensions;
 
 public static class ServiceExtensions
 {
-    public static IServiceCollection AddBusinessServices(this IServiceCollection services)
+    public static void AddBusinessServices(this IServiceCollection services)
     {
-        if (services == null)
-            throw new ArgumentNullException(nameof(services));
-
         services.AddScoped<ITokenProvider, TokenProvider>();
         services.AddScoped<IPasswordProvider, PasswordProvider>();
         services.AddScoped<ILinkProvider, LinkProvider>();
@@ -51,15 +48,10 @@ public static class ServiceExtensions
         services.AddScoped<ICommentFacade, CommentFacade>();
         services.AddScoped<IProfileFacade, ProfileFacade>();
         services.AddScoped<IAuthFacade, AuthFacade>();
-
-        return services;
     }
 
-    public static IServiceCollection SetupOptions(this IServiceCollection services)
+    public static void SetupOptions(this IServiceCollection services)
     {
-        if (services == null)
-            throw new ArgumentNullException(nameof(services));
-
         Env.Load();
 
         services.ConfigureOptions<JwtOptionsSetup>();
@@ -70,18 +62,11 @@ public static class ServiceExtensions
         services.ConfigureOptions<PasswordOptionsSetup>();
         services.ConfigureOptions<UrlOptionsSetup>();
         services.ConfigureOptions<PaymentOptionsSetup>();
-
-        return services;
     }
 
-    public static IServiceCollection AddPermissionAuthorization(this IServiceCollection services)
+    public static void AddPermissionAuthorization(this IServiceCollection services)
     {
-        if (services == null)
-            throw new ArgumentNullException(nameof(services));
-
         services.AddSingleton<IAuthorizationHandler, PermissionAuthHandler>();
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionAuthPolicyProvider>();
-
-        return services;
     }
 }
