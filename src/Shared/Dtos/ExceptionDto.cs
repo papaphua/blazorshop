@@ -4,10 +4,5 @@ namespace BlazorShop.Shared.Dtos;
 
 public sealed class ExceptionDto
 {
-    public ExceptionDto(string message)
-    {
-        Message = message;
-    }
-
-    [Required] public string Message { get; }
+    [Required] public string Message { get; set; } = null!;
 }

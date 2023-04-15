@@ -16,6 +16,7 @@ public static class ExceptionMessages
     public const string TwoAuthRequired = "Two Factor Authentication is enabled for this user.";
     public const string ProductNotFound = "Product is not found.";
     public const string CommentNotFound = "Comment is not found.";
+    public const string InternalServerError = "Internal server error.";
 
     public static string UsernameAndEmailAlreadyExist(string username, string email)
     {

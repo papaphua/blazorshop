@@ -4,12 +4,12 @@ namespace BlazorShop.Server.Common.Extensions;
 
 public static class ApplicationExtensions
 {
-    public static IApplicationBuilder UseGlobalExceptionHandler(this IApplicationBuilder app)
+    public static IApplicationBuilder UseExceptionManager(this IApplicationBuilder app)
     {
         if (app == null)
             throw new ArgumentNullException(nameof(app));
 
-        app.UseMiddleware<GlobalExceptionHandler>();
+        app.UseMiddleware<ExceptionManager>();
 
         return app;
     }

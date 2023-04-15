@@ -37,9 +37,9 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddPermissionAuthorization();
 
-builder.Services.AddGlobalExceptionHandler();
-
 var app = builder.Build();
+
+app.UseExceptionManager();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -59,8 +59,6 @@ app.UseSwaggerUI(options => { options.SwaggerEndpoint("/swagger/v1/swagger.json"
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseGlobalExceptionHandler();
 
 app.MapRazorPages();
 app.MapControllers();

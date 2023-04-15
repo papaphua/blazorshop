@@ -74,17 +74,6 @@ public static class ServiceExtensions
         return services;
     }
 
-
-    public static IServiceCollection AddGlobalExceptionHandler(this IServiceCollection services)
-    {
-        if (services == null)
-            throw new ArgumentNullException(nameof(services));
-
-        services.AddTransient<GlobalExceptionHandler>();
-
-        return services;
-    }
-
     public static IServiceCollection AddPermissionAuthorization(this IServiceCollection services)
     {
         if (services == null)
