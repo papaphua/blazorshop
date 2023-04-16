@@ -79,24 +79,38 @@ public sealed class AuthFacade : IAuthFacade
         if (!registerDto.Password.Equals(registerDto.ConfirmPassword))
             throw new BusinessException(ExceptionMessages.PasswordsNotMatch);
 
-        var user = _mapper.Map<User>(registerDto);
+        User user;
+        
+        var transaction = await _db.Database.BeginTransactionAsync();
+        const string savepoint = nameof(RegisterAsync);
+        await transaction.CreateSavepointAsync(savepoint);
 
-        user.PasswordHash = _passwordProvider.GetPasswordHash(registerDto.Password);
+        try
+        {
+            user = _mapper.Map<User>(registerDto);
+            user.PasswordHash = _passwordProvider.GetPasswordHash(registerDto.Password);
+            
+            if (!_db.Users.Any())
+                user.RoleId = (int)Roles.Admin;
+            else
+                user.RoleId = (int)Roles.Customer;
+            
+            var customerId = await _paymentService.AddPaymentProfileAsync(user);
+            user.CustomerId = customerId;
 
-        if (!_db.Users.Any())
-            user.RoleId = (int)Roles.Admin;
-        else
-            user.RoleId = (int)Roles.Customer;
+            await _userService.CreateUserAsync(user);
+            
+            await _securityService.CreateSecurityForUserAsync(user.Id);
 
-        var customerId = await _paymentService.AddPaymentProfileAsync(user);
-
-        user.CustomerId = customerId;
-
-        await _db.Users.AddAsync(user);
-        await _db.SaveChangesAsync();
-
-        await _securityService.CreateSecurityForUserAsync(user.Id);
-
+            await transaction.CommitAsync();
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackToSavepointAsync(savepoint);
+            
+            throw;
+        }
+        
         await GetEmailConfirmationLinkAsync(user.Id);
     }
 

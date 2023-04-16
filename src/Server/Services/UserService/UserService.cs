@@ -43,6 +43,12 @@ public sealed class UserService : IUserService
             .FirstOrDefaultAsync(user => user.Email.Equals(email));
     }
 
+    public async Task CreateUserAsync(User user)
+    {
+        await _db.Users.AddAsync(user);
+        await _db.SaveChangesAsync();
+    }
+
     public async Task DeleteUserAsync(Guid id)
     {
         
