@@ -6,6 +6,7 @@ using BlazorShop.Server.Common.Providers.LinkProvider;
 using BlazorShop.Server.Common.Providers.PasswordProvider;
 using BlazorShop.Server.Common.Providers.TokenProvider;
 using BlazorShop.Server.Data;
+using BlazorShop.Server.Data.Entities;
 using BlazorShop.Server.Services.MailService;
 using BlazorShop.Server.Services.PaymentService;
 using BlazorShop.Server.Services.SecurityService;
@@ -53,6 +54,8 @@ public sealed class ProfileFacade : IProfileFacade
     {
         var user = await _userService.GetUserByIdAsync(userId);
 
+        if (user is null) throw new NotFoundException(ExceptionMessages.Unauthorized);
+        
         return _mapper.Map<ProfileDto>(user);
     }
 
@@ -68,16 +71,33 @@ public sealed class ProfileFacade : IProfileFacade
         if (user is null)
             throw new NotFoundException(ExceptionMessages.NotRegistered);
 
-        var updatedUser = _mapper.Map(newProfileDto, user);
+        string accessToken;
+        string refreshToken;
+        User updatedUser;
+        
+        var transaction = await _db.Database.BeginTransactionAsync();
+        const string savepoint = nameof(UpdateUserProfileAsync);
+        await transaction.CreateSavepointAsync(savepoint);
+        
+        try
+        {
+            updatedUser = _mapper.Map(newProfileDto, user);
+            await _userService.UpdateUserAsync(updatedUser);
+            
+            accessToken = await _tokenProvider.GenerateAccessTokenAsync(updatedUser);
+            refreshToken = _tokenProvider.GenerateRefreshToken(updatedUser);
+            await _sessionService.UpdateSessionAsync(user.Id, accessToken, refreshToken);
 
-        _db.Users.Update(updatedUser);
-
+            await transaction.CommitAsync();
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackToSavepointAsync(savepoint);
+            
+            throw;
+        }
+        
         await _paymentService.UpdatePaymentProfileAsync(updatedUser.Id);
-
-        var accessToken = await _tokenProvider.GenerateAccessTokenAsync(updatedUser);
-        var refreshToken = _tokenProvider.GenerateRefreshToken(updatedUser);
-
-        await _sessionService.UpdateSessionAsync(user.Id, accessToken, refreshToken);
 
         return new TokenDto(accessToken, refreshToken);
     }
@@ -97,19 +117,35 @@ public sealed class ProfileFacade : IProfileFacade
         await _securityService.IsConfirmationCodeValidAsync(userId, emailChangeDto.CurrentConfirmationCode);
         await _securityService.IsNewEmailConfirmationCodeValidAsync(userId, emailChangeDto.NewConfirmationCode);
 
-        user.Email = emailChangeDto.NewEmail;
+        string accessToken;
+        string refreshToken;
+        
+        var transaction = await _db.Database.BeginTransactionAsync();
+        const string savepoint = nameof(ChangeEmailAsync);
+        await transaction.CreateSavepointAsync(savepoint);
 
-        await _db.SaveChangesAsync();
+        try
+        {
+            user.Email = emailChangeDto.NewEmail;
+            await _db.SaveChangesAsync();
+            
+            accessToken = await _tokenProvider.GenerateAccessTokenAsync(user);
+            refreshToken = _tokenProvider.GenerateRefreshToken(user);
+            await _sessionService.UpdateSessionAsync(user.Id, accessToken, refreshToken);
+            
+            await _securityService.RemoveConfirmationCodesAsync(userId);
 
+            await transaction.CommitAsync();
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackToSavepointAsync(savepoint);
+            
+            throw;
+        }
+        
         await _paymentService.UpdatePaymentProfileAsync(user.Id);
-
-        var accessToken = await _tokenProvider.GenerateAccessTokenAsync(user);
-        var refreshToken = _tokenProvider.GenerateRefreshToken(user);
-
-        await _sessionService.UpdateSessionAsync(user.Id, accessToken, refreshToken);
-
-        await _securityService.RemoveConfirmationCodesAsync(userId);
-
+        
         return new TokenDto(accessToken, refreshToken);
     }
 
@@ -122,11 +158,25 @@ public sealed class ProfileFacade : IProfileFacade
 
         await _securityService.IsConfirmationCodeValidAsync(userId, passwordChangeDto.ConfirmationCode);
 
-        user.PasswordHash = _passwordProvider.GetPasswordHash(passwordChangeDto.NewPassword);
+        var transaction = await _db.Database.BeginTransactionAsync();
+        const string savepoint = nameof(ChangePasswordAsync);
+        await transaction.CreateSavepointAsync(savepoint);
 
-        await _db.SaveChangesAsync();
+        try
+        {
+            user.PasswordHash = _passwordProvider.GetPasswordHash(passwordChangeDto.NewPassword);
+            await _db.SaveChangesAsync();
 
-        await _securityService.RemoveConfirmationCodesAsync(userId);
+            await _securityService.RemoveConfirmationCodesAsync(userId);
+            
+            await transaction.CommitAsync();
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackToSavepointAsync(savepoint);
+            
+            throw;
+        }
     }
 
     public async Task GetDeleteProfileLinkAsync(Guid userId)
@@ -152,9 +202,10 @@ public sealed class ProfileFacade : IProfileFacade
 
         await _securityService.IsConfirmationCodeValidAsync(user.Id, parameters.Token);
 
-        await _paymentService.DeletePaymentProfileAsync(user.Id);
-
-        _db.Users.Remove(user);
+        await _userService.DeleteUserAsync(user.Id);
+        
         await _db.SaveChangesAsync();
+        
+        await _paymentService.DeletePaymentProfileAsync(user.Id);
     }
 }

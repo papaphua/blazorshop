@@ -1,4 +1,5 @@
-﻿using BlazorShop.Server.Auth.PermissionHandler;
+﻿using BlazorShop.Server.Services.UserService;
+using BlazorShop.Server.Auth.PermissionHandler;
 using BlazorShop.Server.Common;
 using BlazorShop.Server.Facades.UserFacade;
 using BlazorShop.Shared.Dtos;
@@ -13,10 +14,12 @@ namespace BlazorShop.Server.Controllers;
 public sealed class UserController : ControllerBase
 {
     private readonly IUserFacade _userFacade;
+    private readonly IUserService _userService;
 
-    public UserController(IUserFacade userFacade)
+    public UserController(IUserFacade userFacade, IUserService userService)
     {
         _userFacade = userFacade;
+        _userService = userService;
     }
 
     [HasPermission(Permissions.AdminPermission)]
@@ -48,6 +51,6 @@ public sealed class UserController : ControllerBase
     [HttpDelete("{id:guid}")]
     public async Task DeleteUser(Guid id)
     {
-        await _userFacade.DeleteUserAsync(id);
+        await _userService.DeleteUserAsync(id);
     }
 }
