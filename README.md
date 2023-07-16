@@ -56,3 +56,27 @@ SENDGRID_API_KEY=YourValue // from app.sendgrid.com/settings/api_keys
 ```
 5) Run BlazorShop.Server: https
 
+## Screenshots
+
+1) Products pages
+![alt text](https://github.com/papaphua/BlazorShop/blob/main/screenshots/products.png?raw=true)
+![alt text](https://github.com/papaphua/BlazorShop/blob/main/screenshots/products_search.png?raw=true)
+![alt text](https://github.com/papaphua/BlazorShop/blob/main/screenshots/product.png?raw=true)
+![alt text](https://github.com/papaphua/BlazorShop/blob/main/screenshots/comments.png?raw=true)
+2) Cart pages
+![alt text](https://github.com/papaphua/BlazorShop/blob/main/screenshots/cart.png?raw=true)
+![alt text](https://github.com/papaphua/BlazorShop/blob/main/screenshots/stripe_checkout.png?raw=true)
+3) Auth pages
+![alt text](https://github.com/papaphua/BlazorShop/blob/main/screenshots/login.png?raw=true)
+![alt text](https://github.com/papaphua/BlazorShop/blob/main/screenshots/register.png?raw=true)
+![alt text](https://github.com/papaphua/BlazorShop/blob/main/screenshots/confirmation_email.png?raw=true)
+![alt text](https://github.com/papaphua/BlazorShop/blob/main/screenshots/email_confirmed.png?raw=true)
+4) Profile pages
+![alt text](https://github.com/papaphua/BlazorShop/blob/main/screenshots/profile.png?raw=true)
+![alt text](https://github.com/papaphua/BlazorShop/blob/main/screenshots/email_change.png?raw=true)
+![alt text](https://github.com/papaphua/BlazorShop/blob/main/screenshots/password_change.png?raw=true)
+5) Management pages
+![alt text](https://github.com/papaphua/BlazorShop/blob/main/screenshots/products_management.png?raw=true)
+![alt text](https://github.com/papaphua/BlazorShop/blob/main/screenshots/products_management_search.png?raw=true)
+![alt text](https://github.com/papaphua/BlazorShop/blob/main/screenshots/users_management.png?raw=true)
+![alt text](https://github.com/papaphua/BlazorShop/blob/main/screenshots/add_product.png?raw=true)
